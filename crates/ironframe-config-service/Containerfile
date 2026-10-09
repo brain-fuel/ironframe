@@ -1,0 +1,13 @@
+# The configuration service as a small static image. Build from the repository root:
+#   podman build -f crates/ironframe-config-service/Containerfile -t localhost/ironframe-config-service:0.1.0 .
+FROM docker.io/library/rust:1-alpine AS build
+RUN apk add --no-cache musl-dev
+WORKDIR /src
+COPY . .
+RUN cargo build --release --locked -p ironframe-config-service
+
+FROM scratch
+COPY --from=build /src/target/release/ironframe-config-service /ironframe-config-service
+ENV IRONFRAME_SETTINGS=/etc/ironframe/settings.json IRONFRAME_LISTEN=0.0.0.0:8700
+EXPOSE 8700
+ENTRYPOINT ["/ironframe-config-service"]

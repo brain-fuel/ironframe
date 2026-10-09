@@ -3,6 +3,7 @@ resolver = "3"
 members = [
     "crates/ironframe-attestation",
     "crates/ironframe-core",
+    "crates/ironframe-config-service",
     "crates/ironframe-cli",
     "examples/kafka-app",
 ]
