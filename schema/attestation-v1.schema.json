@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/brain-fuel/ironframe/schema/attestation-v1.schema.json",
+  "title": "Environment attestation, version 1",
+  "description": "Which endpoint each dependency of one run reached, and whether it was the real dependency or a stand-in. Readers ignore fields they do not know.",
+  "type": "object",
+  "required": ["format", "version", "environment", "run", "dependencies"],
+  "properties": {
+    "format": { "const": "environment-attestation" },
+    "version": { "const": 1 },
+    "environment": { "type": "string", "minLength": 1 },
+    "run": {
+      "type": "object",
+      "required": ["id", "started_at", "recorded_at"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "started_at": { "type": "string", "format": "date-time" },
+        "recorded_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "producer": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/dependency" }
+    }
+  },
+  "$defs": {
+    "dependency": {
+      "type": "object",
+      "required": ["name", "endpoint", "reached", "kind"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "endpoint": { "type": "string", "minLength": 1 },
+        "reached": { "type": "boolean" },
+        "kind": { "enum": ["real", "stand-in"] },
+        "stand_in": {
+          "type": "object",
+          "required": ["product", "version", "conformance"],
+          "properties": {
+            "product": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "minLength": 1 },
+            "conformance": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "if": { "properties": { "kind": { "const": "stand-in" } } },
+      "then": { "required": ["stand_in"] },
+      "else": { "not": { "required": ["stand_in"] } }
+    }
+  }
+}
