@@ -1,0 +1,3 @@
+decision/hcl/modules/aws-ecs-fargate/versions.tf/terraform/terraform:
+  digest: sha256:2081ab7d01d4e589
+  verdict: pending

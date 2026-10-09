@@ -1,0 +1,42 @@
+decision/rust/crates/ironframe-core/src/sync/azure.rs:
+  digest: sha256:f1edd7d1e542a9ce
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/const/API_VERSION:
+  digest: sha256:cceaa0182d2c08c5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/function/sign:
+  digest: sha256:9f7106470c3b81e0
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/function/sync:
+  digest: sha256:f695a94a558ac2c6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/impl/ConnectionString/function/parse:
+  digest: sha256:029288919bdc8131
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/impl/RestAppConfiguration/function/new:
+  digest: sha256:d5ef592d85a649ba
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/struct/ConnectionString:
+  digest: sha256:8538324126808748
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/struct/ConnectionString/field/endpoint:
+  digest: sha256:1653974f539a2d00
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/struct/ConnectionString/field/id:
+  digest: sha256:1fb09fe5fc130150
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/struct/ConnectionString/field/secret:
+  digest: sha256:1cde51b5e8add60a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/struct/RestAppConfiguration:
+  digest: sha256:b855df29299dbfe1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/trait/AppConfigurationApi:
+  digest: sha256:d9894dea5a6bdc09
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/trait/AppConfigurationApi/function/get:
+  digest: sha256:ffb21ea8036e03ff
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/azure.rs/trait/AppConfigurationApi/function/put:
+  digest: sha256:351c7c1adce6c2f1
+  verdict: pending

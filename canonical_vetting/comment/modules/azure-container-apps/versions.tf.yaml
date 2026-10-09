@@ -1,0 +1,3 @@
+decision/hcl/modules/azure-container-apps/versions.tf/terraform/terraform:
+  digest: sha256:4f47acfde9a7cfbf
+  verdict: pending

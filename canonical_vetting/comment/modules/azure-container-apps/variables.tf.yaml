@@ -1,0 +1,33 @@
+decision/hcl/modules/azure-container-apps/variables.tf/variable/cpu:
+  digest: sha256:317f7531c72f99e5
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/environment:
+  digest: sha256:d015c9d892dc55ea
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/external:
+  digest: sha256:951ab242ea6e6b68
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/image:
+  digest: sha256:4396600c8096aaad
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/infrastructure_subnet_id:
+  digest: sha256:d53ab43c823f3035
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/location:
+  digest: sha256:241b74188faf720a
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/memory:
+  digest: sha256:f41ed826c710f16c
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/name:
+  digest: sha256:2f042e4abdb01ec9
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/ports:
+  digest: sha256:9b848318e9c984de
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/resource_group_name:
+  digest: sha256:db84a4f8f698777e
+  verdict: pending
+decision/hcl/modules/azure-container-apps/variables.tf/variable/transport:
+  digest: sha256:5c8be09e43d55036
+  verdict: pending

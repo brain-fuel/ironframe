@@ -1,0 +1,12 @@
+decision/hcl/modules/gcp-cloud-run/tests/plan.tftest.hcl/block/mock_provider.google:
+  digest: sha256:2f2582898077bde2
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/tests/plan.tftest.hcl/run/a_long_name_is_shortened_within_cloud_run_s_limit:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/tests/plan.tftest.hcl/run/more_than_one_port_is_refused:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/tests/plan.tftest.hcl/run/the_service_runs_the_twin_on_its_port_with_its_config:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending

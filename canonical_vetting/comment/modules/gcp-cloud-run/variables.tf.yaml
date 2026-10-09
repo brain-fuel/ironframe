@@ -1,0 +1,27 @@
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/cpu:
+  digest: sha256:c2b71e7e6151cba3
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/environment:
+  digest: sha256:d015c9d892dc55ea
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/image:
+  digest: sha256:4396600c8096aaad
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/memory:
+  digest: sha256:5bf425d219b171e1
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/name:
+  digest: sha256:1fa386c8d3e5c2ed
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/ports:
+  digest: sha256:90b03c99432c5890
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/project:
+  digest: sha256:7f4c582d30883b8d
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/public:
+  digest: sha256:a1ac4e515161f13a
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/variables.tf/variable/region:
+  digest: sha256:a03717eccf0f76d6
+  verdict: pending

@@ -1,0 +1,36 @@
+decision/make/Makefile/rule/build:
+  digest: sha256:3ca0681b14a3fddf
+  verdict: pending
+decision/make/Makefile/rule/canon:
+  digest: sha256:ea8433e733e812c9
+  verdict: pending
+decision/make/Makefile/rule/check:
+  digest: sha256:be262900ae07ae30
+  verdict: pending
+decision/make/Makefile/rule/clean:
+  digest: sha256:847c5f2d051a1995
+  verdict: pending
+decision/make/Makefile/rule/config-service-image:
+  digest: sha256:a9f71b8a6485ca21
+  verdict: pending
+decision/make/Makefile/rule/help:
+  digest: sha256:1131fe0da6c95623
+  verdict: pending
+decision/make/Makefile/rule/lint:
+  digest: sha256:a24242f5029c426d
+  verdict: pending
+decision/make/Makefile/rule/test:
+  digest: sha256:01d238f7c7a339c9
+  verdict: pending
+decision/make/Makefile/rule/tofu-check:
+  digest: sha256:9a7d5b666e70a16d
+  verdict: pending
+decision/make/Makefile/variable/CANON_HOME:
+  digest: sha256:4e4940c76228fbe4
+  verdict: pending
+decision/make/Makefile/variable/MODULES:
+  digest: sha256:32f6e0b0858b72a0
+  verdict: pending
+decision/make/Makefile/variable/PODMAN:
+  digest: sha256:6a430c21c9803c62
+  verdict: pending

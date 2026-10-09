@@ -1,0 +1,30 @@
+decision/rust/crates/ironframe-core/src/sync/mod.rs:
+  digest: sha256:fb4be1e3596a1dcb
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/enum/SyncOutcome:
+  digest: sha256:c4fad925e0b7fe1a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/enum/SyncOutcome/variant/Unchanged:
+  digest: sha256:001884dff65309d5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/enum/SyncOutcome/variant/Updated:
+  digest: sha256:210f49a099208bea
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/function/describe:
+  digest: sha256:ecfb150f7d99561b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/function/settings_json:
+  digest: sha256:63e030fbf716f4bd
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/function/sync_env_file:
+  digest: sha256:4b37294ac63ebb23
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/struct/SyncError:
+  digest: sha256:0d5eaf33899dd88a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/struct/SyncError/field/reason:
+  digest: sha256:d20efd45ae1aaee0
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/mod.rs/struct/SyncError/field/target:
+  digest: sha256:ff12f088dea4bee4
+  verdict: pending

@@ -1,0 +1,108 @@
+decision/rust/crates/ironframe-core/src/ops.rs:
+  digest: sha256:3abb2814667c0ecc
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError:
+  digest: sha256:2d93fad9a645f159
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Attestation:
+  digest: sha256:010025d2cfa4c758
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Io:
+  digest: sha256:0c4d3e01625a8f78
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Manifest:
+  digest: sha256:a1b35e5af65611ba
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Podman:
+  digest: sha256:ac967ca7dad4b84c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Resolve:
+  digest: sha256:e1b0bd6e6a4f7db6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Sync:
+  digest: sha256:66284269c73b40d4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Tofu:
+  digest: sha256:82d9bb4d5c55db66
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/attest_now:
+  digest: sha256:3b4d0cf5ee59bbb1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/down:
+  digest: sha256:43d1a10048d065de
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/plan:
+  digest: sha256:164699ca30462421
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/resolve_in:
+  digest: sha256:6889c687f9d59aab
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/status:
+  digest: sha256:f363186d4f2e7fa4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/sync_environment:
+  digest: sha256:a6147fa3c387303d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/up:
+  digest: sha256:484b3b085b60b9aa
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus:
+  digest: sha256:a1fdf1047f23390e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus/field/endpoint:
+  digest: sha256:58701a6309a36f23
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus/field/kind:
+  digest: sha256:4a59af2b64ec9eb2
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus/field/name:
+  digest: sha256:c51e3f7a6e56b36f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus/field/reachable:
+  digest: sha256:bc1156d8b7f0f61a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/DependencyStatus/field/state:
+  digest: sha256:4439e12834b46a0f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/RealClouds:
+  digest: sha256:76da3f77d872e2c7
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpOptions:
+  digest: sha256:cb6b2b3ff77043cc
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpOptions/field/sync:
+  digest: sha256:79b7282a6eca9b78
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpOptions/field/wait:
+  digest: sha256:8d4f5efc1576f060
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport:
+  digest: sha256:03b81401a99b9b1c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport/field/attestation:
+  digest: sha256:3195e423214342d1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport/field/attestation_path:
+  digest: sha256:a5c76e66c21b68f0
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport/field/environment:
+  digest: sha256:1a7506a9931e9267
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport/field/synced:
+  digest: sha256:fa6746358802e71b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/struct/UpReport/field/unreached:
+  digest: sha256:d82da64f5fe9b537
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/trait/Clouds:
+  digest: sha256:356eafb6f2c4735e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/trait/Clouds/function/aws:
+  digest: sha256:6536c579880c27ac
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/trait/Clouds/function/azure:
+  digest: sha256:a03a5aabf89b1dda
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/trait/Clouds/function/gcp:
+  digest: sha256:1029c5acf884988a
+  verdict: pending

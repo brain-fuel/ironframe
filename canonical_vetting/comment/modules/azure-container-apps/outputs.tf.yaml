@@ -1,0 +1,9 @@
+decision/hcl/modules/azure-container-apps/outputs.tf/output/endpoint:
+  digest: sha256:c737944cf6ed4420
+  verdict: pending
+decision/hcl/modules/azure-container-apps/outputs.tf/output/host:
+  digest: sha256:88436734842d78d0
+  verdict: pending
+decision/hcl/modules/azure-container-apps/outputs.tf/output/ports:
+  digest: sha256:8bce632d49e703e3
+  verdict: pending

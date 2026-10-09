@@ -1,0 +1,99 @@
+registry/MIT:
+  digest: sha256:ed6c0abb656b1c69
+  verdict: pending
+registry/REQ-attestation-round-trip:
+  digest: sha256:732fef65b1cd922f
+  verdict: pending
+registry/REQ-cloud-root-module:
+  digest: sha256:8b7115db1fa6a88c
+  verdict: pending
+registry/REQ-compose-generation:
+  digest: sha256:08eeb7a6fb69e730
+  verdict: pending
+registry/REQ-config-service-serves-settings:
+  digest: sha256:1ffc4e2ac99c64cb
+  verdict: pending
+registry/REQ-config-sync-idempotent:
+  digest: sha256:4b3674a299186345
+  verdict: pending
+registry/REQ-example-reads-config:
+  digest: sha256:f5b1f1d101992b67
+  verdict: pending
+registry/REQ-manifest-validation:
+  digest: sha256:86d5be5129ca4fb8
+  verdict: pending
+registry/REQ-missing-image-fails-clearly:
+  digest: sha256:c02a0b446b1c2187
+  verdict: pending
+registry/REQ-modules-plan:
+  digest: sha256:bc6935379893358f
+  verdict: pending
+registry/REQ-settings-resolution:
+  digest: sha256:00e276983d32eb42
+  verdict: pending
+registry/aws-appconfig:
+  digest: sha256:e305c98303349866
+  verdict: pending
+registry/aws-sdk-rust:
+  digest: sha256:fb9e45715975ca2d
+  verdict: pending
+registry/azure-app-configuration:
+  digest: sha256:240287a178eb2492
+  verdict: pending
+registry/azure-appconfig-hmac:
+  digest: sha256:66b484332a011b7a
+  verdict: pending
+registry/azure-appconfig-rest:
+  digest: sha256:da718a8f16d8c9d9
+  verdict: pending
+registry/canon:
+  digest: sha256:a152c76a874314e1
+  verdict: pending
+registry/cloud-run-ports:
+  digest: sha256:52c4e79465f3ec20
+  verdict: pending
+registry/compose-spec:
+  digest: sha256:ba38491d33f9c12e
+  verdict: pending
+registry/container-apps-tcp:
+  digest: sha256:30fe455297934d89
+  verdict: pending
+registry/diataxis:
+  digest: sha256:da6d545b5d1d42a6
+  verdict: pending
+registry/gcp-parameter-manager:
+  digest: sha256:89144ad80a837d5d
+  verdict: pending
+registry/google-cloud-rust:
+  digest: sha256:23fba4a34f3f48e4
+  verdict: pending
+registry/json-schema-2020-12:
+  digest: sha256:3ae3462411001465
+  verdict: pending
+registry/kafka-protocol:
+  digest: sha256:7fca8c0c1d4c5d14
+  verdict: pending
+registry/keep-a-changelog:
+  digest: sha256:c2fd784f65633045
+  verdict: pending
+registry/lawspec:
+  digest: sha256:fb38dbf32517f321
+  verdict: pending
+registry/lawtwin:
+  digest: sha256:b598a104198678b7
+  verdict: pending
+registry/opentofu:
+  digest: sha256:52f9e3fb260480db
+  verdict: pending
+registry/opentofu-testing:
+  digest: sha256:91fbeb40ef0dc8ad
+  verdict: pending
+registry/podman:
+  digest: sha256:0038c630dcfc9713
+  verdict: pending
+registry/rfc3339:
+  digest: sha256:3c75d35fd9ebd621
+  verdict: pending
+registry/semver-2:
+  digest: sha256:7ef7fa24c6809d32
+  verdict: pending

@@ -1,0 +1,102 @@
+decision/rust/crates/ironframe-cli/src/main.rs:
+  digest: sha256:825c7f570faf8f3b
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command:
+  digest: sha256:bc4998a6a25de976
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Attest:
+  digest: sha256:703b1787cba2a376
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Attest/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Attest/field/output:
+  digest: sha256:30605f27a2600f18
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Compose:
+  digest: sha256:9a03297c96d71776
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Compose/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Down:
+  digest: sha256:03028f09a236e6f0
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Down/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Plan:
+  digest: sha256:d04e2fb13175f640
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Plan/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Schema:
+  digest: sha256:313f53438aeac524
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Schema/field/which:
+  digest: sha256:098ade5d30ba6753
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Settings:
+  digest: sha256:7f9cb9dd550d1e34
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Settings/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Settings/field/format:
+  digest: sha256:0439bf072db871b9
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Status:
+  digest: sha256:24a8bbc2ada570f0
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Status/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Status/field/json:
+  digest: sha256:331591ba021d3f6a
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Sync:
+  digest: sha256:d3fc8025f5ea380c
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Sync/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Up:
+  digest: sha256:eb71676a3026cef1
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Up/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Up/field/no_sync:
+  digest: sha256:9c9270e1cbb96619
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Up/field/wait:
+  digest: sha256:6acdb333d4714df9
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Validate:
+  digest: sha256:dfefca3562e089cd
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SchemaKind:
+  digest: sha256:b842ec5c619497eb
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SchemaKind/variant/Attestation:
+  digest: sha256:bd049e62a0a4bdae
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SchemaKind/variant/Manifest:
+  digest: sha256:47a7b5ce7550fe84
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SettingsFormat:
+  digest: sha256:da5a991a684b1cfe
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SettingsFormat/variant/Env:
+  digest: sha256:397444a6bd46a02b
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/SettingsFormat/variant/Json:
+  digest: sha256:3e2c40c2ca1d9836
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/struct/Cli:
+  digest: sha256:23fcead1db2e21f0
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/struct/Cli/field/manifest:
+  digest: sha256:44c521576a2974a2
+  verdict: pending

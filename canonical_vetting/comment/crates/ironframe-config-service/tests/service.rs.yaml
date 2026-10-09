@@ -1,0 +1,24 @@
+decision/rust/crates/ironframe-config-service/tests/service.rs:
+  digest: sha256:62c65c70973c5722
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/a_missing_environment_or_setting_is_a_404_naming_what_exists:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/a_rewritten_settings_file_is_served_without_a_restart:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/an_environment_is_served_as_a_json_object_of_its_settings:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/an_environment_is_served_as_dotenv_that_reads_back_to_the_same_settings:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/an_unreadable_settings_file_is_a_503_not_a_crash:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/one_setting_is_served_as_its_bare_value:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending
+decision/rust/crates/ironframe-config-service/tests/service.rs/function/the_environment_list_names_the_project_and_its_environments:
+  digest: sha256:a14cc9a6cb336364
+  verdict: pending

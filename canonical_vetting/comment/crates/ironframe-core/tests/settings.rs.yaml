@@ -1,0 +1,24 @@
+decision/rust/crates/ironframe-core/tests/settings.rs:
+  digest: sha256:5c5ef5d455f2a55c
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/a_cloud_twin_has_no_endpoint_until_it_is_deployed:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/a_local_twin_is_reached_at_localhost_on_its_first_port:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/a_pinned_endpoint_wins_and_its_parts_fill_the_templates:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/a_twin_receives_its_config_as_json_in_twin_config:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/dotenv_output_reads_back_to_the_same_settings:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/endpoints_split_into_host_and_port_with_scheme_defaults:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/settings.rs/function/short_image_names_are_docker_hub_names:
+  digest: sha256:d0b06d343636e3ae
+  verdict: pending

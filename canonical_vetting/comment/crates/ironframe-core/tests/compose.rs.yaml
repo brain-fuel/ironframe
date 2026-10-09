@@ -1,0 +1,15 @@
+decision/rust/crates/ironframe-core/tests/compose.rs:
+  digest: sha256:a2e5a05b8818446a
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/compose.rs/function/a_hosted_real_dependency_gets_no_service:
+  digest: sha256:7dffe7752c0484f1
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/compose.rs/function/each_container_is_a_labelled_service_with_its_ports_and_environment:
+  digest: sha256:7dffe7752c0484f1
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/compose.rs/function/the_configuration_service_mounts_the_settings_document_read_only:
+  digest: sha256:7dffe7752c0484f1
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/compose.rs/function/the_same_manifest_always_gives_the_same_file:
+  digest: sha256:7dffe7752c0484f1
+  verdict: pending

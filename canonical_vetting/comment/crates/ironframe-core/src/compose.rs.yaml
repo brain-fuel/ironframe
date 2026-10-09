@@ -1,0 +1,24 @@
+decision/rust/crates/ironframe-core/src/compose.rs:
+  digest: sha256:374452c8d210026c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/CONFIG_SERVICE:
+  digest: sha256:9f0f4372aec57e28
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/CONFIG_SERVICE_SETTINGS_PATH:
+  digest: sha256:151ed8f1ad0c60dd
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/LABEL_DEPENDENCY:
+  digest: sha256:2b51cca49d67db64
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/LABEL_ENVIRONMENT:
+  digest: sha256:2273a9467bad4745
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/LABEL_KIND:
+  digest: sha256:c34c7b1a106e9f15
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/const/LABEL_PROJECT:
+  digest: sha256:e526bffb4769484c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/compose.rs/function/compose_file:
+  digest: sha256:2ca1f0de71317ef3
+  verdict: pending

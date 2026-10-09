@@ -1,0 +1,18 @@
+decision/rust/examples/kafka-app/src/main.rs:
+  digest: sha256:02e9043c0d45672c
+  verdict: pending
+decision/rust/examples/kafka-app/src/main.rs/const/SETTING:
+  digest: sha256:20e3f98209d49985
+  verdict: pending
+decision/rust/examples/kafka-app/src/main.rs/function/api_versions_request:
+  digest: sha256:303c0caee6c0925c
+  verdict: pending
+decision/rust/examples/kafka-app/src/main.rs/function/bootstrap_servers:
+  digest: sha256:09691f653d8a30a2
+  verdict: pending
+decision/rust/examples/kafka-app/src/main.rs/function/probe:
+  digest: sha256:c985050c60dadffa
+  verdict: pending
+decision/rust/examples/kafka-app/src/main.rs/module/tests/function/the_api_versions_request_is_framed_with_its_length_and_names_the_client:
+  digest: sha256:d5807448816f3ced
+  verdict: pending

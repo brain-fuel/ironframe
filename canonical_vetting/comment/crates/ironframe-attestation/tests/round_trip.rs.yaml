@@ -1,0 +1,24 @@
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs:
+  digest: sha256:d7cc88301c3f1c02
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_dependency_recorded_twice_is_refused:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_reader_ignores_fields_a_later_writer_adds:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_stand_in_without_its_product_is_refused_by_reader_and_schema:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/an_attestation_reads_back_exactly_as_it_was_written:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/another_format_or_version_is_refused_before_any_field_is_trusted:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/every_written_attestation_satisfies_the_published_schema:
+  digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/the_written_form_uses_the_documented_field_names_and_kind_words:
+  digest: sha256:c7f247774016f383
+  verdict: pending

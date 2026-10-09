@@ -1,0 +1,36 @@
+ledger/DEC-attestation-format:
+  digest: sha256:72f11034ee11b73c
+  verdict: pending
+ledger/DEC-cloud-run-http-only:
+  digest: sha256:6c6949197d54067b
+  verdict: pending
+ledger/DEC-config-service:
+  digest: sha256:c82b0dab6316be5a
+  verdict: pending
+ledger/DEC-config-sync:
+  digest: sha256:e1458bba74808b8a
+  verdict: pending
+ledger/DEC-credentials-by-reference:
+  digest: sha256:dcf4b4c39723d0c7
+  verdict: pending
+ledger/DEC-manifest-shape:
+  digest: sha256:e23c212fce95c84d
+  verdict: pending
+ledger/DEC-opentofu:
+  digest: sha256:36bc7cff6ca76b0a
+  verdict: pending
+ledger/DEC-podman-compose:
+  digest: sha256:8ce294d89f4d0d58
+  verdict: pending
+ledger/DEC-rust:
+  digest: sha256:f953303ac03ac798
+  verdict: pending
+ledger/DEC-three-planes:
+  digest: sha256:6fc45d8e4f90e17d
+  verdict: pending
+ledger/DEC-vetting-deferred:
+  digest: sha256:f3890b75f5e53d74
+  verdict: pending
+ledger/DEC-wiring-in-ironframe:
+  digest: sha256:8ae4414259353599
+  verdict: pending

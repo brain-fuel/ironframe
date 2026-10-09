@@ -1,0 +1,12 @@
+decision/hcl/modules/azure-container-apps/tests/plan.tftest.hcl/block/mock_provider.azurerm:
+  digest: sha256:fb72d058b3f11c7f
+  verdict: pending
+decision/hcl/modules/azure-container-apps/tests/plan.tftest.hcl/run/an_http_twin_gets_https_ingress_on_its_port:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/azure-container-apps/tests/plan.tftest.hcl/run/tcp_ingress_exposes_the_twin_s_port:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/azure-container-apps/tests/plan.tftest.hcl/run/tcp_ingress_without_a_subnet_is_refused:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending

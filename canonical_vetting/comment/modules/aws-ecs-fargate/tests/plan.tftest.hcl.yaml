@@ -1,0 +1,12 @@
+decision/hcl/modules/aws-ecs-fargate/tests/plan.tftest.hcl/block/mock_provider.aws:
+  digest: sha256:40e6370ac1f3d6e3
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/tests/plan.tftest.hcl/run/a_twin_gets_one_tcp_listener_and_target_group_per_port:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/tests/plan.tftest.hcl/run/a_twin_without_ports_is_refused:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/tests/plan.tftest.hcl/run/the_container_receives_the_image_ports_and_twin_config:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending

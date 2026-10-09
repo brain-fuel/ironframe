@@ -1,0 +1,24 @@
+decision/rust/crates/ironframe-core/tests/sync.rs:
+  digest: sha256:988d57ff7e50d24d
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/an_env_file_is_written_once_and_then_left_alone:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/app_configuration_requests_are_signed_as_the_service_documents:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/app_configuration_writes_only_the_keys_that_changed:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/appconfig_is_created_versioned_and_deployed_on_the_first_sync:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/appconfig_is_left_alone_when_it_already_holds_the_settings:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/appconfig_uses_the_named_environment_and_strategy:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending
+decision/rust/crates/ironframe-core/tests/sync.rs/function/parameter_manager_gets_one_version_per_distinct_content:
+  digest: sha256:6db2a7d4b67548ae
+  verdict: pending

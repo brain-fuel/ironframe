@@ -1,0 +1,9 @@
+decision/hcl/modules/aws-ecs-fargate/outputs.tf/output/endpoint:
+  digest: sha256:11217e0728b5455e
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/outputs.tf/output/host:
+  digest: sha256:08780207fe4cb319
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/outputs.tf/output/ports:
+  digest: sha256:31da537f6c46d210
+  verdict: pending

@@ -1,0 +1,9 @@
+decision/hcl/modules/gcp-cloud-run/outputs.tf/output/endpoint:
+  digest: sha256:8e23f533bcab1964
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/outputs.tf/output/host:
+  digest: sha256:03fd008d8d0db52b
+  verdict: pending
+decision/hcl/modules/gcp-cloud-run/outputs.tf/output/ports:
+  digest: sha256:844e7c17d1d467ea
+  verdict: pending

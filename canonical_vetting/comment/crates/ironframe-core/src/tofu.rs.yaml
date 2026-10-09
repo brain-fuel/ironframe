@@ -1,0 +1,75 @@
+decision/rust/crates/ironframe-core/src/tofu.rs:
+  digest: sha256:40807f62da360b84
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/const/ENDPOINTS_OUTPUT:
+  digest: sha256:adf2064d2ab9b8e2
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/const/RELEASED_MODULES:
+  digest: sha256:f29827f74ca1444c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError:
+  digest: sha256:200d0e970d491a86
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Failed:
+  digest: sha256:2e13c1dd099fa154
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Failed/field/command:
+  digest: sha256:fa45a85d88ef0a8f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Failed/field/reason:
+  digest: sha256:45efe8b4cdeb8328
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Failed/field/tool:
+  digest: sha256:d32511a1824a7583
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Io:
+  digest: sha256:cfbd2e2911e7e8e1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/NotCloud:
+  digest: sha256:a9cf084f95d43145
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/NotInstalled:
+  digest: sha256:3c6a4aa362f358b8
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/enum/TofuError/variant/Output:
+  digest: sha256:44791d6ac2ee9060
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/function/deployment_name:
+  digest: sha256:e3552e9dd90f7a77
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/function/module_source:
+  digest: sha256:400ce4e31552c8be
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/function/root_module:
+  digest: sha256:1075678cec942e4a
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/apply":
+  digest: sha256:f362688b3a3a234f
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/at":
+  digest: sha256:3542b7143d89b633
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/destroy":
+  digest: sha256:6852dab9390c2a89
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/endpoints":
+  digest: sha256:e7d2fe864b6cc8a3
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/init":
+  digest: sha256:bba381077ab01773
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/locate":
+  digest: sha256:42ecf80e4db50dff
+  verdict: pending
+"decision/rust/crates/ironframe-core/src/tofu.rs/impl/Tofu<'a>/function/plan":
+  digest: sha256:195dad47a2870147
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/struct/Tofu:
+  digest: sha256:6ed399fb755fb607
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/struct/Tofu/field/program:
+  digest: sha256:d32511a1824a7583
+  verdict: pending
+decision/rust/crates/ironframe-core/src/tofu.rs/struct/Tofu/field/root:
+  digest: sha256:addbae5f066b0150
+  verdict: pending

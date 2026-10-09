@@ -1,0 +1,36 @@
+decision/rust/crates/ironframe-core/src/sync/gcp.rs:
+  digest: sha256:32065ea7a8d3d475
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/enum/VersionCreated:
+  digest: sha256:d0f82ddf1b5b574b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/enum/VersionCreated/variant/AlreadyExists:
+  digest: sha256:25726692949b3a64
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/enum/VersionCreated/variant/Created:
+  digest: sha256:cd1515c0d7119119
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/function/sync:
+  digest: sha256:cfe5e34712ff49f9
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/function/version_id:
+  digest: sha256:f00c7211de7fc57e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/impl/SdkParameterManager/function/new:
+  digest: sha256:ea7f6c6608e9bc0d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/struct/SdkParameterManager:
+  digest: sha256:f80af87820a45c64
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/trait/ParameterManagerApi:
+  digest: sha256:dbb3476526cfabe5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/trait/ParameterManagerApi/function/create_parameter:
+  digest: sha256:15ee3f41d36ecee6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/trait/ParameterManagerApi/function/create_version:
+  digest: sha256:1ad83920d4875d55
+  verdict: pending
+decision/rust/crates/ironframe-core/src/sync/gcp.rs/trait/ParameterManagerApi/function/parameter_exists:
+  digest: sha256:da26007f93eefb69
+  verdict: pending

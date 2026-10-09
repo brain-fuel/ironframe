@@ -1,0 +1,33 @@
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/allowed_cidr_blocks:
+  digest: sha256:ac1217ac9727cdcb
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/assign_public_ip:
+  digest: sha256:00c8a8aa0c25147d
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/cpu:
+  digest: sha256:05a8ac347de69182
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/environment:
+  digest: sha256:d015c9d892dc55ea
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/image:
+  digest: sha256:4396600c8096aaad
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/internal:
+  digest: sha256:c6d6e4025e9d59fe
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/memory:
+  digest: sha256:ae1027a3e3ac3dae
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/name:
+  digest: sha256:b52660afe1030c47
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/ports:
+  digest: sha256:1c8a363cddbf6d92
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/subnet_ids:
+  digest: sha256:991d286de183f665
+  verdict: pending
+decision/hcl/modules/aws-ecs-fargate/variables.tf/variable/vpc_id:
+  digest: sha256:c9256f9263f011a4
+  verdict: pending

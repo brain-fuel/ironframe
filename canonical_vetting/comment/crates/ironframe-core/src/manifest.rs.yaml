@@ -1,0 +1,279 @@
+decision/rust/crates/ironframe-core/src/manifest.rs:
+  digest: sha256:dd11092f63caa326
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/CREDENTIAL_SCHEMES:
+  digest: sha256:2cf94db9ff0f515d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/DEFAULT_CONFIG_SERVICE_IMAGE:
+  digest: sha256:a681cbe3b3f45fdb
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/DEFAULT_CONFIG_SERVICE_PORT:
+  digest: sha256:b946807ab67ce056
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/DEFAULT_MANIFEST:
+  digest: sha256:8856fd8a9423785e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/MANIFEST_VERSION:
+  digest: sha256:a17254875d0a898e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/PLACEHOLDERS:
+  digest: sha256:1120f3ef4849bd4e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/SCHEMA:
+  digest: sha256:c5947861d4782544
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/const/TWIN_CONFIG_VARIABLE:
+  digest: sha256:d8d2f43442383070
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Binding:
+  digest: sha256:bc4869380ab68f50
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Binding/variant/Real:
+  digest: sha256:906010911642aa0c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Binding/variant/Twin:
+  digest: sha256:a0c333c809024ab1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Runtime:
+  digest: sha256:14a4cf5c2d79ee9b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Runtime/variant/Aws:
+  digest: sha256:6f5e2bdd68c3d33b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Runtime/variant/Azure:
+  digest: sha256:951a997cc1a1755b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Runtime/variant/Gcp:
+  digest: sha256:f03b96c9a1844e72
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/Runtime/variant/Podman:
+  digest: sha256:537f71e18c0d9348
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/SyncTarget:
+  digest: sha256:aea27b442ecb93f6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/SyncTarget/variant/AwsAppconfig:
+  digest: sha256:c583b78e2251b13e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/SyncTarget/variant/AzureAppConfiguration:
+  digest: sha256:98d3469b0fd03847
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/SyncTarget/variant/EnvFile:
+  digest: sha256:68d6f86733fc696e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/enum/SyncTarget/variant/GcpParameterManager:
+  digest: sha256:46da19c59bbf7718
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/function/is_name:
+  digest: sha256:c6021bfef04d44d4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/function/placeholders:
+  digest: sha256:74574e18b3fb2b95
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Manifest/function/environment:
+  digest: sha256:cf406bcd646b8c1d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Manifest/function/load:
+  digest: sha256:fb62ba21a38002a4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Manifest/function/parse:
+  digest: sha256:fc219c851d5af7c1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Manifest/function/problems:
+  digest: sha256:ed8a7dbe5e53cb90
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/as_str:
+  digest: sha256:cd3e02442a285fd9
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/is_cloud:
+  digest: sha256:8426a82532fb5261
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/module:
+  digest: sha256:298fb0b5c8a07bad
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/module_inputs:
+  digest: sha256:6657b0f324404c6a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/provider_inputs:
+  digest: sha256:11fbf1ff90cde9ea
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Runtime/function/required_inputs:
+  digest: sha256:4e8bff1976573c97
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/impl/Twin/function/image_ref:
+  digest: sha256:61df29bfa5a9e655
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget:
+  digest: sha256:84792bdd3f0a9d92
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget/field/application:
+  digest: sha256:c46a02d494412257
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget/field/deployment_strategy:
+  digest: sha256:ed3c2c71025f1e1d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget/field/environment:
+  digest: sha256:1f1744e42c375303
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget/field/profile:
+  digest: sha256:9b2ee76c98fe5c2f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AwsAppConfigTarget/field/region:
+  digest: sha256:eac6dc79a81495ec
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AzureAppConfigurationTarget:
+  digest: sha256:11b89640ddcecf23
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AzureAppConfigurationTarget/field/connection_string_env:
+  digest: sha256:987df984d5bb97ac
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AzureAppConfigurationTarget/field/endpoint:
+  digest: sha256:f7f4b133cc2e4a0d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AzureAppConfigurationTarget/field/label:
+  digest: sha256:1c30d067648f0959
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/AzureAppConfigurationTarget/field/prefix:
+  digest: sha256:f599f5425f83af42
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Cloud:
+  digest: sha256:8637098bce21a9af
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Cloud/field/inputs:
+  digest: sha256:7c183f1768366289
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Cloud/field/modules:
+  digest: sha256:5ba418a797bbf1c4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ConfigService:
+  digest: sha256:f643493aacb120d5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ConfigService/field/image:
+  digest: sha256:4a9d88a51df6956a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ConfigService/field/port:
+  digest: sha256:6aa0c0c5f95dcfe3
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/DependencyDecl:
+  digest: sha256:8ab9bd1f3b187c99
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/DependencyDecl/field/description:
+  digest: sha256:8e624a92174c7205
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/DependencyDecl/field/settings:
+  digest: sha256:f03bc67ac8ab0108
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/EnvFileTarget:
+  digest: sha256:3eff0804ac7883c3
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/EnvFileTarget/field/path:
+  digest: sha256:5fc92bf8ea8ae099
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment:
+  digest: sha256:470ad3489ebbf599
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment/field/cloud:
+  digest: sha256:e17d5cbf6a56b8c6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment/field/config_service:
+  digest: sha256:d6a32eaedd5987fa
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment/field/dependencies:
+  digest: sha256:0ce0789c3e84b4f7
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment/field/runtime:
+  digest: sha256:76db9e0c391ca756
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Environment/field/sync:
+  digest: sha256:86922e9edae788c5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/GcpParameterTarget:
+  digest: sha256:8296359b08d9d2da
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/GcpParameterTarget/field/location:
+  digest: sha256:286ac4ffc9dbe7df
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/GcpParameterTarget/field/parameter:
+  digest: sha256:5136a524749372f5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/GcpParameterTarget/field/project:
+  digest: sha256:7f4c582d30883b8d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Manifest:
+  digest: sha256:d969daa03dd7a632
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Manifest/field/dependencies:
+  digest: sha256:700835923c9c7b74
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Manifest/field/environments:
+  digest: sha256:615fd3d68d8e8b1d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Manifest/field/project:
+  digest: sha256:a7d616062b930ff9
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Manifest/field/version:
+  digest: sha256:73deb73d108fc1ae
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ManifestError:
+  digest: sha256:b66a9e7f0749673f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ManifestError/field/origin:
+  digest: sha256:b67ee5d262f65983
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/ManifestError/field/problems:
+  digest: sha256:8dd5203c9b2c30c5
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Problem:
+  digest: sha256:4470cc5a2d8de85b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Problem/field/at:
+  digest: sha256:431f085f1458c516
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Problem/field/message:
+  digest: sha256:13819796583cb3e3
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real:
+  digest: sha256:3497f718d29f567b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real/field/credentials:
+  digest: sha256:4e39b92d8fbcdb63
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real/field/endpoint:
+  digest: sha256:367f8a05dea86c21
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real/field/env:
+  digest: sha256:a00d0e9906699f75
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real/field/image:
+  digest: sha256:cbb71e22ee74e36f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Real/field/ports:
+  digest: sha256:b08ec111672f1c2f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin:
+  digest: sha256:5c22cf8e53d33da0
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/config:
+  digest: sha256:75e5c8349eed006c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/conformance:
+  digest: sha256:a8b1360c4e68b14c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/credentials:
+  digest: sha256:7680504e701b24d9
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/endpoint:
+  digest: sha256:bb502cb7b1336e79
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/env:
+  digest: sha256:3a2cd35fe85a10fa
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/image:
+  digest: sha256:bae8211e98f9e974
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/ports:
+  digest: sha256:8d058ccb892a9109
+  verdict: pending
+decision/rust/crates/ironframe-core/src/manifest.rs/struct/Twin/field/version:
+  digest: sha256:f27fdc4ffa79563f
+  verdict: pending
