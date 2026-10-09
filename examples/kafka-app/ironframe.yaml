@@ -1,0 +1,84 @@
+# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it
+# is in each environment. The app never sees this file; it reads its setting as it always has.
+version: 1
+project: kafka-app
+
+dependencies:
+  kafka:
+    description: The Kafka cluster the app talks to.
+    settings:
+      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}
+
+environments:
+  # The Kafka twin on this machine. Its image is not released yet, so `ironframe up local`
+  # stops before starting anything and says which image is missing.
+  local:
+    runtime: podman
+    dependencies:
+      kafka:
+        twin:
+          image: lawtwin/kafka
+          version: 0.1.0
+          conformance: unrated
+          ports: [9092]
+          config:
+            seed: 42
+    sync:
+      - env_file:
+          path: .env
+
+  # The real Kafka on this machine, run from Apache's image until the twin exists, with the
+  # configuration service beside it on port 8700 (build its image with `make config-service-image`).
+  local-broker:
+    runtime: podman
+    dependencies:
+      kafka:
+        real:
+          endpoint: localhost:9092
+          image: apache/kafka:4.1.0
+          ports: [9092]
+    sync:
+      - env_file:
+          path: .env
+    config_service:
+      port: 8700
+
+  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to
+  # AWS AppConfig for the app deployed beside it.
+  staging:
+    runtime: aws
+    cloud:
+      modules: ../../modules
+      region: us-east-1
+      vpc_id: vpc-0123456789abcdef0
+      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]
+    dependencies:
+      kafka:
+        twin:
+          image: lawtwin/kafka
+          version: 0.1.0
+          conformance: unrated
+          ports: [9092]
+    sync:
+      - aws_appconfig:
+          region: us-east-1
+          application: kafka-app
+          profile: connections
+
+  # The real, hosted cluster: nothing is deployed, the settings point at it.
+  production:
+    runtime: aws
+    cloud:
+      region: us-east-1
+      vpc_id: vpc-0123456789abcdef0
+      subnet_ids: [subnet-0123456789abcdef0]
+    dependencies:
+      kafka:
+        real:
+          endpoint: b-1.kafka-app.example.internal:9092
+          credentials: aws-secretsmanager:kafka-app/production/kafka
+    sync:
+      - aws_appconfig:
+          region: us-east-1
+          application: kafka-app
+          profile: connections

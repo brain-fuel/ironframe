@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "crates/ironframe-attestation",
+    "examples/kafka-app",
 ]
 
 [workspace.package]
