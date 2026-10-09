@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/brain-fuel/ironframe/schema/ironframe-v1.schema.json",
+  "title": "Ironframe manifest, version 1",
+  "description": "ironframe.yaml: the dependencies an application reads from its configuration, and for each environment whether each one is the real dependency or a twin.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "project", "dependencies", "environments"],
+  "properties": {
+    "version": { "const": 1, "description": "The manifest version." },
+    "project": { "$ref": "#/$defs/name", "description": "The project's name; it prefixes every container, compose project and cloud resource." },
+    "dependencies": {
+      "type": "object",
+      "description": "The dependencies the application has, each with the settings it reads them through.",
+      "propertyNames": { "$ref": "#/$defs/name" },
+      "additionalProperties": { "$ref": "#/$defs/dependency" }
+    },
+    "environments": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/name" },
+      "additionalProperties": { "$ref": "#/$defs/environment" }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+    },
+    "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+    "credentials": {
+      "type": "string",
+      "pattern": "^(env|file|aws-secretsmanager|gcp-secretmanager|azure-keyvault|vault):.+$",
+      "description": "A reference to credentials, <scheme>:<location>. Ironframe passes it on and never reads the secret."
+    },
+    "stringMap": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["settings"],
+      "properties": {
+        "description": { "type": "string" },
+        "settings": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+          "additionalProperties": { "type": "string" },
+          "description": "Setting name to template; the template may use ${endpoint}, ${host}, ${port}, ${credentials}, ${kind} and ${name}."
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "dependencies"],
+      "properties": {
+        "runtime": { "enum": ["podman", "aws", "gcp", "azure"] },
+        "cloud": {
+          "type": "object",
+          "description": "Inputs for a cloud runtime, passed to the provider and every module. aws needs region, vpc_id and subnet_ids; gcp needs project and region; azure needs location and resource_group_name.",
+          "properties": {
+            "modules": { "type": "string", "description": "A module source to use instead of the released modules." }
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/name" },
+          "additionalProperties": { "$ref": "#/$defs/binding" }
+        },
+        "sync": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/syncTarget" }
+        },
+        "config_service": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "image": { "type": "string", "minLength": 1 },
+            "port": { "$ref": "#/$defs/port" }
+          }
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "real": { "$ref": "#/$defs/real" },
+        "twin": { "$ref": "#/$defs/twin" }
+      }
+    },
+    "real": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint"],
+      "properties": {
+        "endpoint": { "type": "string", "minLength": 1 },
+        "credentials": { "$ref": "#/$defs/credentials" },
+        "image": { "type": "string", "minLength": 1 },
+        "ports": { "type": "array", "items": { "$ref": "#/$defs/port" } },
+        "env": { "$ref": "#/$defs/stringMap" }
+      }
+    },
+    "twin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "version", "conformance", "ports"],
+      "properties": {
+        "image": { "type": "string", "minLength": 1, "description": "The image name without a tag." },
+        "version": { "type": "string", "minLength": 1, "description": "The image tag, which is the twin's version." },
+        "config": { "type": "object", "description": "Handed to the twin as JSON in TWIN_CONFIG." },
+        "conformance": { "type": "string", "minLength": 1, "description": "The conformance level the twin's release declares." },
+        "ports": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/port" } },
+        "env": { "$ref": "#/$defs/stringMap" },
+        "endpoint": { "type": "string", "minLength": 1 },
+        "credentials": { "$ref": "#/$defs/credentials" }
+      }
+    },
+    "syncTarget": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "env_file": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path"],
+          "properties": { "path": { "type": "string", "minLength": 1 } }
+        },
+        "aws_appconfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["region", "application", "profile"],
+          "properties": {
+            "region": { "type": "string", "minLength": 1 },
+            "application": { "type": "string", "minLength": 1 },
+            "environment": { "type": "string", "minLength": 1 },
+            "profile": { "type": "string", "minLength": 1 },
+            "deployment_strategy": { "type": "string", "minLength": 1 }
+          }
+        },
+        "gcp_parameter_manager": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["project", "parameter"],
+          "properties": {
+            "project": { "type": "string", "minLength": 1 },
+            "location": { "type": "string", "minLength": 1 },
+            "parameter": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,63}$" }
+          }
+        },
+        "azure_app_configuration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["endpoint"],
+          "properties": {
+            "endpoint": { "type": "string", "pattern": "^https://" },
+            "label": { "type": "string", "minLength": 1 },
+            "prefix": { "type": "string" },
+            "connection_string_env": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}
