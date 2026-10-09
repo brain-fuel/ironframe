@@ -1,0 +1,132 @@
+MIT:
+  kind: license
+  title: MIT License
+  locator: https://spdx.org/licenses/MIT.html
+keep-a-changelog:
+  kind: article
+  title: Keep a Changelog 1.0.0
+  locator: https://keepachangelog.com/en/1.0.0/
+semver-2:
+  kind: article
+  title: Semantic Versioning 2.0.0
+  locator: https://semver.org/spec/v2.0.0.html
+diataxis:
+  kind: article
+  title: Diátaxis, a systematic approach to technical documentation authoring
+  locator: https://diataxis.fr/
+canon:
+  kind: package
+  title: canon, the canonical format checker, version 0.2.0 at commit 2f22e6e
+  locator: https://github.com/brain-fuel/canon/tree/2f22e6e
+lawspec:
+  kind: package
+  title: LawSpec, executable laws for business contracts, whose evidence command reads environment attestations
+  locator: https://github.com/brain-fuel/lawspec
+lawtwin:
+  kind: package
+  title: LawTwin, contract-governed stand-ins for dependencies that cannot be provisioned, reset, isolated or forced into a state
+  locator: https://github.com/brain-fuel/lawtwin
+opentofu:
+  kind: package
+  title: OpenTofu, the open-source infrastructure as code tool compatible with Terraform
+  locator: https://opentofu.org/docs/
+opentofu-testing:
+  kind: article
+  title: OpenTofu, Command tofu test, including mock providers
+  locator: https://opentofu.org/docs/cli/commands/test/
+podman:
+  kind: package
+  title: Podman, the daemonless container engine
+  locator: https://podman.io/
+compose-spec:
+  kind: article
+  title: The Compose Specification
+  locator: https://compose-spec.io/
+json-schema-2020-12:
+  kind: article
+  title: JSON Schema, draft 2020-12
+  locator: https://json-schema.org/draft/2020-12
+rfc3339:
+  kind: article
+  title: "RFC 3339: Date and Time on the Internet: Timestamps"
+  locator: https://www.rfc-editor.org/rfc/rfc3339
+aws-appconfig:
+  kind: article
+  title: AWS AppConfig, hosted configuration profiles and deployments
+  locator: https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html
+aws-sdk-rust:
+  kind: package
+  title: The AWS SDK for Rust, crate aws-sdk-appconfig
+  locator: https://docs.rs/aws-sdk-appconfig
+gcp-parameter-manager:
+  kind: article
+  title: Google Cloud Parameter Manager
+  locator: https://cloud.google.com/secret-manager/parameter-manager/docs/overview
+google-cloud-rust:
+  kind: package
+  title: Google Cloud Client Libraries for Rust, crate google-cloud-parametermanager-v1
+  locator: https://docs.rs/google-cloud-parametermanager-v1
+azure-app-configuration:
+  kind: article
+  title: Azure App Configuration
+  locator: https://learn.microsoft.com/azure/azure-app-configuration/overview
+azure-appconfig-rest:
+  kind: article
+  title: Azure App Configuration REST API, key-values
+  locator: https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value
+azure-appconfig-hmac:
+  kind: article
+  title: Azure App Configuration REST API, HMAC authentication
+  locator: https://learn.microsoft.com/azure/azure-app-configuration/rest-api-authentication-hmac
+cloud-run-ports:
+  kind: article
+  title: Cloud Run, configure the container port; one port per service, HTTP/1 or HTTP/2
+  locator: https://cloud.google.com/run/docs/configuring/services/containers#configure-port
+container-apps-tcp:
+  kind: article
+  title: Azure Container Apps ingress, TCP requires a custom virtual network
+  locator: https://learn.microsoft.com/azure/container-apps/ingress-overview
+kafka-protocol:
+  kind: article
+  title: The Apache Kafka protocol guide, ApiVersions and framing
+  locator: https://kafka.apache.org/protocol
+REQ-manifest-validation:
+  kind: requirement
+  title: Ironframe reads ironframe.yaml against its JSON Schema and then its rules across fields, and reports every problem of a pass at once, each with the dotted path of the field at fault
+  locator: docs/reference/manifest.md
+REQ-settings-resolution:
+  kind: requirement
+  title: Ironframe resolves each dependency's endpoint once per environment, pinned, deployed or localhost and the first port, and renders the application's settings from it
+  locator: docs/reference/manifest.md
+REQ-compose-generation:
+  kind: requirement
+  title: A podman environment's compose file is generated whole from the manifest, one labelled service per container, ports kept, the twin's configuration passed in TWIN_CONFIG
+  locator: docs/how-to/run-an-environment-locally.md
+REQ-missing-image-fails-clearly:
+  kind: requirement
+  title: ironframe up checks every image, pulling those absent, before anything starts, and when any stays missing it starts nothing and names each dependency, image and reason
+  locator: docs/how-to/run-an-environment-locally.md
+REQ-config-service-serves-settings:
+  kind: requirement
+  title: The configuration service serves each environment's settings as JSON, dotenv and single values, re-reads its settings document, and answers what it lacks with a 404 naming what exists
+  locator: docs/reference/config-service.md
+REQ-config-sync-idempotent:
+  kind: requirement
+  title: Each sync target receives an environment's settings, creates what is missing, and writes nothing when it already holds them
+  locator: docs/how-to/sync-configuration.md
+REQ-attestation-round-trip:
+  kind: requirement
+  title: An environment attestation reads back exactly as written, satisfies its published schema, tolerates added fields, and refuses documents that would mislead a reader
+  locator: docs/reference/attestation.md
+REQ-cloud-root-module:
+  kind: requirement
+  title: A cloud environment's OpenTofu root deploys each twin through its cloud's module, configures the provider from the environment's inputs, and outputs every twin's endpoint for up to read back
+  locator: docs/how-to/deploy-twins-to-a-cloud.md
+REQ-modules-plan:
+  kind: requirement
+  title: Each OpenTofu module validates and plans against a mocked provider, runs the twin image with its ports and TWIN_CONFIG, and refuses inputs its cloud cannot serve
+  locator: docs/how-to/deploy-twins-to-a-cloud.md
+REQ-example-reads-config:
+  kind: requirement
+  title: The example application reads its Kafka bootstrap servers from its own configuration and speaks the Kafka protocol to them, knowing nothing of Ironframe
+  locator: docs/tutorials/wire-the-kafka-example.md

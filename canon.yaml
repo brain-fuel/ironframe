@@ -1,0 +1,60 @@
+version: 0.1.0
+canon: 0.2.0
+registry: canonical_refs.yaml
+decisions: canonical_decisions.yaml
+exemptions: canonical_exemptions.yaml
+vetting: canonical_vetting
+ignore:
+  - .canon/
+  - .canon-cache/
+  - .ironframe/
+  - target/
+  - "**/.terraform/"
+  - "**/.terraform.lock.hcl"
+  - "*.md"
+  - "!docs/**/*.md"
+languages:
+  folio:
+    extensions: [.md]
+    lexer: .canon/grammars/folio/FolioLexer.g4
+    parser: .canon/grammars/folio/FolioParser.g4
+    start: document
+  make:
+    extensions: [Makefile]
+    lexer: .canon/grammars/make/canonically_commented/MakefileLexer.g4
+    parser: .canon/grammars/make/canonically_commented/MakefileParser.g4
+    start: makefile
+  hcl:
+    extensions: [.tf, .tfvars, .hcl]
+    lexer: .canon/grammars/hcl/canonically_commented/HCLLexer.g4
+    parser: .canon/grammars/hcl/canonically_commented/HCLParser.g4
+    start: configFile
+  rust:
+    extensions: [.rs]
+    lexer: .canon/grammars/rust/RustLexer.g4
+    parser: .canon/grammars/rust/RustParser.g4
+    start: crate
+    comments:
+      line: "//"
+      blockOpen: "/*"
+      blockClose: "*/"
+      outerDoc: ["///", "/**"]
+      innerDoc: ["//!", "/*!"]
+      strings: ["\""]
+    units:
+      - {rule: function_, kind: function, name: {rule: identifier}, required: false}
+      - {rule: structStruct, kind: struct, name: {rule: identifier}, required: false}
+      - {rule: tupleStruct, kind: struct, name: {rule: identifier}, required: false}
+      - {rule: enumeration, kind: enum, name: {rule: identifier}, required: false}
+      - {rule: union_, kind: union, name: {rule: identifier}, required: false}
+      - {rule: trait_, kind: trait, name: {rule: identifier}, required: false}
+      - {rule: macroRulesDefinition, kind: macro, name: {rule: identifier}, required: false}
+      - {rule: typeAlias, kind: type, name: {rule: identifier}, required: false}
+      - {rule: constantItem, kind: const, name: {rule: identifier}, required: false}
+      - {rule: staticItem, kind: static, name: {rule: identifier}, required: false}
+      - {rule: inherentImpl, kind: impl, name: {rule: type_}, required: false}
+      - {rule: traitImpl, kind: impl, name: {rule: traitImplTarget}, required: false}
+      - {rule: module, kind: module, name: {rule: identifier}, required: false}
+      - {rule: enumItem, kind: variant, name: {rule: identifier}, required: false}
+      - {rule: structField, kind: field, name: {rule: identifier}, required: false}
+      - {rule: tupleField, kind: field, name: {ordinal: true}, required: false}

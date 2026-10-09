@@ -1,0 +1,30 @@
+# Cargo build output
+/target/
+
+# Ironframe's per-environment working directory: generated compose files,
+# OpenTofu roots and state, env files and attestations of local runs
+.ironframe/
+
+# The link to a canon checkout that `make canon` creates
+/.canon
+
+# canon's cache of parsed files
+/.canon-cache/
+
+# OpenTofu and Terraform caches and state
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Env files written for local runs
+.env
+.env.*
+!.env.example
+
+# Editors and the OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

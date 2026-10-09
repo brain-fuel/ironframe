@@ -1,0 +1,105 @@
+DEC-wiring-in-ironframe:
+  status: decided
+  question: Something must decide, per environment and per dependency, whether an application talks to the real dependency or to a stand-in, and must hand the application the endpoint. Where does that wiring live?
+  answer: |
+    In Ironframe, and only there. LawSpec knows nothing about LawTwin: business contracts never mention twins, endpoints or environments. LawTwin owns the stand-ins and never decides which environment uses what. Ironframe owns the environment manifests, the configuration service and its cloud sync, and the environment attestation, and never contains a contract or anything of a twin's insides; it runs a twin's image, hands it its configuration and records its declared conformance level. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [lawspec, lawtwin]
+
+DEC-three-planes:
+  status: decided
+  question: How do LawSpec, LawTwin and Ironframe divide the work so none of them drifts into another's concerns?
+  answer: |
+    As three planes. LawSpec, the business contract, owns the application's laws; a dependency is an ability whose production handler is the real client library. LawTwin, the stand-ins, owns dependency contracts as LawSpec packages, the twin servers, their control plane, conformance and record and replay. Ironframe, the wiring, owns which environment uses what, the configuration that tells applications where their dependencies are, and the attestation of what a run actually reached. The only thing that crosses from Ironframe to LawSpec is the attestation, in a tool-neutral format any tool may write, so LawSpec reads it without importing, naming or calling Ironframe or LawTwin. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [lawspec, lawtwin]
+
+DEC-config-service:
+  status: decided
+  question: How do applications learn where their dependencies are in each environment, without changing how they read configuration?
+  answer: |
+    Through an AppConfig-like layer that Ironframe owns: its own configuration service, a small Rust HTTP service in a container that serves each environment's connection settings as JSON, as dotenv, or one value at a time, beside the sync targets of DEC-config-sync. The service serves a settings document Ironframe writes when it brings an environment up, re-read on each request, and never writes anything itself. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [aws-appconfig]
+
+DEC-config-sync:
+  status: decided
+  question: Applications already read configuration from their cloud's configuration store or from env files. How do the settings reach them there?
+  answer: |
+    Ironframe syncs the same settings the configuration service serves into AWS AppConfig, GCP Parameter Manager and Azure App Configuration, and into env files for local runs, so applications read configuration the way they already do. AppConfig receives a hosted, freeform JSON profile and a deployment; Parameter Manager a JSON parameter with one version per distinct content; App Configuration one key-value per setting under a prefix and a label. A sync writes nothing when the target already holds the settings. The clients use the official Rust SDKs where they exist, aws-sdk-appconfig and google-cloud-parametermanager-v1, and App Configuration's REST API with HMAC signing, since Azure has released no Rust client for it. Each cloud sits behind a small trait of the calls the sync makes, so the sync is tested against recorded calls. LocalStack's image now requires an auth token, so the AWS client is not exercised against it. Decided by the owner for 0.1.0; the details of each target are this release's.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [aws-appconfig, aws-sdk-rust, gcp-parameter-manager, google-cloud-rust, azure-app-configuration, azure-appconfig-rest, azure-appconfig-hmac]
+
+DEC-rust:
+  status: decided
+  question: Which language are Ironframe's command, library and configuration service written in?
+  answer: |
+    Rust, as LawTwin's twin servers are, so one toolchain builds the family's servers and the configuration service is a small static binary in a scratch image. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+
+DEC-opentofu:
+  status: decided
+  question: How are twins deployed to AWS, GCP and Azure?
+  answer: |
+    With OpenTofu, or Terraform, which reads the same modules. The repository ships one module per cloud under modules/, AWS ECS on Fargate behind a network load balancer, GCP Cloud Run and Azure Container Apps, each running one twin image and exposing its ports. ironframe writes a cloud environment's root module as JSON from the manifest, one module instance per twin, and reads each twin's endpoint back from its output. Each module validates and plans against a mocked provider in its own tofu test. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [opentofu, opentofu-testing]
+
+DEC-podman-compose:
+  status: decided
+  question: How do twins and local stand-ins run on a developer's machine?
+  answer: |
+    With podman and a compose file Ironframe generates from the manifest, run by podman compose. Containers are labelled with their project, environment and dependency so status and down find them, and published ports keep their numbers, so the endpoint a twin is reached at is the one the application is told. podman is found through IRONFRAME_PODMAN, then PATH, then /opt/podman/bin/podman, where the macOS installer puts it. Short image names are Docker Hub names, as Docker reads them. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [podman, compose-spec]
+
+DEC-vetting-deferred:
+  status: decided
+  question: Ironframe adopts canon from its first commit. When are its comments, pages, decisions and references vetted?
+  answer: |
+    At 1.0. Every comment, page, decision and reference is ingested pending from the start, and canonical_exemptions.yaml exempts them all with revisit 1.0.0, so the debt is counted and not yet due, as LawSpec defers its own. Decided by the owner for 0.1.0.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [canon]
+
+DEC-manifest-shape:
+  status: open
+  question: What does ironframe.yaml say, and how is it checked?
+  answer: |
+    Proposed for 0.1.0, until the owner decides. A versioned manifest names its project, declares each dependency once with the settings the application reads as templates over the bound endpoint (${endpoint}, ${host}, ${port}, ${credentials}, ${kind}, ${name}), and binds every declared dependency in every environment to `real`, with its endpoint, a credentials reference and optionally an image to run on podman, or to `twin`, with its image, version, configuration, declared conformance level and ports. An environment names its runtime, podman, aws, gcp or azure, the cloud inputs a cloud runtime needs, its sync targets and optionally a configuration service. It is checked in two passes, its JSON Schema and then the rules across fields, each reporting every problem with the field's dotted path. Ironframe's generated files live in .ironframe/<environment>/, ignored by git.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [json-schema-2020-12]
+
+DEC-attestation-format:
+  status: open
+  question: What does an environment attestation record, so that a tool such as lawspec evidence can tell which obligations ran against stand-ins without knowing which tool wired the environment?
+  answer: |
+    Proposed for 0.1.0, until the owner decides. A JSON document of format environment-attestation, version 1: the environment's name; the run's id and its start and record times in RFC 3339; optionally the producer's name and version, which no reader may depend on; and per dependency its name, the endpoint the run was wired to, whether it answered, its kind, real or stand-in, and for a stand-in its product, version and declared conformance level. Readers ignore fields they do not know, so fields are added without a version change; a change that would mislead an older reader raises the version. Nothing in it names Ironframe, LawSpec or LawTwin. Ironframe writes it during up and on demand with ironframe attest, reusing the run up started. Whether an endpoint answered is a TCP connection that stays open a moment, since podman's port forwarder accepts connections before anything listens behind it.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [rfc3339, json-schema-2020-12, lawspec]
+
+DEC-credentials-by-reference:
+  status: open
+  question: How does a manifest say how a real dependency is authenticated without Ironframe handling secrets?
+  answer: |
+    Proposed for 0.1.0, until the owner decides. A binding names a credentials reference, <scheme>:<location>, with scheme env, file, aws-secretsmanager, gcp-secretmanager, azure-keyvault or vault. Ironframe checks the scheme, passes the reference on through ${credentials}, and never reads the secret, so no secret lands in a settings document, an env file or a cloud configuration store.
+  opened: 0.1.0
+  revisit: 1.0.0
+
+DEC-cloud-run-http-only:
+  status: open
+  question: Cloud Run serves HTTP and gRPC on one port per service. How does a twin of a raw TCP protocol, such as Kafka, run on GCP?
+  answer: |
+    Not yet. The gcp-cloud-run module serves HTTP twins, and the manifest refuses a GCP twin with more than one port. Candidates for a TCP twin on GCP are a GKE Autopilot module or a Compute Engine container VM behind a TCP load balancer.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [cloud-run-ports, container-apps-tcp]

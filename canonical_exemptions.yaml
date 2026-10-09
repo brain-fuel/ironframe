@@ -1,0 +1,28 @@
+/crates/:
+  kinds: [comment]
+  reason: "The crates' comments are written from the first commit and ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/examples/:
+  kinds: [comment]
+  reason: "The example application's comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/modules/:
+  kinds: [comment]
+  reason: "The OpenTofu modules' comments and descriptions are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/Makefile:
+  kinds: [comment]
+  reason: "The Makefile's comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/docs/:
+  kinds: [doc]
+  reason: "Every page carries front matter from the first commit and is ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+ledger/*:
+  kinds: [ledger]
+  reason: "The ledger is written from the first commit; the owner defers signing off each decision to 1.0"
+  revisit: 1.0.0
+registry/*:
+  kinds: [registry]
+  reason: "The registry is written from the first commit; the owner defers signing off each reference and requirement to 1.0"
+  revisit: 1.0.0
