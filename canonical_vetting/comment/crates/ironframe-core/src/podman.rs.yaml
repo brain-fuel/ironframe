@@ -49,6 +49,9 @@ decision/rust/crates/ironframe-core/src/podman.rs/function/parse_ps:
 "decision/rust/crates/ironframe-core/src/podman.rs/impl/Podman<'a>/function/ensure_images":
   digest: sha256:393c19ba53daa566
   verdict: pending
+"decision/rust/crates/ironframe-core/src/podman.rs/impl/Podman<'a>/function/image_labels":
+  digest: sha256:6cc1d6179421d17a
+  verdict: pending
 "decision/rust/crates/ironframe-core/src/podman.rs/impl/Podman<'a>/function/locate":
   digest: sha256:23d249f794bfed1f
   verdict: pending

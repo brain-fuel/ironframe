@@ -82,7 +82,7 @@ DEC-attestation-format:
   status: open
   question: What does an environment attestation record, so that a tool such as lawspec evidence can tell which obligations ran against stand-ins without knowing which tool wired the environment?
   answer: |
-    Proposed for 0.1.0, until the owner decides. A JSON document of format environment-attestation, version 1: the environment's name; the run's id and its start and record times in RFC 3339; optionally the producer's name and version, which no reader may depend on; and per dependency its name, the endpoint the run was wired to, whether it answered, its kind, real or stand-in, and for a stand-in its product, version and declared conformance level. Readers ignore fields they do not know, so fields are added without a version change; a change that would mislead an older reader raises the version. Nothing in it names Ironframe, LawSpec or LawTwin. Ironframe writes it during up and on demand with ironframe attest, reusing the run up started. Whether an endpoint answered is a TCP connection that stays open a moment, since podman's port forwarder accepts connections before anything listens behind it.
+    Proposed for 0.1.0, until the owner decides. A JSON document of format environment-attestation, version 1: the environment's name; the run's id and its start and record times in RFC 3339; optionally the producer's name and version, which no reader may depend on; and per dependency its name, the endpoint the run was wired to, whether it answered, its kind, real or stand-in, and for a stand-in its product, version and declared conformance level, and optionally the stand-in's seed and the digest and length of its history (DEC-history-digest). Readers ignore fields they do not know, so fields are added without a version change; a change that would mislead an older reader raises the version. Nothing in it names Ironframe, LawSpec or LawTwin. Ironframe writes it during up and on demand with ironframe attest, reusing the run up started. Whether an endpoint answered is a TCP connection that stays open a moment, since podman's port forwarder accepts connections before anything listens behind it.
   opened: 0.1.0
   revisit: 1.0.0
   refs: [rfc3339, json-schema-2020-12, lawspec]
@@ -99,7 +99,43 @@ DEC-cloud-run-http-only:
   status: open
   question: Cloud Run serves HTTP and gRPC on one port per service. How does a twin of a raw TCP protocol, such as Kafka, run on GCP?
   answer: |
-    Not yet. The gcp-cloud-run module serves HTTP twins, and the manifest refuses a GCP twin with more than one port. Candidates for a TCP twin on GCP are a GKE Autopilot module or a Compute Engine container VM behind a TCP load balancer.
+    The gcp-cloud-run module serves HTTP twins only, and the manifest refuses a GCP twin of protocol http with more than one port. A twin of protocol tcp runs on Compute Engine instead, as DEC-gce-for-tcp-twins proposes; a GKE Autopilot module remains the alternative for teams that already run GKE.
   opened: 0.1.0
   revisit: 1.0.0
   refs: [cloud-run-ports, container-apps-tcp]
+
+DEC-twin-control-plane:
+  status: open
+  question: A test needs a twin seeded, in a given state and showing given faults from the moment the application starts, and a person needs to drive it while it runs. How does Ironframe do that without knowing what the twin does inside?
+  answer: |
+    Proposed for 0.1.x, until the owner decides. A twin binding may give seed and contract, which reach the twin as keys of TWIN_CONFIG, a state to force and faults to raise, and admin, where its control plane is reached: a port published on podman (container port 9644, LawTwin's default, unless container_port says otherwise) or a URL in a cloud. up waits for the control plane's /healthz, checks the seed through GET /v1/twin and sets it with POST /v1/seed when the twin reports another, forces the state with POST /v1/state and raises each fault with POST /v1/faults/{name}, in order, and stops on a refusal. What it learnt is kept in .ironframe/<environment>/twins.json. ironframe twin <dependency> inspect, force, fault, faults, history, advance, seed, reset and laws speak the same admin API with the meaning and exit statuses lawtwin gives them (2 for a refused state), calling the API directly rather than the lawtwin binary, so the command works where lawtwin is not installed. Ironframe knows the API LawTwin documents and never a twin's insides: a fault's name and parameters are passed on unread.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawtwin, lawtwin-control-plane]
+
+DEC-conformance-from-report:
+  status: open
+  question: A twin's conformance level is declared by its maker per release. How does a manifest state it so that a level typed by hand cannot drift from the evidence behind it?
+  answer: |
+    Proposed for 0.1.x, until the owner decides. conformance is either a level, as before, or a mapping with report, a conformance report beside the manifest, image_label, a label of the twin's image, and an optional declared level. A report is read when the manifest is loaded, in either of LawTwin's two shapes (a level object with number and name, or a level word); the declared level must name the report's level by name, number or <number>-<name>, and a report that says which release, twin or contract it is for must be for this twin's version, image and contract, or the manifest is refused with the field at fault. A label is read by up once the image is present and checked the same way. The attestation records the report's level name, else the label's, else the declared level, else unrated.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawtwin]
+
+DEC-history-digest:
+  status: open
+  question: Evidence that cites a run against a stand-in should say exactly what the application talked to. What does the attestation record of a stand-in's run beyond its product, version and level?
+  answer: |
+    Proposed for 0.1.x, until the owner decides. Three optional fields of stand_in, added without a version change since readers ignore what they do not know: seed, the seed of the stand-in's random choices; history_digest, sha256: and 64 lowercase hex digits over the stand-in's history as its maker's tool exports it; and history_entries, how many entries it held. Ironframe reads them from the control plane when it attests (GET /v1/twin and GET /v1/history?format=jsonl) and keeps the history beside the attestation, .ironframe/<environment>/history/<dependency>.jsonl, so the digest can be checked and the history replayed. A deterministic twin given the same seed and the same requests writes the same history, so the same digest identifies the same run.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawtwin-control-plane, fips-180-4]
+
+DEC-gce-for-tcp-twins:
+  status: open
+  question: Where does a twin of a TCP protocol of its own, such as Kafka, run on GCP?
+  answer: |
+    Proposed for 0.1.x, until the owner decides. On a Compute Engine instance from modules/gcp-compute-engine: Container-Optimized OS, the image started by a systemd unit written through cloud-init, a reserved address, internal by default and external when public, and a firewall rule for the twin's TCP ports from allowed_cidr_blocks. A twin binding says protocol tcp to be deployed there instead of Cloud Run; http stays the default so existing manifests keep their meaning. advertise_variable names the environment variable the twin reads the address it tells clients from, which the module sets to the reserved address and first port, since a Kafka client connects to the address the broker advertises. The control plane is not opened by the firewall unless its port is among the twin's ports.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [cloud-run-ports, gce-container-optimized-os, cos-cloud-init]

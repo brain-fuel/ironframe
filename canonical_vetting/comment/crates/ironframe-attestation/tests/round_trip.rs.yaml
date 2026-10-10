@@ -4,8 +4,14 @@ decision/rust/crates/ironframe-attestation/tests/round_trip.rs:
 decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_dependency_recorded_twice_is_refused:
   digest: sha256:c7f247774016f383
   verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_history_digest_of_another_form_is_refused_by_reader_and_schema:
+  digest: sha256:97ae19c3d81ffbb1
+  verdict: pending
 decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_reader_ignores_fields_a_later_writer_adds:
   digest: sha256:c7f247774016f383
+  verdict: pending
+decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_stand_in_s_seed_and_history_digest_round_trip_and_satisfy_the_schema:
+  digest: sha256:97ae19c3d81ffbb1
   verdict: pending
 decision/rust/crates/ironframe-attestation/tests/round_trip.rs/function/a_stand_in_without_its_product_is_refused_by_reader_and_schema:
   digest: sha256:c7f247774016f383

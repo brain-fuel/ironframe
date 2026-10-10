@@ -1,0 +1,9 @@
+decision/hcl/modules/gcp-compute-engine/outputs.tf/output/endpoint:
+  digest: sha256:53c856918bb6e365
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/outputs.tf/output/host:
+  digest: sha256:7c45defcfc716650
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/outputs.tf/output/ports:
+  digest: sha256:2b68787e60d24661
+  verdict: pending

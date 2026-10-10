@@ -24,9 +24,20 @@ environment, the real dependency or a LawTwin twin. ref:DEC-wiring-in-ironframe
   ref:DEC-config-sync
 - The environment attestation, version 1. ref:DEC-attestation-format
 
+## 0.1.x: LawTwin's twins
+
+- LawTwin's Kafka and HTTP twins in the examples, set up through their control
+  plane at start, and driven with `ironframe twin`. ref:DEC-twin-control-plane
+- Conformance levels read from a twin release's report or image label and
+  checked against the declared level. ref:DEC-conformance-from-report
+- A stand-in's seed and history digest in the attestation. ref:DEC-history-digest
+- TCP twins on GCP through Compute Engine. ref:DEC-gce-for-tcp-twins
+
 ## Still open
 
-- A TCP twin on GCP, which Cloud Run cannot serve. ref:DEC-cloud-run-http-only
+- A GKE Autopilot module, for teams that run GKE. ref:DEC-cloud-run-http-only
+- The address a TCP twin advertises on ECS Fargate and Container Apps, set by
+  the module as Compute Engine's is.
 - Exercising the AWS client against an emulator: LocalStack's image now
   requires an auth token. ref:DEC-config-sync
 - Shared OpenTofu state for cloud environments.

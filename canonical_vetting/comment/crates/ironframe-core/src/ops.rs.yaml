@@ -7,6 +7,9 @@ decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError:
 decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Attestation:
   digest: sha256:010025d2cfa4c758
   verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Conformance:
+  digest: sha256:7353ae3888ddeee3
+  verdict: pending
 decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Io:
   digest: sha256:0c4d3e01625a8f78
   verdict: pending
@@ -25,11 +28,35 @@ decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Sync:
 decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Tofu:
   digest: sha256:82d9bb4d5c55db66
   verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Twin:
+  digest: sha256:d4cd0f925c054188
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Twin/field/dependency:
+  digest: sha256:dfc8203f4ca89857
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Twin/field/error:
+  digest: sha256:5a1d5aaa3e4744cd
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/enum/OpsError/variant/Usage:
+  digest: sha256:b525fb8f2335c134
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/admin_urls:
+  digest: sha256:f68822ebad215b36
+  verdict: pending
 decision/rust/crates/ironframe-core/src/ops.rs/function/attest_now:
   digest: sha256:3b4d0cf5ee59bbb1
   verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/control_plane:
+  digest: sha256:e93ab085632f8427
+  verdict: pending
 decision/rust/crates/ironframe-core/src/ops.rs/function/down:
   digest: sha256:43d1a10048d065de
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/labelled_levels:
+  digest: sha256:4936484944c40f9f
+  verdict: pending
+decision/rust/crates/ironframe-core/src/ops.rs/function/observe_twins:
+  digest: sha256:02861330a8cfa959
   verdict: pending
 decision/rust/crates/ironframe-core/src/ops.rs/function/plan:
   digest: sha256:164699ca30462421

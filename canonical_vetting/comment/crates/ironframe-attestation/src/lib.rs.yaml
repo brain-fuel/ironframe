@@ -13,6 +13,9 @@ decision/rust/crates/ironframe-attestation/src/lib.rs/const/VERSION:
 decision/rust/crates/ironframe-attestation/src/lib.rs/enum/AttestationError:
   digest: sha256:48c25bcf6ca4f0fc
   verdict: pending
+decision/rust/crates/ironframe-attestation/src/lib.rs/enum/AttestationError/variant/BadHistoryDigest:
+  digest: sha256:0ea8e1a1a1fef915
+  verdict: pending
 decision/rust/crates/ironframe-attestation/src/lib.rs/enum/AttestationError/variant/DuplicateDependency:
   digest: sha256:e563f798fcbca18a
   verdict: pending
@@ -42,6 +45,9 @@ decision/rust/crates/ironframe-attestation/src/lib.rs/enum/Kind/variant/Real:
   verdict: pending
 decision/rust/crates/ironframe-attestation/src/lib.rs/enum/Kind/variant/StandIn:
   digest: sha256:2fbfc931824ec45b
+  verdict: pending
+decision/rust/crates/ironframe-attestation/src/lib.rs/function/is_history_digest:
+  digest: sha256:8c686dfa9e20c406
   verdict: pending
 decision/rust/crates/ironframe-attestation/src/lib.rs/impl/Attestation/function/from_json:
   digest: sha256:ad877ff4dcff25e4
@@ -121,8 +127,17 @@ decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn:
 decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/conformance:
   digest: sha256:36ebb9e67ce976fc
   verdict: pending
+decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/history_digest:
+  digest: sha256:216bc4204a9c4acf
+  verdict: pending
+decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/history_entries:
+  digest: sha256:3242abd88f355490
+  verdict: pending
 decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/product:
   digest: sha256:4eb20021422a7ce3
+  verdict: pending
+decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/seed:
+  digest: sha256:e19fe87c9151183e
   verdict: pending
 decision/rust/crates/ironframe-attestation/src/lib.rs/struct/StandIn/field/version:
   digest: sha256:12a03b79317d5a1e

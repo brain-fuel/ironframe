@@ -13,6 +13,9 @@ decision/make/Makefile/rule/clean:
 decision/make/Makefile/rule/config-service-image:
   digest: sha256:a9f71b8a6485ca21
   verdict: pending
+decision/make/Makefile/rule/e2e:
+  digest: sha256:58cf379047fdc14a
+  verdict: pending
 decision/make/Makefile/rule/help:
   digest: sha256:1131fe0da6c95623
   verdict: pending

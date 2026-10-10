@@ -1,0 +1,3 @@
+decision/hcl/modules/gcp-compute-engine/versions.tf/terraform/terraform:
+  digest: sha256:bd7fbe5a1e897e8d
+  verdict: pending

@@ -1,0 +1,39 @@
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/advertise_variable:
+  digest: sha256:f97842b35a66aadf
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/allowed_cidr_blocks:
+  digest: sha256:2ba41687902b1db7
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/environment:
+  digest: sha256:3705448e9ebd8f5e
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/image:
+  digest: sha256:4396600c8096aaad
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/machine_type:
+  digest: sha256:62e1f0985823f033
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/name:
+  digest: sha256:f720da23208efb8c
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/network:
+  digest: sha256:3018647bc3804816
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/ports:
+  digest: sha256:1a4ce0ce73692d65
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/project:
+  digest: sha256:7f4c582d30883b8d
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/public:
+  digest: sha256:c02e0527642b2852
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/region:
+  digest: sha256:5151d37921afd29a
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/subnetwork:
+  digest: sha256:96409c98c46da859
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/variables.tf/variable/zone:
+  digest: sha256:520e749e056d68f0
+  verdict: pending

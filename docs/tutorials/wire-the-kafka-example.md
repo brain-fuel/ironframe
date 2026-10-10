@@ -1,84 +1,111 @@
 ---
 id: ironframe.tutorials.wire-the-kafka-example
 kind: tutorial
-title: Wire the Kafka example
+title: Wire the examples to LawTwin's twins
 ---
-# Wire the Kafka example
+# Wire the examples to LawTwin's twins
 
-In this tutorial you run `examples/kafka-app`, a tiny application that reads
-`KAFKA_BOOTSTRAP_SERVERS` from its configuration and asks the broker which
-Kafka APIs it supports. You bring its Kafka up with Ironframe, first as the
-twin that does not exist yet, then as the real broker, and you read the
-attestation of the run. The application never changes. ref:REQ-example-reads-config
+In this tutorial you run two tiny applications against LawTwin's twins:
+`examples/kafka-app`, which reads `KAFKA_BOOTSTRAP_SERVERS` and asks the
+broker for its API versions and its topic, and `examples/petstore-app`, which
+reads `PETSTORE_URL`, adds a pet and reads it back. You bring each
+application's dependency up with Ironframe as a twin, drive the twin, and read
+the attestation of the run. The applications never change.
+ref:REQ-example-reads-config ref:REQ-end-to-end-with-twins
 
-You need Rust, podman with a running machine, and podman-compose.
+You need Rust, podman with a running machine, podman-compose, and a checkout
+of LawTwin beside this one.
 
-## Build Ironframe
+## Build the images and Ironframe
 
-From the repository root:
+LawTwin's images are built in its repository; Ironframe's configuration
+service in this one:
 
 ```sh
+(cd ../lawtwin && make image image-http)
+make config-service-image
 cargo build
 export PATH="$PWD/target/debug:$PATH"
-cd examples/kafka-app
-ironframe validate
 ```
 
-`validate` prints the project and its four environments: `local`,
-`local-broker`, `staging` and `production`.
-
-## Ask for the twin
-
-The `local` environment binds Kafka to the twin `lawtwin/kafka:0.1.0`:
+## Bring the Kafka twin up
 
 ```sh
+cd examples/kafka-app
+ironframe validate
 ironframe up local
 ```
 
-The image has not been released, so Ironframe stops before starting anything
-and says so: `dependency "kafka" needs docker.io/lawtwin/kafka:0.1.0`. Nothing
-is running and no file has been written.
+`validate` reads LawTwin's conformance report for the Kafka twin's release,
+`conformance/lawtwin-kafka-0.1.0.json`, and checks that the level the manifest
+declares, `answers`, is the report's: level 3. `up` starts
+`lawtwin/kafka:0.1.0` and the configuration service, waits for the twin's
+control plane on port 9644, checks that its seed is 42, waits for the broker
+on `localhost:9092`, writes `.env`, and writes the attestation.
 
-## Use the real broker instead
-
-`local-broker` binds Kafka to the real thing, run from Apache's image, with
-the configuration service beside it. Build the service's image once, from the
-repository root, then bring the environment up:
-
-```sh
-(cd ../.. && make config-service-image)
-ironframe up local-broker
-```
-
-Ironframe pulls `apache/kafka:4.1.0`, starts it, waits until it answers on
-`localhost:9092`, writes `.env`, and writes the attestation. Run the app:
+Run the app:
 
 ```sh
 cargo run -p kafka-app
 ```
 
 It reads `.env` the way a dotenv library would and prints
-`kafka-app: localhost:9092 supports ... APIs`. Ask the configuration service
-for the same setting:
+`kafka-app: localhost:9092 supports 22 APIs; topic kafka-app has 1
+partition(s)`. Ask the configuration service for the same setting:
 
 ```sh
-curl localhost:8700/v1/environments/local-broker
+curl localhost:8700/v1/environments/local
 ```
+
+## Drive the twin
+
+```sh
+ironframe twin kafka inspect
+ironframe twin kafka history
+ironframe twin kafka faults
+ironframe twin kafka advance 5s
+```
+
+The history holds what the app did, as calls of the Kafka contract: a
+metadata request, the topic it created, and the metadata answer.
 
 ## Read the attestation
 
 ```sh
-cat .ironframe/local-broker/attestation.json
+ironframe attest local
+cat .ironframe/local/attestation.json
 ```
 
-The record for `kafka` says `"kind": "real"`, the endpoint, and `"reached":
-true`. Once the twin exists, the same file for `local` will say `"kind":
-"stand-in"` with the twin's product, version and declared conformance level,
-and a tool such as `lawspec evidence` will report which obligations ran
-against it. ref:DEC-attestation-format
+The record for `kafka` says `"kind": "stand-in"`, `lawtwin/kafka` `0.1.0`,
+conformance `answers`, seed 42, and the SHA-256 digest of the history, which
+is kept in `.ironframe/local/history/kafka.jsonl`. A tool such as `lawspec
+evidence` reads the file to report which obligations ran against a stand-in,
+and at what level. ref:DEC-attestation-format ref:DEC-history-digest
+
+## The Petstore
+
+```sh
+cd ../petstore-app
+ironframe up local
+cargo run -p petstore-app
+ironframe twin petstore history
+ironframe attest local
+```
+
+The Petstore twin, `lawtwin/http:0.1.0` serving the `petstore` contract,
+starts with a 5 ms `latency` fault raised, as the manifest asks; its control
+plane is on 9645, so both examples run side by side. The app prints
+`petstore-app: http://localhost:8080 added pet 1 and read it back`, and the
+attestation records conformance `conformant`, from the report of `lawtwin
+conform http` beside the manifest. Run it twice from a fresh `up` and the
+history digest is the same: the same seed and the same requests give the same
+history.
 
 ## Clean up
 
 ```sh
-ironframe down local-broker
+ironframe down local
+cd ../kafka-app && ironframe down local
 ```
+
+`make e2e` runs this whole tutorial as a test, in a scratch directory.

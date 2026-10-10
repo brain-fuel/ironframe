@@ -61,6 +61,18 @@ decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Sync:
 decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Sync/field/environment:
   digest: sha256:8782960aa3dc0034
   verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Twin:
+  digest: sha256:1a87c5c82fdda190
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Twin/field/action:
+  digest: sha256:7d4e339a478ceaea
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Twin/field/dependency:
+  digest: sha256:dfc8203f4ca89857
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Twin/field/environment:
+  digest: sha256:8782960aa3dc0034
+  verdict: pending
 decision/rust/crates/ironframe-cli/src/main.rs/enum/Command/variant/Up:
   digest: sha256:eb71676a3026cef1
   verdict: pending
@@ -93,6 +105,66 @@ decision/rust/crates/ironframe-cli/src/main.rs/enum/SettingsFormat/variant/Env:
   verdict: pending
 decision/rust/crates/ironframe-cli/src/main.rs/enum/SettingsFormat/variant/Json:
   digest: sha256:3e2c40c2ca1d9836
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction:
+  digest: sha256:4032b5f6fa448599
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Advance:
+  digest: sha256:13ec9a603d21b331
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Advance/field/duration:
+  digest: sha256:4050ae5bbef899a5
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Fault:
+  digest: sha256:ff60cf87db86151f
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Fault/field/name:
+  digest: sha256:29389df92f6fc2b0
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Fault/field/params:
+  digest: sha256:b89b654133903836
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Faults:
+  digest: sha256:d7f402c953ce3b81
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Force:
+  digest: sha256:3b33ca60928c2154
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Force/field/state:
+  digest: sha256:d6234d9501ceaf46
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/History:
+  digest: sha256:fe0ec7079a1cb878
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/History/field/array:
+  digest: sha256:95a42422e8a10c9a
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/History/field/limit:
+  digest: sha256:bd954ce404c6af21
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/History/field/since:
+  digest: sha256:eb79b1c80ad693b4
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Inspect:
+  digest: sha256:c2841c2f5579d549
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Inspect/field/records:
+  digest: sha256:d75d910b7145d5dd
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Laws:
+  digest: sha256:979f40676bff4f4e
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Reset:
+  digest: sha256:cb13abbb12578eca
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Seed:
+  digest: sha256:d94ebf5a1ddaa17b
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/enum/TwinAction/variant/Seed/field/seed:
+  digest: sha256:1c0005c95eddeaa3
+  verdict: pending
+decision/rust/crates/ironframe-cli/src/main.rs/function/twin:
+  digest: sha256:c3a520015724f285
   verdict: pending
 decision/rust/crates/ironframe-cli/src/main.rs/struct/Cli:
   digest: sha256:23fcead1db2e21f0

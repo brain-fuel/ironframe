@@ -1,0 +1,27 @@
+decision/rust/examples/petstore-app/src/main.rs:
+  digest: sha256:a655b6d7d794ac8f
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/const/SETTING:
+  digest: sha256:20e3f98209d49985
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/function/base_url:
+  digest: sha256:fb65319eb53dd336
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/function/exchange:
+  digest: sha256:3d611efcef653cff
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/function/field:
+  digest: sha256:9dabfc3efe1721c4
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/function/parse_response:
+  digest: sha256:8fe65e02b79fb3f8
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/function/split_url:
+  digest: sha256:940a6beb060aa157
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/module/tests/function/a_response_s_status_and_fields_are_read:
+  digest: sha256:d5807448816f3ced
+  verdict: pending
+decision/rust/examples/petstore-app/src/main.rs/module/tests/function/a_url_is_split_into_host_port_and_path:
+  digest: sha256:d5807448816f3ced
+  verdict: pending

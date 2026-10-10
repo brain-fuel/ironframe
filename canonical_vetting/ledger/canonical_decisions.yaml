@@ -10,8 +10,17 @@ ledger/DEC-config-service:
 ledger/DEC-config-sync:
   digest: sha256:e1458bba74808b8a
   verdict: pending
+ledger/DEC-conformance-from-report:
+  digest: sha256:a5098c9b7eb8539a
+  verdict: pending
 ledger/DEC-credentials-by-reference:
   digest: sha256:dcf4b4c39723d0c7
+  verdict: pending
+ledger/DEC-gce-for-tcp-twins:
+  digest: sha256:fe8dce18bb3cc8ee
+  verdict: pending
+ledger/DEC-history-digest:
+  digest: sha256:8a32d47068b164b1
   verdict: pending
 ledger/DEC-manifest-shape:
   digest: sha256:e23c212fce95c84d
@@ -27,6 +36,9 @@ ledger/DEC-rust:
   verdict: pending
 ledger/DEC-three-planes:
   digest: sha256:6fc45d8e4f90e17d
+  verdict: pending
+ledger/DEC-twin-control-plane:
+  digest: sha256:29535ab1b7af144c
   verdict: pending
 ledger/DEC-vetting-deferred:
   digest: sha256:f3890b75f5e53d74

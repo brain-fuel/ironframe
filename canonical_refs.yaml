@@ -130,3 +130,35 @@ REQ-example-reads-config:
   kind: requirement
   title: The example application reads its Kafka bootstrap servers from its own configuration and speaks the Kafka protocol to them, knowing nothing of Ironframe
   locator: docs/tutorials/wire-the-kafka-example.md
+lawtwin-control-plane:
+  kind: article
+  title: LawTwin, the control plane; the admin API every twin serves, and the lawtwin commands that speak it
+  locator: https://github.com/brain-fuel/lawtwin/blob/main/docs/reference/control-plane.md
+fips-180-4:
+  kind: article
+  title: FIPS 180-4, Secure Hash Standard, which defines SHA-256
+  locator: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
+gce-container-optimized-os:
+  kind: article
+  title: Container-Optimized OS, running containers on Compute Engine instances
+  locator: https://cloud.google.com/container-optimized-os/docs
+cos-cloud-init:
+  kind: article
+  title: Container-Optimized OS, creating and configuring instances with cloud-init
+  locator: https://cloud.google.com/container-optimized-os/docs/how-to/create-configure-instance
+REQ-twin-start-setup:
+  kind: requirement
+  title: ironframe up waits for each twin's control plane, sets its seed, forces its state and raises its faults in order, stopping on a refusal, and ironframe twin drives the control plane with lawtwin's meaning and exit statuses
+  locator: docs/how-to/drive-a-twin.md
+REQ-conformance-matches-report:
+  kind: requirement
+  title: A twin's conformance level is read from its report or image label, a declared level that disagrees is refused with the field at fault, and so is a report for another release, twin or contract
+  locator: docs/reference/manifest.md
+REQ-attestation-stand-in-run:
+  kind: requirement
+  title: The attestation records a stand-in's seed and the sha256 digest and length of its history, which round-trip, satisfy the schema, and match the history kept beside the attestation
+  locator: docs/reference/attestation.md
+REQ-end-to-end-with-twins:
+  kind: requirement
+  title: ironframe up local starts LawTwin's Kafka and HTTP twins in podman, both example applications run against them, ironframe attest lists each stand-in with its level, seed and history digest, and ironframe down removes them
+  locator: docs/tutorials/wire-the-kafka-example.md

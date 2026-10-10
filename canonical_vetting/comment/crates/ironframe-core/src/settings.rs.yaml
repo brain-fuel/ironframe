@@ -70,6 +70,12 @@ decision/rust/crates/ironframe-core/src/settings.rs/impl/SettingsDocument/functi
 decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency:
   digest: sha256:25bf76cfc5afdd87
   verdict: pending
+decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/field/admin_port:
+  digest: sha256:f9adfb1a4086802d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/field/admin_url:
+  digest: sha256:99efa494c26c9527
+  verdict: pending
 decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/field/container_env:
   digest: sha256:11c725d3cb7478fd
   verdict: pending
@@ -96,6 +102,9 @@ decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/fi
   verdict: pending
 decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/field/stand_in:
   digest: sha256:dce76dd3083d7ea4
+  verdict: pending
+decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedDependency/field/twin:
+  digest: sha256:e3d421ed8cfe9868
   verdict: pending
 decision/rust/crates/ironframe-core/src/settings.rs/struct/ResolvedEnvironment:
   digest: sha256:e69dcc811e23a98a

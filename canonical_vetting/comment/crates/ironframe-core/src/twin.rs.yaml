@@ -1,0 +1,138 @@
+decision/rust/crates/ironframe-core/src/twin.rs:
+  digest: sha256:e8ea082a326ce601
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError:
+  digest: sha256:976225b88585b957
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Answered:
+  digest: sha256:821cc794ddfd9911
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Input:
+  digest: sha256:e3367c28e86ec5c1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Refused:
+  digest: sha256:18e85381299a26e6
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Refused/field/law:
+  digest: sha256:48af578d96eb23c7
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Refused/field/reason:
+  digest: sha256:9aaee400beef077c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Unreachable:
+  digest: sha256:ea8e0076dedecc79
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Unreachable/field/reason:
+  digest: sha256:9aaee400beef077c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/enum/TwinError/variant/Unreachable/field/url:
+  digest: sha256:404465771ec988d8
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/function/history_digest:
+  digest: sha256:d0120d85cea81072
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/function/parse_fault:
+  digest: sha256:5112ab5facd416df
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/function/pretty:
+  digest: sha256:1e19c45790674c65
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/advance:
+  digest: sha256:1bb65d9ca39aff6b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/clear:
+  digest: sha256:eee7956f036cbc20
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/describe:
+  digest: sha256:8ec6d4effaf8884b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/faults:
+  digest: sha256:dbb49e0cb4c14937
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/force:
+  digest: sha256:2e2b47a8ce702e76
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/healthy:
+  digest: sha256:e1ec4d1c897d6661
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/history:
+  digest: sha256:50d32546feab79e7
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/inspect:
+  digest: sha256:6586d955a4d6362d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/new:
+  digest: sha256:ab98829bacf1d267
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/observe:
+  digest: sha256:2da1cdb2411294da
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/raise:
+  digest: sha256:2adb683907b72c39
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/request:
+  digest: sha256:62f1edc20b193a63
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/set_seed:
+  digest: sha256:5d9de8d6b3946e01
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/set_up:
+  digest: sha256:234e2c248baa4f3a
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/ControlPlane/function/wait_healthy:
+  digest: sha256:bee907db073558bd
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/Reply/function/ok:
+  digest: sha256:5138f483e8fa0087
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/impl/TwinError/function/exit_code:
+  digest: sha256:98c8fd75d4061c4e
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/ControlPlane:
+  digest: sha256:134bdebea984e977
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/ControlPlane/field/url:
+  digest: sha256:c51ee10d857369e9
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Observation:
+  digest: sha256:84a899437464df88
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Observation/field/history:
+  digest: sha256:eb9599127f92ef79
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Observation/field/history_digest:
+  digest: sha256:a47a31bb0017dd78
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Observation/field/history_entries:
+  digest: sha256:eee765fc875a0a63
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Observation/field/seed:
+  digest: sha256:a9a05acfd4b0c90b
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Reply:
+  digest: sha256:bc8ce5c10f0447a7
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Reply/field/body:
+  digest: sha256:af65f9191c6b3785
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/Reply/field/status:
+  digest: sha256:0a4d3c8404351dd1
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord:
+  digest: sha256:883d77da637c6549
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord/field/admin:
+  digest: sha256:a52dd69bdc6c85ab
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord/field/conformance:
+  digest: sha256:8e5bbf7d2c39e60c
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord/field/faults:
+  digest: sha256:538d4366202189f8
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord/field/forced:
+  digest: sha256:c8cf731efbe23e9d
+  verdict: pending
+decision/rust/crates/ironframe-core/src/twin.rs/struct/TwinRecord/field/seed:
+  digest: sha256:50cdffd005446f0d
+  verdict: pending

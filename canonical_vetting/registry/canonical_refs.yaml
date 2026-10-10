@@ -4,6 +4,9 @@ registry/MIT:
 registry/REQ-attestation-round-trip:
   digest: sha256:732fef65b1cd922f
   verdict: pending
+registry/REQ-attestation-stand-in-run:
+  digest: sha256:afa437911237b8ad
+  verdict: pending
 registry/REQ-cloud-root-module:
   digest: sha256:8b7115db1fa6a88c
   verdict: pending
@@ -15,6 +18,12 @@ registry/REQ-config-service-serves-settings:
   verdict: pending
 registry/REQ-config-sync-idempotent:
   digest: sha256:4b3674a299186345
+  verdict: pending
+registry/REQ-conformance-matches-report:
+  digest: sha256:8522c79031ed43b2
+  verdict: pending
+registry/REQ-end-to-end-with-twins:
+  digest: sha256:81482543c549f492
   verdict: pending
 registry/REQ-example-reads-config:
   digest: sha256:f5b1f1d101992b67
@@ -30,6 +39,9 @@ registry/REQ-modules-plan:
   verdict: pending
 registry/REQ-settings-resolution:
   digest: sha256:00e276983d32eb42
+  verdict: pending
+registry/REQ-twin-start-setup:
+  digest: sha256:bd6a03031618efd4
   verdict: pending
 registry/aws-appconfig:
   digest: sha256:e305c98303349866
@@ -58,8 +70,17 @@ registry/compose-spec:
 registry/container-apps-tcp:
   digest: sha256:30fe455297934d89
   verdict: pending
+registry/cos-cloud-init:
+  digest: sha256:9aea8ea6026d410f
+  verdict: pending
 registry/diataxis:
   digest: sha256:da6d545b5d1d42a6
+  verdict: pending
+registry/fips-180-4:
+  digest: sha256:e05680f7030d07bc
+  verdict: pending
+registry/gce-container-optimized-os:
+  digest: sha256:88912089855f9ca1
   verdict: pending
 registry/gcp-parameter-manager:
   digest: sha256:89144ad80a837d5d
@@ -81,6 +102,9 @@ registry/lawspec:
   verdict: pending
 registry/lawtwin:
   digest: sha256:b598a104198678b7
+  verdict: pending
+registry/lawtwin-control-plane:
+  digest: sha256:f55af14e6aac34aa
   verdict: pending
 registry/opentofu:
   digest: sha256:52f9e3fb260480db

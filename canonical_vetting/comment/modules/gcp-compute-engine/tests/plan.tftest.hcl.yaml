@@ -1,0 +1,18 @@
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/block/mock_provider.google:
+  digest: sha256:01e3d43546a2f43c
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/run/a_long_name_is_shortened_within_compute_engine_s_limit:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/run/a_multi_line_environment_value_is_refused:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/run/a_private_twin_has_an_internal_address_and_a_firewall_rule_for_its_ports:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/run/a_public_twin_gets_an_external_address:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
+decision/hcl/modules/gcp-compute-engine/tests/plan.tftest.hcl/run/the_instance_runs_the_twin_with_its_ports_config_and_advertised_address:
+  digest: sha256:cf30d995a0c05e8b
+  verdict: pending
