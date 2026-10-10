@@ -89,3 +89,25 @@ fn the_example_staging_root_points_at_this_repository_s_modules() {
     let source = root["module"]["twin_kafka"]["source"].as_str().unwrap();
     assert!(Path::new(source).join("main.tf").exists(), "{source}");
 }
+
+/// ref:REQ-cloud-root-module
+#[test]
+fn a_tcp_twin_on_gcp_runs_on_compute_engine_with_its_advertised_address() {
+    let manifest = Manifest::parse(
+        "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  orders:\n    settings: {O: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {modules: ../modules, project: p, region: europe-west1, zone: europe-west1-c, cpu: '2', allowed_cidr_blocks: [10.0.0.0/8]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: answers, ports: [9092], protocol: tcp, seed: 42, advertise_variable: LAWTWIN_ADVERTISE}\n      orders:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: conformant, ports: [8080], contract: petstore}\n",
+    )
+    .unwrap();
+    let root = root_module(&manifest, "dev", Path::new("/work/app")).unwrap();
+    let kafka = &root["module"]["twin_kafka"];
+    assert_eq!(kafka["source"], "/work/app/../modules/gcp-compute-engine");
+    assert_eq!(kafka["advertise_variable"], "LAWTWIN_ADVERTISE");
+    assert_eq!(kafka["zone"], "europe-west1-c");
+    assert_eq!(kafka["allowed_cidr_blocks"], serde_json::json!(["10.0.0.0/8"]));
+    assert!(kafka.get("cpu").is_none(), "Compute Engine takes a machine type, not a CPU limit");
+    assert_eq!(kafka["environment"]["TWIN_CONFIG"], r#"{"seed":42}"#);
+    let orders = &root["module"]["twin_orders"];
+    assert_eq!(orders["source"], "/work/app/../modules/gcp-cloud-run");
+    assert_eq!(orders["cpu"], "2");
+    assert!(orders.get("zone").is_none() && orders.get("advertise_variable").is_none());
+    assert_eq!(orders["environment"]["TWIN_CONFIG"], r#"{"contract":"petstore"}"#);
+}
