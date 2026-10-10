@@ -6,6 +6,7 @@ members = [
     "crates/ironframe-config-service",
     "crates/ironframe-cli",
     "examples/kafka-app",
+    "examples/petstore-app",
 ]
 
 [workspace.package]

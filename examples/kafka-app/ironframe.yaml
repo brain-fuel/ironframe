@@ -10,8 +10,10 @@ dependencies:
       KAFKA_BOOTSTRAP_SERVERS: ${endpoint}
 
 environments:
-  # The Kafka twin on this machine. Its image is not released yet, so `ironframe up local`
-  # stops before starting anything and says which image is missing.
+  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin
+  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,
+  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the
+  # lawtwin repository with `make image` until it is published.
   local:
     runtime: podman
     dependencies:
@@ -19,13 +21,20 @@ environments:
         twin:
           image: lawtwin/kafka
           version: 0.1.0
-          conformance: unrated
+          conformance:
+            level: answers
+            report: conformance/lawtwin-kafka-0.1.0.json
           ports: [9092]
+          seed: 42
           config:
-            seed: 42
+            clock: frozen
+          admin:
+            port: 9644
     sync:
       - env_file:
           path: .env
+    config_service:
+      port: 8700
 
   # The real Kafka on this machine, run from Apache's image until the twin exists, with the
   # configuration service beside it on port 8700 (build its image with `make config-service-image`).
@@ -57,13 +66,39 @@ environments:
         twin:
           image: lawtwin/kafka
           version: 0.1.0
-          conformance: unrated
+          conformance:
+            report: conformance/lawtwin-kafka-0.1.0.json
           ports: [9092]
     sync:
       - aws_appconfig:
           region: us-east-1
           application: kafka-app
           profile: connections
+
+  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a
+  # Compute Engine instance with a reserved address it advertises to clients.
+  staging-gcp:
+    runtime: gcp
+    cloud:
+      modules: ../../modules
+      project: kafka-app-staging
+      region: europe-west1
+      allowed_cidr_blocks: [10.0.0.0/8]
+    dependencies:
+      kafka:
+        twin:
+          image: lawtwin/kafka
+          version: 0.1.0
+          conformance:
+            report: conformance/lawtwin-kafka-0.1.0.json
+          ports: [9092]
+          protocol: tcp
+          seed: 42
+          advertise_variable: LAWTWIN_ADVERTISE
+    sync:
+      - gcp_parameter_manager:
+          project: kafka-app-staging
+          parameter: kafka-app-connections
 
   # The real, hosted cluster: nothing is deployed, the settings point at it.
   production:

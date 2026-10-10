@@ -1,0 +1,9 @@
+[package]
+name = "petstore-app"
+description = "A tiny application that reads its Petstore API's base URL from its configuration, adds a pet and reads it back"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]

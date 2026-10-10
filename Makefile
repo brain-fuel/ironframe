@@ -11,7 +11,7 @@ PODMAN ?= $(shell command -v podman || echo /opt/podman/bin/podman)
 MODULES = $(wildcard modules/*)
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint tofu-check canon check config-service-image clean
+.PHONY: help build test e2e lint tofu-check canon check config-service-image clean
 
 # | What you can ask for, read from the help lines of the rules below.
 help: ## what you can ask for
@@ -24,6 +24,11 @@ build: ## build every crate
 # | Run every crate's tests. ref:REQ-manifest-validation
 test: ## run the cargo tests
 	cargo test --workspace
+
+# | Bring both examples up against LawTwin's real images in podman, run each app, attest and take
+# | everything down; needs podman and the images. ref:REQ-end-to-end-with-twins
+e2e: ## run the end-to-end test against LawTwin's images in podman
+	cargo test -p ironframe-cli --test e2e -- --ignored --nocapture
 
 # | Formatting and clippy, warnings as errors. ref:DEC-rust
 lint: ## check formatting and clippy

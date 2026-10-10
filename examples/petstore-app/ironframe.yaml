@@ -1,0 +1,63 @@
+# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it
+# is in each environment. The app never sees this file; it reads its setting as it always has.
+version: 1
+project: petstore-app
+
+dependencies:
+  petstore:
+    description: The Petstore API the app adds pets to.
+    settings:
+      PETSTORE_URL: ${endpoint}
+
+environments:
+  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the
+  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as
+  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.
+  # Build the image in the lawtwin repository with `make image-http` until it is published.
+  local:
+    runtime: podman
+    dependencies:
+      petstore:
+        twin:
+          image: lawtwin/http
+          version: 0.1.0
+          contract: petstore
+          conformance:
+            level: conformant
+            report: conformance/lawtwin-http-0.1.0-petstore.json
+          ports: [8080]
+          endpoint: http://localhost:8080
+          seed: 42
+          advertise_variable: LAWTWIN_ADVERTISE
+          faults:
+            - name: latency
+              params:
+                delay: 5ms
+          admin:
+            port: 9645
+            container_port: 9644
+    sync:
+      - env_file:
+          path: .env
+
+  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.
+  staging:
+    runtime: gcp
+    cloud:
+      modules: ../../modules
+      project: petstore-app-staging
+      region: europe-west1
+    dependencies:
+      petstore:
+        twin:
+          image: lawtwin/http
+          version: 0.1.0
+          contract: petstore
+          conformance:
+            report: conformance/lawtwin-http-0.1.0-petstore.json
+          ports: [8080]
+          seed: 42
+    sync:
+      - gcp_parameter_manager:
+          project: petstore-app-staging
+          parameter: petstore-app-connections

@@ -36,7 +36,7 @@ fn the_shared_and_example_manifests_are_valid() {
     assert_eq!(manifest.environments["staging"].runtime, Runtime::Aws);
     assert!(matches!(manifest.environments["local"].dependencies["kafka"], Binding::Twin(_)));
     let example = Manifest::load(&common::example_manifest_path()).unwrap();
-    assert_eq!(example.environments.len(), 4);
+    assert_eq!(example.environments.len(), 5);
 }
 
 /// ref:REQ-manifest-validation
