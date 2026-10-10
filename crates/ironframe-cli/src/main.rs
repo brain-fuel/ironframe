@@ -7,6 +7,8 @@ use ironframe_core::ops::{self, RealClouds, UpOptions};
 use ironframe_core::process::SystemRunner;
 use ironframe_core::settings::render_dotenv;
 use ironframe_core::sync::SyncOutcome;
+use ironframe_core::twin::{ControlPlane, TwinError, parse_fault, pretty};
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::time::Duration;
@@ -92,6 +94,68 @@ enum Command {
         #[arg(short, long)]
         output: Option<PathBuf>,
     },
+    /// Drive the twin standing in for a dependency through its control plane, as `lawtwin` does.
+    Twin {
+        /// The dependency the twin stands in for.
+        dependency: String,
+        /// The environment.
+        #[arg(short = 'e', long = "env", default_value = "local")]
+        environment: String,
+        /// What to do.
+        #[command(subcommand)]
+        action: TwinAction,
+    },
+}
+
+/// What `ironframe twin` asks of a twin's control plane.
+#[derive(Subcommand)]
+enum TwinAction {
+    /// Show the twin's state.
+    Inspect {
+        /// Every record as well.
+        #[arg(long)]
+        records: bool,
+    },
+    /// Force a state from a JSON file, or `-` for standard input; exit 2 when a law refuses it.
+    Force {
+        /// The state file.
+        state: String,
+    },
+    /// Raise a declared fault with name=value parameters, or `fault clear [<name>]`.
+    Fault {
+        /// The fault, or `clear`.
+        name: String,
+        /// The parameters, name=value; after `clear`, the fault to clear.
+        params: Vec<String>,
+    },
+    /// List the declared faults and the active ones.
+    Faults,
+    /// Print the history, as JSON lines unless --array.
+    History {
+        /// Only entries after this position.
+        #[arg(long)]
+        since: Option<u64>,
+        /// At most this many entries.
+        #[arg(long)]
+        limit: Option<u64>,
+        /// One JSON array.
+        #[arg(long)]
+        array: bool,
+    },
+    /// Move the twin clock forward, such as 5s.
+    Advance {
+        /// The duration: 250ms, 5s, 2m or 1h.
+        duration: String,
+    },
+    /// Show the seed, or start again from an empty state with a new one.
+    Seed {
+        /// The new seed.
+        seed: Option<u64>,
+    },
+    /// Start again from an empty state with the same seed.
+    Reset,
+    /// Check the contract's laws over the state and history; exit 1 if one does not hold.
+    Laws,
 }
 
 /// The schemas `ironframe schema` prints.
@@ -236,11 +300,93 @@ async fn run(cli: Cli) -> Result<ExitCode, Box<dyn std::error::Error>> {
             }
         }
         Command::Attest { environment, output } => {
-            let (_, path) = ops::attest_now(&manifest, &dir, &environment, output.as_deref())?;
-            println!("{}", path.display());
+            let (attestation, path) = ops::attest_now(&manifest, &dir, &environment, output.as_deref()).await?;
+            for dependency in &attestation.dependencies {
+                let stand_in = dependency.stand_in.as_ref().map_or_else(String::new, |s| {
+                    let mut text = format!("{}:{} conformance {}", s.product, s.version, s.conformance);
+                    if let Some(seed) = s.seed {
+                        text.push_str(&format!(" seed {seed}"));
+                    }
+                    if let Some(digest) = &s.history_digest {
+                        text.push_str(&format!(" history {digest}"));
+                    }
+                    text
+                });
+                println!(
+                    "{:<20} {:<8} {:<8} {:<24} {stand_in}",
+                    dependency.name,
+                    match dependency.kind {
+                        ironframe_attestation::Kind::Real => "real",
+                        ironframe_attestation::Kind::StandIn => "stand-in",
+                    },
+                    if dependency.reached { "reached" } else { "unreached" },
+                    dependency.endpoint
+                );
+            }
+            println!("attestation: {}", path.display());
+        }
+        Command::Twin { dependency, environment, action } => {
+            let control = ops::control_plane(&manifest, &dir, &environment, &dependency)?;
+            return Ok(match twin(&control, action).await {
+                Ok(()) => ExitCode::SUCCESS,
+                Err((message, code)) => {
+                    eprintln!("ironframe twin {dependency}: {message}");
+                    ExitCode::from(code)
+                }
+            });
         }
     }
     Ok(ExitCode::SUCCESS)
+}
+
+/// Runs one control-plane command and prints the twin's answer as `lawtwin` does.
+async fn twin(control: &ControlPlane, action: TwinAction) -> Result<(), (String, u8)> {
+    let fail = |e: TwinError| (e.to_string(), e.exit_code());
+    let print = |body: String| println!("{}", pretty(&body));
+    match action {
+        TwinAction::Inspect { records } => control.inspect(records).await.map(print).map_err(fail),
+        TwinAction::Force { state } => {
+            let text = if state == "-" {
+                let mut text = String::new();
+                std::io::stdin().read_to_string(&mut text).map_err(|e| (e.to_string(), 1))?;
+                text
+            } else {
+                std::fs::read_to_string(&state).map_err(|e| (format!("{state}: {e}"), 1))?
+            };
+            control.force(text).await.map(print).map_err(fail)
+        }
+        TwinAction::Fault { name, params } if name == "clear" => {
+            control.clear(params.first().map(String::as_str)).await.map(print).map_err(fail)
+        }
+        TwinAction::Fault { name, params } => {
+            let fault = parse_fault(&name, &params).map_err(fail)?;
+            control.raise(&fault).await.map(print).map_err(fail)
+        }
+        TwinAction::Faults => control.faults().await.map(print).map_err(fail),
+        TwinAction::History { since, limit, array } => {
+            let body = control.history(since, limit, array).await.map_err(fail)?;
+            if array {
+                print(body);
+            } else {
+                print!("{body}");
+            }
+            Ok(())
+        }
+        TwinAction::Advance { duration } => control.advance(&duration).await.map(print).map_err(fail),
+        TwinAction::Seed { seed: Some(seed) } => control.set_seed(seed).await.map(print).map_err(fail),
+        TwinAction::Seed { seed: None } => {
+            control.request("GET", "/v1/seed", None).await.and_then(|r| r.ok()).map(print).map_err(fail)
+        }
+        TwinAction::Reset => {
+            control.request("DELETE", "/v1/reset", None).await.and_then(|r| r.ok()).map(print).map_err(fail)
+        }
+        TwinAction::Laws => {
+            let body = control.request("GET", "/v1/laws", None).await.and_then(|r| r.ok()).map_err(fail)?;
+            print(body.clone());
+            let value: serde_json::Value = serde_json::from_str(&body).unwrap_or_default();
+            if value["holds"].as_bool() == Some(true) { Ok(()) } else { Err(("a law does not hold".into(), 1)) }
+        }
+    }
 }
 
 #[tokio::main]

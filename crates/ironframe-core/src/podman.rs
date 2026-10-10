@@ -159,6 +159,17 @@ impl<'a> Podman<'a> {
         if missing.is_empty() { Ok(()) } else { Err(PodmanError::ImagesUnavailable(missing)) }
     }
 
+    /// The labels of an image that is present, by key. ref:DEC-conformance-from-report
+    pub fn image_labels(&self, image: &str) -> Result<BTreeMap<String, String>, PodmanError> {
+        let output = self.run_checked(&["image", "inspect", "--format", "{{json .Config.Labels}}", image], false)?;
+        let text = output.stdout.trim();
+        if text.is_empty() || text == "null" {
+            return Ok(BTreeMap::new());
+        }
+        serde_json::from_str(text)
+            .map_err(|e| PodmanError::Failed { command: format!("image inspect {image}"), reason: e.to_string() })
+    }
+
     /// Brings the compose project up in the background.
     pub fn compose_up(&self, file: &Path, project: &str) -> Result<(), PodmanError> {
         let file = file.to_string_lossy();

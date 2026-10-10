@@ -113,17 +113,20 @@ impl Runtime {
         }
     }
 
-    /// The module directory under `modules/` that runs a twin on this runtime; none for podman.
-    pub fn module(self) -> Option<&'static str> {
-        match self {
-            Runtime::Podman => None,
-            Runtime::Aws => Some("aws-ecs-fargate"),
-            Runtime::Gcp => Some("gcp-cloud-run"),
-            Runtime::Azure => Some("azure-container-apps"),
+    /// The module directory under `modules/` that runs a twin on this runtime, for a twin serving
+    /// `protocol`; none for podman. Cloud Run serves only HTTP, so a TCP twin on GCP runs on a
+    /// Compute Engine instance. ref:DEC-cloud-run-http-only ref:DEC-gce-for-tcp-twins
+    pub fn module(self, protocol: Protocol) -> Option<&'static str> {
+        match (self, protocol) {
+            (Runtime::Podman, _) => None,
+            (Runtime::Aws, _) => Some("aws-ecs-fargate"),
+            (Runtime::Gcp, Protocol::Http) => Some("gcp-cloud-run"),
+            (Runtime::Gcp, Protocol::Tcp) => Some("gcp-compute-engine"),
+            (Runtime::Azure, _) => Some("azure-container-apps"),
         }
     }
 
-    /// The inputs passed to the OpenTofu provider rather than to the modules.
+    /// The inputs the provider takes rather than the modules.
     pub fn provider_inputs(self) -> &'static [&'static str] {
         match self {
             Runtime::Podman => &[],
@@ -133,25 +136,20 @@ impl Runtime {
         }
     }
 
-    /// The inputs the runtime's module takes, beside the name, image, ports and environment
+    /// The inputs any of the runtime's modules take, beside the name, image, ports and environment
     /// Ironframe passes itself.
-    pub fn module_inputs(self) -> &'static [&'static str] {
-        match self {
-            Runtime::Podman => &[],
-            Runtime::Aws => {
-                &["vpc_id", "subnet_ids", "cpu", "memory", "assign_public_ip", "allowed_cidr_blocks", "internal"]
+    pub fn module_inputs(self) -> Vec<&'static str> {
+        let mut all: Vec<&'static str> = Vec::new();
+        for protocol in [Protocol::Tcp, Protocol::Http] {
+            if let Some(module) = self.module(protocol) {
+                for input in inputs_of_module(module) {
+                    if !all.contains(input) {
+                        all.push(input);
+                    }
+                }
             }
-            Runtime::Gcp => &["project", "region", "cpu", "memory", "public"],
-            Runtime::Azure => &[
-                "location",
-                "resource_group_name",
-                "cpu",
-                "memory",
-                "infrastructure_subnet_id",
-                "transport",
-                "external",
-            ],
         }
+        all
     }
 
     /// The inputs the runtime's module and provider cannot do without.
@@ -163,6 +161,36 @@ impl Runtime {
             Runtime::Azure => &["location", "resource_group_name"],
         }
     }
+}
+
+/// The inputs one module under `modules/` takes from `cloud`, beside the name, image, ports and
+/// environment Ironframe passes itself. ref:DEC-opentofu
+pub fn inputs_of_module(module: &str) -> &'static [&'static str] {
+    match module {
+        "aws-ecs-fargate" => {
+            &["vpc_id", "subnet_ids", "cpu", "memory", "assign_public_ip", "allowed_cidr_blocks", "internal"]
+        }
+        "gcp-cloud-run" => &["project", "region", "cpu", "memory", "public"],
+        "gcp-compute-engine" => {
+            &["project", "region", "zone", "machine_type", "network", "subnetwork", "allowed_cidr_blocks", "public"]
+        }
+        "azure-container-apps" => {
+            &["location", "resource_group_name", "cpu", "memory", "infrastructure_subnet_id", "transport", "external"]
+        }
+        _ => &[],
+    }
+}
+
+/// What a twin serves on its first port, which decides where a cloud can run it: Cloud Run serves
+/// only HTTP. ref:DEC-gce-for-tcp-twins
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "lowercase")]
+pub enum Protocol {
+    /// HTTP, such as an API server twin.
+    #[default]
+    Http,
+    /// A protocol of its own over TCP, such as Kafka's.
+    Tcp,
 }
 
 impl fmt::Display for Runtime {
@@ -186,6 +214,7 @@ pub struct Cloud {
 /// What a dependency is in one environment. ref:DEC-manifest-shape
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[allow(clippy::large_enum_variant)] // a manifest holds a handful of bindings; boxing buys nothing
 pub enum Binding {
     /// The real dependency.
     Real(Real),
@@ -215,8 +244,10 @@ pub struct Real {
 }
 
 /// A twin: the stand-in's image and version, the configuration handed to it, the conformance level
-/// its release declares, and the ports it serves. Ironframe runs it and records it; what the twin
-/// does with its configuration is its own business. ref:DEC-manifest-shape ref:DEC-three-planes
+/// its release declares, the ports it serves, and how it is set up when it starts: its seed, the
+/// contract it serves, a state to force and the faults to raise, through its control plane.
+/// Ironframe runs it and records it; what the twin does with its configuration is its own
+/// business. ref:DEC-manifest-shape ref:DEC-three-planes ref:DEC-twin-control-plane
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Twin {
@@ -227,8 +258,9 @@ pub struct Twin {
     /// Configuration handed to the twin as JSON in `TWIN_CONFIG`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub config: Option<serde_json::Value>,
-    /// The conformance level the twin's release declares, recorded in the attestation.
-    pub conformance: String,
+    /// The conformance level the twin's release declares, or where to read it, recorded in the
+    /// attestation.
+    pub conformance: Conformance,
     /// The container ports the twin serves; the first is the endpoint's.
     pub ports: Vec<u16>,
     /// Further environment variables for the container.
@@ -240,12 +272,239 @@ pub struct Twin {
     /// A reference to credentials the application should present to the twin.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub credentials: Option<String>,
+    /// The seed of the twin's random choices, handed over as `seed` in `TWIN_CONFIG` and checked
+    /// through the control plane once the twin answers.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seed: Option<u64>,
+    /// The contract a twin that serves several should serve, handed over as `contract` in
+    /// `TWIN_CONFIG`, such as `petstore` for the HTTP twin.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contract: Option<String>,
+    /// A state to force once the twin answers: a JSON file relative to the manifest, or the state
+    /// itself.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub state: Option<serde_json::Value>,
+    /// Faults to raise once the twin answers, in order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub faults: Vec<Fault>,
+    /// Where the twin's control plane is reached.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub admin: Option<Admin>,
+    /// What the twin serves on its first port, which decides where a cloud runs it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub protocol: Option<Protocol>,
+    /// An environment variable the twin reads the address it should tell clients from; Ironframe
+    /// sets it to the endpoint's `host:port`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub advertise_variable: Option<String>,
+    /// The conformance report named by `conformance.report`, read when the manifest was loaded.
+    #[serde(skip)]
+    pub report: Option<ConformanceReport>,
 }
 
 impl Twin {
     /// The image reference with the version as its tag.
     pub fn image_ref(&self) -> String {
         format!("{}:{}", self.image, self.version)
+    }
+
+    /// The protocol, HTTP when the manifest names none.
+    pub fn protocol(&self) -> Protocol {
+        self.protocol.unwrap_or_default()
+    }
+
+    /// The JSON handed to the twin in `TWIN_CONFIG`: `config`, with `seed` and `contract` added.
+    /// ref:DEC-twin-control-plane
+    pub fn twin_config(&self) -> serde_json::Value {
+        let mut config = match &self.config {
+            Some(serde_json::Value::Object(map)) => map.clone(),
+            _ => serde_json::Map::new(),
+        };
+        if let Some(seed) = self.seed {
+            config.insert("seed".into(), seed.into());
+        }
+        if let Some(contract) = &self.contract {
+            config.insert("contract".into(), contract.clone().into());
+        }
+        serde_json::Value::Object(config)
+    }
+
+    /// The conformance level to record: the report's when one was read, else the declared one,
+    /// else `unrated`. A level read from an image label replaces it when `up` reads the label.
+    /// ref:DEC-conformance-from-report
+    pub fn conformance_level(&self) -> String {
+        if let Some(report) = &self.report {
+            return report.level.clone();
+        }
+        self.conformance.declared().map(str::to_string).unwrap_or_else(|| UNRATED.to_string())
+    }
+}
+
+/// The level recorded for a twin whose level nothing declares. ref:DEC-conformance-from-report
+pub const UNRATED: &str = "unrated";
+
+/// The control-plane port of a LawTwin twin inside its container, the default for
+/// `admin.container_port`. ref:DEC-twin-control-plane
+pub const DEFAULT_ADMIN_CONTAINER_PORT: u16 = 9644;
+
+/// A twin's conformance level: the level its release declares, as a word, or where to read it, a
+/// conformance report beside the manifest or a label of the image, with an optional declared level
+/// that must agree. ref:DEC-conformance-from-report
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Conformance {
+    /// The declared level, such as `answers`.
+    Level(String),
+    /// Where the level is read, and optionally the level declared.
+    Sourced(ConformanceSource),
+}
+
+/// Where a twin's conformance level is read. ref:DEC-conformance-from-report
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ConformanceSource {
+    /// The level declared, which must match the report's or the label's.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub level: Option<String>,
+    /// The twin release's conformance report, a JSON file relative to the manifest.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub report: Option<PathBuf>,
+    /// An image label holding the level, read when `up` has the image.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image_label: Option<String>,
+}
+
+impl Conformance {
+    /// The level the manifest declares, if it declares one.
+    pub fn declared(&self) -> Option<&str> {
+        match self {
+            Conformance::Level(level) => Some(level),
+            Conformance::Sourced(source) => source.level.as_deref(),
+        }
+    }
+
+    /// The report to read, if any.
+    pub fn report(&self) -> Option<&Path> {
+        match self {
+            Conformance::Level(_) => None,
+            Conformance::Sourced(source) => source.report.as_deref(),
+        }
+    }
+
+    /// The image label to read, if any.
+    pub fn image_label(&self) -> Option<&str> {
+        match self {
+            Conformance::Level(_) => None,
+            Conformance::Sourced(source) => source.image_label.as_deref(),
+        }
+    }
+}
+
+/// What Ironframe reads from a conformance report: the level, by name and, when it has one, by
+/// number, and what the report is about. Two shapes are read: a level that is an object with
+/// `number` and `name`, as LawTwin's Kafka reports give it, and a level that is a word, as
+/// `lawtwin conform http` writes it. ref:DEC-conformance-from-report
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct ConformanceReport {
+    /// The level's name, such as `answers` or `conformant`.
+    pub level: String,
+    /// The level's number, when the report gives one.
+    pub number: Option<u64>,
+    /// The twin release the report is for, when it says.
+    pub release: Option<String>,
+    /// The twin the report is for, when it says, such as `kafka`.
+    pub twin: Option<String>,
+    /// The contract package the report checked, when it says, such as `lawtwin.petstore`.
+    pub contract: Option<String>,
+}
+
+impl ConformanceReport {
+    /// Reads a report from its JSON. ref:DEC-conformance-from-report
+    pub fn parse(text: &str) -> Result<ConformanceReport, String> {
+        let value: serde_json::Value = serde_json::from_str(text).map_err(|e| format!("not JSON: {e}"))?;
+        let (level, number) = match &value["level"] {
+            serde_json::Value::String(name) => (name.clone(), None),
+            serde_json::Value::Object(level) => {
+                let name = level.get("name").and_then(|n| n.as_str()).ok_or("level has no name")?;
+                (name.to_string(), level.get("number").and_then(serde_json::Value::as_u64))
+            }
+            _ => return Err("the report has no level".into()),
+        };
+        if level.trim().is_empty() {
+            return Err("the report's level is empty".into());
+        }
+        let text_of = |v: &serde_json::Value| v.as_str().map(str::to_string);
+        Ok(ConformanceReport {
+            level,
+            number,
+            release: text_of(&value["release"]),
+            twin: text_of(&value["twin"]),
+            contract: text_of(&value["contract"]).or_else(|| text_of(&value["contract"]["package"])),
+        })
+    }
+
+    /// Whether a declared level names this report's level: its name, ignoring case, its number,
+    /// or both as `<number>-<name>`. ref:DEC-conformance-from-report
+    pub fn matches(&self, declared: &str) -> bool {
+        let declared = declared.trim().to_ascii_lowercase();
+        let name = self.level.to_ascii_lowercase();
+        declared == name || self.number.is_some_and(|n| declared == n.to_string() || declared == format!("{n}-{name}"))
+    }
+
+    /// How the report names its level, for a message.
+    pub fn describe(&self) -> String {
+        match self.number {
+            Some(number) => format!("level {number} ({})", self.level),
+            None => format!("level {}", self.level),
+        }
+    }
+}
+
+/// A fault to raise when the twin starts: a fault its maker declares, by name, and its parameters.
+/// ref:DEC-twin-control-plane
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Fault {
+    /// The fault's name, such as `latency`.
+    pub name: String,
+    /// Its parameters, by name; each a string or an integer.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub params: BTreeMap<String, serde_json::Value>,
+}
+
+/// Where a twin's control plane is reached: on podman a port published on this machine, in a cloud
+/// a URL the operator gives. ref:DEC-twin-control-plane
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Admin {
+    /// The port published on this machine; `container_port` when absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub port: Option<u16>,
+    /// The control plane's port inside the container.
+    #[serde(default = "default_admin_container_port")]
+    pub container_port: u16,
+    /// The control plane's URL, which wins over the port.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+}
+
+fn default_admin_container_port() -> u16 {
+    DEFAULT_ADMIN_CONTAINER_PORT
+}
+
+impl Admin {
+    /// The port published on this machine.
+    pub fn host_port(&self) -> u16 {
+        self.port.unwrap_or(self.container_port)
+    }
+
+    /// The control plane's URL in an environment on `runtime`, if it has one there.
+    pub fn url_on(&self, runtime: Runtime) -> Option<String> {
+        match (&self.url, runtime) {
+            (Some(url), _) => Some(url.trim_end_matches('/').to_string()),
+            (None, Runtime::Podman) => Some(format!("http://127.0.0.1:{}", self.host_port())),
+            (None, _) => None,
+        }
     }
 }
 
@@ -405,10 +664,47 @@ impl Manifest {
             origin: Some(path.to_path_buf()),
             problems: vec![problem("", format!("cannot read the manifest: {error}"))],
         })?;
-        Manifest::parse(&text).map_err(|mut error| {
+        let mut manifest = Manifest::parse(&text).map_err(|mut error| {
             error.origin = Some(path.to_path_buf());
             error
-        })
+        })?;
+        let directory = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
+        let problems = manifest.read_reports(directory);
+        if problems.is_empty() {
+            Ok(manifest)
+        } else {
+            Err(ManifestError { origin: Some(path.to_path_buf()), problems })
+        }
+    }
+
+    /// Reads the conformance report of every twin that names one, relative to `directory`, and
+    /// checks it against the twin: the declared level must be the report's, and a report that says
+    /// which release or twin it is for must be for this one. Returns every problem found.
+    /// ref:DEC-conformance-from-report ref:REQ-conformance-matches-report
+    pub fn read_reports(&mut self, directory: &Path) -> Vec<Problem> {
+        let mut found = Vec::new();
+        for (name, environment) in &mut self.environments {
+            for (dependency, binding) in &mut environment.dependencies {
+                let Binding::Twin(twin) = binding else { continue };
+                let Some(relative) = twin.conformance.report() else { continue };
+                let at = format!("environments.{name}.dependencies.{dependency}.twin.conformance.report");
+                let path = directory.join(relative);
+                let report = match std::fs::read_to_string(&path) {
+                    Ok(text) => ConformanceReport::parse(&text),
+                    Err(error) => Err(format!("cannot read it: {error}")),
+                };
+                let report = match report {
+                    Ok(report) => report,
+                    Err(reason) => {
+                        found.push(problem(&at, format!("{}: {reason}", relative.display())));
+                        continue;
+                    }
+                };
+                found.extend(report_problems(&at, twin, &report));
+                twin.report = Some(report);
+            }
+        }
+        found
     }
 
     /// Reads and checks a manifest from YAML text: its shape against the JSON Schema, then the
@@ -528,7 +824,7 @@ impl Manifest {
                     if !known {
                         let mut all: Vec<&str> = runtime.provider_inputs().to_vec();
                         for module_input in runtime.module_inputs() {
-                            if !all.contains(module_input) {
+                            if !all.contains(&module_input) {
                                 all.push(module_input);
                             }
                         }
@@ -610,28 +906,16 @@ impl Manifest {
                     if twin.version.trim().is_empty() {
                         found.push(problem(format!("{at}.version"), "the version must not be empty"));
                     }
-                    if twin.conformance.trim().is_empty() {
-                        found.push(problem(format!("{at}.conformance"), "declare the release's conformance level"));
-                    }
-                    if twin.ports.is_empty() {
-                        found.push(problem(format!("{at}.ports"), "a twin serves at least one port"));
-                    }
-                    if runtime == Runtime::Gcp && twin.ports.len() > 1 {
-                        found.push(problem(format!("{at}.ports"), "Cloud Run serves one port per service"));
-                    }
-                    if let Some(config) = &twin.config
-                        && !config.is_object()
-                    {
-                        found.push(problem(format!("{at}.config"), "the twin's config is a mapping"));
-                    }
-                    if twin.env.contains_key(TWIN_CONFIG_VARIABLE) {
-                        found.push(problem(
-                            format!("{at}.env.{TWIN_CONFIG_VARIABLE}"),
-                            "TWIN_CONFIG is written from `config`; set the configuration there",
-                        ));
-                    }
+                    twin_problems(&at, twin, runtime, found);
                     credentials_problems(&at, twin.credentials.as_deref(), uses_credentials, found);
-                    (twin.ports.clone(), true)
+                    let mut ports = twin.ports.clone();
+                    if runtime == Runtime::Podman
+                        && let Some(admin) = &twin.admin
+                        && admin.url.is_none()
+                    {
+                        ports.push(admin.host_port());
+                    }
+                    (ports, true)
                 }
             };
             for port in &ports {
@@ -678,6 +962,173 @@ impl Manifest {
                 found
                     .push(problem(format!("{at}.azure_app_configuration.endpoint"), "the endpoint is an https:// URL"));
             }
+        }
+    }
+}
+
+/// How a twin disagrees with its conformance report. ref:REQ-conformance-matches-report
+pub fn report_problems(at: &str, twin: &Twin, report: &ConformanceReport) -> Vec<Problem> {
+    let mut found = Vec::new();
+    if let Some(declared) = twin.conformance.declared()
+        && !report.matches(declared)
+    {
+        found.push(problem(
+            at,
+            format!("the twin declares conformance {declared:?}, but its report gives {}", report.describe()),
+        ));
+    }
+    if let Some(release) = &report.release
+        && release != &twin.version
+    {
+        found.push(problem(
+            at,
+            format!("the report is for release {release}, but the twin is version {}", twin.version),
+        ));
+    }
+    if let Some(name) = &report.twin {
+        let image = twin.image.rsplit('/').next().unwrap_or(&twin.image);
+        if image != name {
+            found.push(problem(at, format!("the report is for the {name} twin, but the image is {}", twin.image)));
+        }
+    }
+    if let (Some(contract), Some(package)) = (&twin.contract, &report.contract)
+        && package != contract
+        && !package.ends_with(&format!(".{contract}"))
+    {
+        found.push(problem(at, format!("the report checked contract {package}, but the twin serves {contract}")));
+    }
+    found
+}
+
+fn twin_problems(at: &str, twin: &Twin, runtime: Runtime, found: &mut Vec<Problem>) {
+    match &twin.conformance {
+        Conformance::Level(level) if level.trim().is_empty() => {
+            found.push(problem(format!("{at}.conformance"), "declare the release's conformance level"))
+        }
+        Conformance::Level(_) => {}
+        Conformance::Sourced(source) => {
+            if source.level.is_none() && source.report.is_none() && source.image_label.is_none() {
+                found.push(problem(
+                    format!("{at}.conformance"),
+                    "give the level, the report to read it from, or the image label that holds it",
+                ));
+            }
+            if source.level.as_deref().is_some_and(|l| l.trim().is_empty()) {
+                found.push(problem(format!("{at}.conformance.level"), "the level must not be empty"));
+            }
+            if source.image_label.as_deref().is_some_and(|l| l.trim().is_empty()) {
+                found.push(problem(format!("{at}.conformance.image_label"), "the label must not be empty"));
+            }
+        }
+    }
+    if twin.ports.is_empty() {
+        found.push(problem(format!("{at}.ports"), "a twin serves at least one port"));
+    }
+    if runtime == Runtime::Gcp && twin.protocol() == Protocol::Http && twin.ports.len() > 1 {
+        found.push(problem(
+            format!("{at}.ports"),
+            "Cloud Run serves one port per service; a twin serving more is `protocol: tcp`, run on Compute Engine",
+        ));
+    }
+    if let Some(config) = &twin.config {
+        if !config.is_object() {
+            found.push(problem(format!("{at}.config"), "the twin's config is a mapping"));
+        }
+        for (key, given) in
+            [("seed", twin.seed.map(serde_json::Value::from)), ("contract", twin.contract.clone().map(Into::into))]
+        {
+            if let (Some(given), Some(in_config)) = (given, config.get(key))
+                && &given != in_config
+            {
+                found.push(problem(
+                    format!("{at}.config.{key}"),
+                    format!("config.{key} is {in_config} but the twin's {key} is {given}; give it once"),
+                ));
+            }
+        }
+    }
+    if twin.env.contains_key(TWIN_CONFIG_VARIABLE) {
+        found.push(problem(
+            format!("{at}.env.{TWIN_CONFIG_VARIABLE}"),
+            "TWIN_CONFIG is written from `config`; set the configuration there",
+        ));
+    }
+    if twin.contract.as_deref().is_some_and(|c| c.trim().is_empty()) {
+        found.push(problem(format!("{at}.contract"), "the contract must not be empty"));
+    }
+    let admin_url = twin.admin.as_ref().and_then(|a| a.url_on(runtime));
+    if let Some(admin) = &twin.admin {
+        if admin.container_port == 0 || admin.port == Some(0) {
+            found.push(problem(format!("{at}.admin"), "a port is between 1 and 65535"));
+        }
+        if runtime.is_cloud() && admin.url.is_none() {
+            found.push(problem(
+                format!("{at}.admin.url"),
+                "a cloud twin's control plane is not published; give the URL it is reached at",
+            ));
+        }
+        if let Some(url) = &admin.url
+            && !(url.starts_with("http://") || url.starts_with("https://"))
+        {
+            found.push(problem(format!("{at}.admin.url"), "the control plane's URL is http:// or https://"));
+        }
+        if runtime == Runtime::Podman && admin.url.is_none() && twin.ports.contains(&admin.container_port) {
+            found.push(problem(
+                format!("{at}.ports"),
+                format!("port {} is the control plane's; it is published through `admin`", admin.container_port),
+            ));
+        }
+    }
+    let needs_admin = |what: &str, found: &mut Vec<Problem>| {
+        if admin_url.is_none() {
+            found.push(problem(
+                format!("{at}.{what}"),
+                "applied through the twin's control plane, so the twin needs `admin`",
+            ));
+        }
+    };
+    if twin.state.is_some() {
+        needs_admin("state", found);
+    }
+    if let Some(state) = &twin.state
+        && !(state.is_object() || state.as_str().is_some_and(|p| !p.trim().is_empty()))
+    {
+        found.push(problem(format!("{at}.state"), "a state is a mapping, or the path of a JSON file"));
+    }
+    if !twin.faults.is_empty() {
+        needs_admin("faults", found);
+    }
+    for (index, fault) in twin.faults.iter().enumerate() {
+        if fault.name.trim().is_empty() {
+            found.push(problem(format!("{at}.faults[{index}].name"), "the fault's name must not be empty"));
+        }
+        for (name, value) in &fault.params {
+            if !(value.is_string() || value.is_i64() || value.is_u64()) {
+                found.push(problem(
+                    format!("{at}.faults[{index}].params.{name}"),
+                    "a fault's parameter is a string or a whole number",
+                ));
+            }
+        }
+    }
+    if let Some(variable) = &twin.advertise_variable {
+        if !is_setting_key(variable) {
+            found.push(problem(format!("{at}.advertise_variable"), "an environment variable name"));
+        }
+        if twin.env.contains_key(variable) {
+            found.push(problem(
+                format!("{at}.env.{variable}"),
+                "this variable is set from the endpoint through `advertise_variable`",
+            ));
+        }
+        let supported = runtime == Runtime::Podman || (runtime == Runtime::Gcp && twin.protocol() == Protocol::Tcp);
+        if !supported {
+            found.push(problem(
+                format!("{at}.advertise_variable"),
+                format!(
+                    "the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on {runtime} pin it in `config` or `env`"
+                ),
+            ));
         }
     }
 }

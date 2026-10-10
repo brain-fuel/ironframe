@@ -11,7 +11,7 @@ rust-version.workspace = true
 default = ["aws", "gcp", "azure"]
 aws = ["dep:aws-config", "dep:aws-sdk-appconfig"]
 gcp = ["dep:google-cloud-parametermanager-v1", "dep:google-cloud-gax"]
-azure = ["dep:reqwest", "dep:hmac", "dep:base64"]
+azure = ["dep:hmac", "dep:base64"]
 
 [dependencies]
 ironframe-attestation.workspace = true
@@ -24,15 +24,16 @@ thiserror.workspace = true
 time.workspace = true
 uuid.workspace = true
 jsonschema.workspace = true
+tokio.workspace = true
 aws-config = { workspace = true, optional = true }
 aws-sdk-appconfig = { workspace = true, optional = true }
 google-cloud-parametermanager-v1 = { workspace = true, optional = true }
 google-cloud-gax = { workspace = true, optional = true }
-reqwest = { workspace = true, optional = true }
+reqwest.workspace = true
 hmac = { workspace = true, optional = true }
 base64 = { workspace = true, optional = true }
 
 [dev-dependencies]
+axum.workspace = true
 tempfile.workspace = true
 serde_yaml.workspace = true
-tokio.workspace = true

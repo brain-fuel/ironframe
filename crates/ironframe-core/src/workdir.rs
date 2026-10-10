@@ -1,6 +1,7 @@
 //! The working directory of an environment, `.ironframe/<environment>/` beside the manifest, where
 //! Ironframe keeps what it generates and what a run leaves behind: the compose file, the OpenTofu
-//! root, the settings document, the deployed endpoints, the run and the attestation. It is ignored
+//! root, the settings document, the deployed endpoints, the run, what was learnt of each twin, the
+//! twins' histories and the attestation. It is ignored
 //! by git; the manifest is the only source. ref:DEC-manifest-shape
 
 use std::collections::BTreeMap;
@@ -47,6 +48,25 @@ impl WorkDir {
     /// The latest attestation.
     pub fn attestation(&self) -> PathBuf {
         self.root.join("attestation.json")
+    }
+
+    /// What `up` learnt of each twin it set up: its control plane, seed and conformance level.
+    pub fn twins(&self) -> PathBuf {
+        self.root.join("twins.json")
+    }
+
+    /// The history of a twin as the latest attestation's digest was taken over it, as JSON lines.
+    pub fn history(&self, dependency: &str) -> PathBuf {
+        self.root.join("history").join(format!("{dependency}.jsonl"))
+    }
+
+    /// What `up` learnt of each twin, or nothing before an `up`.
+    pub fn read_twins(&self) -> std::io::Result<BTreeMap<String, crate::twin::TwinRecord>> {
+        match std::fs::read_to_string(self.twins()) {
+            Ok(text) => serde_json::from_str(&text).map_err(std::io::Error::other),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(BTreeMap::new()),
+            Err(error) => Err(error),
+        }
     }
 
     /// The endpoints a cloud deployment reported, or none before one.

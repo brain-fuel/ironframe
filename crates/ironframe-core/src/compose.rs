@@ -46,7 +46,8 @@ struct Service {
 
 /// The compose file for a resolved podman environment. `config_service` names the service to add
 /// and the settings document on this machine it serves. Ports keep their numbers on the host, so
-/// the endpoint a twin is reached at is the one the application is told. ref:DEC-podman-compose
+/// the endpoint a twin is reached at is the one the application is told; a twin's control plane is
+/// published on the port its `admin` names. ref:DEC-podman-compose ref:DEC-twin-control-plane
 pub fn compose_file(environment: &ResolvedEnvironment, config_service: Option<(&ConfigService, &Path)>) -> String {
     let stack = environment.stack_name();
     let labels = |dependency: &str, kind: &str| {
@@ -65,7 +66,12 @@ pub fn compose_file(environment: &ResolvedEnvironment, config_service: Option<(&
             Service {
                 image: image.clone(),
                 container_name: format!("{stack}-{}", dependency.name),
-                ports: dependency.ports.iter().map(|p| format!("{p}:{p}")).collect(),
+                ports: dependency
+                    .ports
+                    .iter()
+                    .map(|p| format!("{p}:{p}"))
+                    .chain(dependency.admin_port.map(|(host, container)| format!("{host}:{container}")))
+                    .collect(),
                 environment: dependency.container_env.clone(),
                 volumes: Vec::new(),
                 labels: labels(&dependency.name, dependency.kind.as_str()),

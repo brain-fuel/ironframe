@@ -3,7 +3,7 @@
 //! compose, OpenTofu, the configuration service, every sync target and the attestation, works from
 //! this one resolution, so they cannot disagree about where a dependency is. ref:DEC-manifest-shape
 
-use crate::manifest::{Binding, Manifest, ManifestError, Runtime, TWIN_CONFIG_VARIABLE};
+use crate::manifest::{Binding, Manifest, ManifestError, Runtime, TWIN_CONFIG_VARIABLE, Twin};
 use ironframe_attestation::StandIn;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -29,7 +29,7 @@ impl BindingKind {
 }
 
 /// One dependency of a resolved environment. ref:DEC-manifest-shape
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ResolvedDependency {
     /// The dependency's name.
     pub name: String,
@@ -49,10 +49,17 @@ pub struct ResolvedDependency {
     pub credentials: Option<String>,
     /// The settings the application reads for this dependency.
     pub settings: BTreeMap<String, String>,
+    /// For a twin, the URL of its control plane, when it has one here.
+    pub admin_url: Option<String>,
+    /// For a twin on podman with a control plane, the port published on this machine and the
+    /// control plane's port inside the container.
+    pub admin_port: Option<(u16, u16)>,
+    /// For a twin, its binding as the manifest gives it: seed, state and faults among it.
+    pub twin: Option<Twin>,
 }
 
 /// An environment with every dependency resolved. ref:DEC-manifest-shape
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ResolvedEnvironment {
     /// The project's name.
     pub project: String,
@@ -130,6 +137,9 @@ pub fn resolve(
                 stand_in: None,
                 credentials: real.credentials.clone(),
                 settings: BTreeMap::new(),
+                admin_url: None,
+                admin_port: None,
+                twin: None,
             },
             Binding::Twin(twin) => {
                 let endpoint = match (&twin.endpoint, deployed.get(dependency)) {
@@ -144,8 +154,23 @@ pub fn resolve(
                     }
                 };
                 let mut container_env = twin.env.clone();
-                let config = twin.config.clone().unwrap_or_else(|| serde_json::json!({}));
-                container_env.insert(TWIN_CONFIG_VARIABLE.to_string(), config.to_string());
+                container_env.insert(TWIN_CONFIG_VARIABLE.to_string(), twin.twin_config().to_string());
+                if let Some(variable) = &twin.advertise_variable
+                    && environment.runtime == Runtime::Podman
+                {
+                    let (host, port) = split_endpoint(&endpoint);
+                    let address = match port {
+                        Some(port) => format!("{host}:{port}"),
+                        None => host,
+                    };
+                    container_env.insert(variable.clone(), address);
+                }
+                let admin_port = match (&twin.admin, environment.runtime) {
+                    (Some(admin), Runtime::Podman) if admin.url.is_none() => {
+                        Some((admin.host_port(), admin.container_port))
+                    }
+                    _ => None,
+                };
                 ResolvedDependency {
                     name: dependency.clone(),
                     kind: BindingKind::Twin,
@@ -156,10 +181,15 @@ pub fn resolve(
                     stand_in: Some(StandIn {
                         product: twin.image.clone(),
                         version: twin.version.clone(),
-                        conformance: twin.conformance.clone(),
+                        conformance: twin.conformance_level(),
+                        seed: twin.seed,
+                        ..StandIn::default()
                     }),
                     credentials: twin.credentials.clone(),
                     settings: BTreeMap::new(),
+                    admin_url: twin.admin.as_ref().and_then(|a| a.url_on(environment.runtime)),
+                    admin_port,
+                    twin: Some(twin.clone()),
                 }
             }
         };

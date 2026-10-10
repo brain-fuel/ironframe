@@ -14,6 +14,7 @@ use crate::sync::azure::AppConfigurationApi;
 use crate::sync::gcp::ParameterManagerApi;
 use crate::sync::{SyncError, SyncOutcome, describe, sync_env_file};
 use crate::tofu::{Tofu, TofuError, root_module};
+use crate::twin::{ControlPlane, Observation, TwinError, TwinRecord};
 use crate::workdir::{WorkDir, write_atomically};
 use async_trait::async_trait;
 use ironframe_attestation::{Attestation, AttestationError};
@@ -42,6 +43,20 @@ pub enum OpsError {
     /// The attestation is invalid.
     #[error(transparent)]
     Attestation(#[from] AttestationError),
+    /// A twin's control plane failed or refused.
+    #[error("twin {dependency:?}: {error}")]
+    Twin {
+        /// The dependency the twin stands in for.
+        dependency: String,
+        /// What went wrong.
+        error: TwinError,
+    },
+    /// A twin's conformance level disagrees with its image's label, or the label is missing.
+    #[error("twin {0:?}: {1}")]
+    Conformance(String, String),
+    /// The command names something the environment does not have.
+    #[error("{0}")]
+    Usage(String),
     /// A file could not be written or read.
     #[error("{0}: {1}")]
     Io(PathBuf, std::io::Error),
@@ -215,6 +230,7 @@ pub async fn up(
     let workdir = WorkDir::new(manifest_dir, name);
     let run = RunRecord::start();
     let started_images: Vec<String>;
+    let mut labelled: BTreeMap<String, String> = BTreeMap::new();
     let environment = if declared.runtime.is_cloud() {
         let tofu = prepare_tofu(manifest, manifest_dir, name, runner)?;
         progress("applying the OpenTofu root");
@@ -241,6 +257,7 @@ pub async fn up(
         }
         progress("checking images");
         podman.ensure_images(&images)?;
+        labelled = labelled_levels(&podman, &environment)?;
         let settings = write_settings(&workdir, &environment)?;
         let compose = compose_file(&environment, declared.config_service.as_ref().map(|s| (s, settings.as_path())));
         write_atomically(&workdir.compose(), &compose).map_err(io(&workdir.compose()))?;
@@ -252,6 +269,30 @@ pub async fn up(
     };
     let run_text = serde_json::to_string_pretty(&run).expect("a run serialises") + "\n";
     write_atomically(&workdir.run(), &run_text).map_err(io(&workdir.run()))?;
+    let mut records: BTreeMap<String, TwinRecord> = BTreeMap::new();
+    for dependency in &environment.dependencies {
+        let (Some(twin), Some(url)) = (&dependency.twin, &dependency.admin_url) else { continue };
+        let fail = |error| OpsError::Twin { dependency: dependency.name.clone(), error };
+        let control = ControlPlane::new(url.clone());
+        progress(&format!("waiting for the control plane of {} at {url}", dependency.name));
+        if !control.wait_healthy(options.wait).await {
+            return Err(fail(TwinError::Unreachable {
+                url: url.clone(),
+                reason: format!("no answer at /healthz within {}s", options.wait.as_secs()),
+            }));
+        }
+        if twin.seed.is_some() || twin.state.is_some() || !twin.faults.is_empty() {
+            progress(&format!("setting up {}", dependency.name));
+        }
+        let mut record = control.set_up(twin, manifest_dir).await.map_err(fail)?;
+        record.conformance = labelled.get(&dependency.name).cloned();
+        records.insert(dependency.name.clone(), record);
+    }
+    for (name, level) in &labelled {
+        records.entry(name.clone()).or_default().conformance = Some(level.clone());
+    }
+    let twins_text = serde_json::to_string_pretty(&records).expect("twin records serialise") + "\n";
+    write_atomically(&workdir.twins(), &twins_text).map_err(io(&workdir.twins()))?;
     let mut unreached = Vec::new();
     let mut reached = BTreeMap::new();
     for dependency in &environment.dependencies {
@@ -272,7 +313,9 @@ pub async fn up(
     } else {
         Vec::new()
     };
-    let attestation = attest(&environment, &run, &|endpoint| reached.get(endpoint).copied().unwrap_or(false));
+    let observed = observe_twins(&environment, &workdir, &records).await?;
+    let attestation =
+        attest(&environment, &run, &|endpoint| reached.get(endpoint).copied().unwrap_or(false), &observed, &records);
     write_attestation(&workdir.attestation(), &attestation)?;
     Ok(UpReport { environment, attestation, attestation_path: workdir.attestation(), synced, unreached })
 }
@@ -414,9 +457,10 @@ pub fn status(
 }
 
 /// Writes the attestation of environment `name` now: the run `up` started, or a new one when there
-/// was none, with each endpoint probed. Writes to `output`, or the working directory's
-/// `attestation.json`. ref:DEC-attestation-format
-pub fn attest_now(
+/// was none, with each endpoint probed and each twin's seed and history read from its control
+/// plane, its history kept beside the attestation. Writes to `output`, or the working directory's
+/// `attestation.json`. ref:DEC-attestation-format ref:DEC-history-digest
+pub async fn attest_now(
     manifest: &Manifest,
     manifest_dir: &Path,
     name: &str,
@@ -428,8 +472,109 @@ pub fn attest_now(
         Ok(text) => serde_json::from_str(&text).map_err(|e| OpsError::Io(workdir.run(), std::io::Error::other(e)))?,
         Err(_) => RunRecord::start(),
     };
-    let attestation = attest(&environment, &run, &|endpoint| tcp_reachable(endpoint, Duration::from_secs(2)));
+    let records = workdir.read_twins().map_err(io(&workdir.twins()))?;
+    let observed = observe_twins(&environment, &workdir, &records).await?;
+    let attestation =
+        attest(&environment, &run, &|endpoint| tcp_reachable(endpoint, Duration::from_secs(2)), &observed, &records);
     let path = output.map(Path::to_path_buf).unwrap_or_else(|| workdir.attestation());
     write_attestation(&path, &attestation)?;
     Ok((attestation, path))
+}
+
+/// The control-plane URL of each twin: the one `up` recorded, else the one the manifest gives.
+fn admin_urls(environment: &ResolvedEnvironment, records: &BTreeMap<String, TwinRecord>) -> BTreeMap<String, String> {
+    environment
+        .dependencies
+        .iter()
+        .filter(|d| d.twin.is_some())
+        .filter_map(|d| {
+            let url = records.get(&d.name).and_then(|r| r.admin.clone()).or_else(|| d.admin_url.clone())?;
+            Some((d.name.clone(), url))
+        })
+        .collect()
+}
+
+/// Reads each twin's seed and history from its control plane and keeps the history in the working
+/// directory, where the attestation's digest can be checked against it. A twin whose control plane
+/// does not answer is recorded without them. ref:DEC-history-digest
+async fn observe_twins(
+    environment: &ResolvedEnvironment,
+    workdir: &WorkDir,
+    records: &BTreeMap<String, TwinRecord>,
+) -> Result<BTreeMap<String, Observation>, OpsError> {
+    let mut observed = BTreeMap::new();
+    for (dependency, url) in admin_urls(environment, records) {
+        let Ok(observation) = ControlPlane::new(url).observe().await else { continue };
+        if let Some(history) = &observation.history {
+            let path = workdir.history(&dependency);
+            write_atomically(&path, history).map_err(io(&path))?;
+        }
+        observed.insert(dependency, observation);
+    }
+    Ok(observed)
+}
+
+/// Reads the conformance level from the image label of each twin that names one, and checks it
+/// against the declared level and the report. ref:DEC-conformance-from-report
+fn labelled_levels(
+    podman: &Podman<'_>,
+    environment: &ResolvedEnvironment,
+) -> Result<BTreeMap<String, String>, OpsError> {
+    let mut levels = BTreeMap::new();
+    for dependency in &environment.dependencies {
+        let (Some(twin), Some(image)) = (&dependency.twin, &dependency.image) else { continue };
+        let Some(label) = twin.conformance.image_label() else { continue };
+        let labels = podman.image_labels(image)?;
+        let fail = |message: String| OpsError::Conformance(dependency.name.clone(), message);
+        let Some(level) = labels.get(label).filter(|l| !l.trim().is_empty()) else {
+            return Err(fail(format!("image {image} has no label {label:?} to read the conformance level from")));
+        };
+        if let Some(declared) = twin.conformance.declared()
+            && !declared.eq_ignore_ascii_case(level)
+            && !twin.report.as_ref().is_some_and(|r| r.matches(declared) && r.matches(level))
+        {
+            return Err(fail(format!(
+                "the twin declares conformance {declared:?}, but image label {label} says {level:?}"
+            )));
+        }
+        if let Some(report) = &twin.report
+            && !report.matches(level)
+        {
+            return Err(fail(format!(
+                "image label {label} says {level:?}, but the report gives {}",
+                report.describe()
+            )));
+        }
+        levels.insert(dependency.name.clone(), twin.report.as_ref().map_or_else(|| level.clone(), |r| r.level.clone()));
+    }
+    Ok(levels)
+}
+
+/// The control plane of the twin standing in for `dependency` in environment `name`: the URL `up`
+/// recorded, else the one the manifest gives. ref:DEC-twin-control-plane
+pub fn control_plane(
+    manifest: &Manifest,
+    manifest_dir: &Path,
+    name: &str,
+    dependency: &str,
+) -> Result<ControlPlane, OpsError> {
+    let environment = resolve_in(manifest, manifest_dir, name)?;
+    let Some(resolved) = environment.dependencies.iter().find(|d| d.name == dependency) else {
+        return Err(OpsError::Usage(format!(
+            "environment {name:?} has no dependency {dependency:?}; it has {}",
+            environment.dependencies.iter().map(|d| format!("{:?}", d.name)).collect::<Vec<_>>().join(", ")
+        )));
+    };
+    if resolved.twin.is_none() {
+        return Err(OpsError::Usage(format!(
+            "dependency {dependency:?} is the real thing in environment {name:?}, not a twin"
+        )));
+    }
+    let workdir = WorkDir::new(manifest_dir, name);
+    let records = workdir.read_twins().map_err(io(&workdir.twins()))?;
+    admin_urls(&environment, &records).remove(dependency).map(ControlPlane::new).ok_or_else(|| {
+        OpsError::Usage(format!(
+            "the twin for {dependency:?} in environment {name:?} has no control plane; give it `admin` in the manifest"
+        ))
+    })
 }

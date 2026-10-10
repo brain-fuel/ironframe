@@ -24,6 +24,7 @@ fn sample() -> Attestation {
                 product: "lawtwin/kafka".into(),
                 version: "0.1.0".into(),
                 conformance: "unrated".into(),
+                ..StandIn::default()
             }),
         },
         DependencyRecord {
@@ -108,4 +109,32 @@ fn a_dependency_recorded_twice_is_refused() {
     let mut attestation = sample();
     attestation.dependencies[1].name = "kafka".into();
     assert_eq!(attestation.to_json(), Err(AttestationError::DuplicateDependency("kafka".into())));
+}
+
+/// ref:REQ-attestation-stand-in-run
+#[test]
+fn a_stand_in_s_seed_and_history_digest_round_trip_and_satisfy_the_schema() {
+    let mut attestation = sample();
+    let stand_in = attestation.dependencies[0].stand_in.as_mut().unwrap();
+    stand_in.seed = Some(42);
+    stand_in.history_digest = Some(format!("sha256:{}", "ab".repeat(32)));
+    stand_in.history_entries = Some(7);
+    let text = attestation.to_json().unwrap();
+    assert_eq!(Attestation::from_json(&text).unwrap(), attestation);
+    assert!(schema_accepts(&text), "{text}");
+    let value: serde_json::Value = serde_json::from_str(&text).unwrap();
+    assert_eq!(value["dependencies"][0]["stand_in"]["seed"], 42);
+    assert_eq!(value["dependencies"][0]["stand_in"]["history_entries"], 7);
+}
+
+/// ref:REQ-attestation-stand-in-run
+#[test]
+fn a_history_digest_of_another_form_is_refused_by_reader_and_schema() {
+    let mut attestation = sample();
+    attestation.dependencies[0].stand_in.as_mut().unwrap().history_digest = Some("md5:abc".into());
+    assert_eq!(attestation.to_json(), Err(AttestationError::BadHistoryDigest("kafka".into())));
+    let mut value: serde_json::Value = serde_json::from_str(&sample().to_json().unwrap()).unwrap();
+    value["dependencies"][0]["stand_in"]["history_digest"] = "sha256:XYZ".into();
+    assert!(!schema_accepts(&value.to_string()));
+    assert_eq!(Attestation::from_json(&value.to_string()), Err(AttestationError::BadHistoryDigest("kafka".into())));
 }

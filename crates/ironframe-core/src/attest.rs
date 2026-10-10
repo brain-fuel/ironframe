@@ -1,11 +1,13 @@
 //! Writing the environment attestation of a run: each dependency's endpoint, whether it answered,
-//! and for a twin the stand-in it was, in the tool-neutral format of `ironframe-attestation`.
+//! and for a twin the stand-in it was, with its seed and the digest of its history, in the tool-neutral format of `ironframe-attestation`.
 //! Ironframe writes it during `up` and on demand with `ironframe attest`, reusing the run `up`
 //! started so both describe one run. ref:DEC-attestation-format
 
 use crate::settings::{BindingKind, ResolvedEnvironment, split_endpoint};
+use crate::twin::{Observation, TwinRecord};
 use ironframe_attestation::{Attestation, DependencyRecord, Kind, Producer, Run};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::io::Read;
 use std::net::{TcpStream, ToSocketAddrs};
 use std::time::{Duration, Instant};
@@ -30,8 +32,16 @@ impl RunRecord {
 }
 
 /// The attestation of `environment` in `run`, recorded now, with `reached` deciding for each
-/// endpoint whether it answered. ref:DEC-attestation-format
-pub fn attest(environment: &ResolvedEnvironment, run: &RunRecord, reached: &dyn Fn(&str) -> bool) -> Attestation {
+/// endpoint whether it answered. For each twin, `observed` gives what its control plane reported
+/// (seed and history digest) and `records` what `up` learnt of it (a level read from the image's
+/// label, the seed it set). ref:DEC-attestation-format ref:DEC-history-digest
+pub fn attest(
+    environment: &ResolvedEnvironment,
+    run: &RunRecord,
+    reached: &dyn Fn(&str) -> bool,
+    observed: &BTreeMap<String, Observation>,
+    records: &BTreeMap<String, TwinRecord>,
+) -> Attestation {
     let recorded_at = OffsetDateTime::now_utc().max(run.started_at);
     let mut attestation =
         Attestation::new(&environment.environment, Run { id: run.id.clone(), started_at: run.started_at, recorded_at });
@@ -47,7 +57,17 @@ pub fn attest(environment: &ResolvedEnvironment, run: &RunRecord, reached: &dyn 
                 BindingKind::Real => Kind::Real,
                 BindingKind::Twin => Kind::StandIn,
             },
-            stand_in: dependency.stand_in.clone(),
+            stand_in: dependency.stand_in.clone().map(|mut stand_in| {
+                let record = records.get(&dependency.name);
+                if let Some(level) = record.and_then(|r| r.conformance.clone()) {
+                    stand_in.conformance = level;
+                }
+                let observation = observed.get(&dependency.name);
+                stand_in.seed = observation.and_then(|o| o.seed).or(record.and_then(|r| r.seed)).or(stand_in.seed);
+                stand_in.history_digest = observation.and_then(|o| o.history_digest.clone());
+                stand_in.history_entries = observation.and_then(|o| o.history_entries);
+                stand_in
+            }),
         })
         .collect();
     attestation

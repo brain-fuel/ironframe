@@ -93,8 +93,11 @@ pub enum Kind {
 }
 
 /// The stand-in a dependency resolved to. The conformance level is the one its maker declares for
-/// that release; the attestation records it and does not judge it. ref:DEC-attestation-format
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+/// that release; the attestation records it and does not judge it. The seed and the history digest
+/// are optional: a writer that can read them from the stand-in records them, so evidence can cite
+/// exactly which deterministic run of which stand-in the application talked to.
+/// ref:DEC-attestation-format ref:DEC-history-digest
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct StandIn {
     /// The stand-in's product name, such as an image name.
     pub product: String,
@@ -102,6 +105,24 @@ pub struct StandIn {
     pub version: String,
     /// The conformance level declared for that version.
     pub conformance: String,
+    /// The seed of the stand-in's random choices in this run, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seed: Option<u64>,
+    /// `sha256:<64 lowercase hex digits>` of the stand-in's history of the run, as its maker's tool
+    /// exports it, at the time the document was recorded.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub history_digest: Option<String>,
+    /// How many entries that history held.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub history_entries: Option<u64>,
+}
+
+/// Whether `digest` is `sha256:` followed by 64 lowercase hexadecimal digits, the one digest form
+/// version 1 knows. ref:DEC-history-digest
+pub fn is_history_digest(digest: &str) -> bool {
+    digest
+        .strip_prefix("sha256:")
+        .is_some_and(|hex| hex.len() == 64 && hex.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)))
 }
 
 /// Why a document is not a valid attestation, each naming the field at fault.
@@ -129,6 +150,9 @@ pub enum AttestationError {
     /// The run was recorded before it started.
     #[error("run.recorded_at is before run.started_at")]
     RecordedBeforeStart,
+    /// A history digest is not `sha256:` and 64 lowercase hexadecimal digits.
+    #[error("dependency {0:?}: stand_in.history_digest must be sha256: followed by 64 lowercase hex digits")]
+    BadHistoryDigest(String),
 }
 
 impl Attestation {
@@ -176,6 +200,11 @@ impl Attestation {
             }
             if (dependency.kind == Kind::StandIn) != dependency.stand_in.is_some() {
                 return Err(AttestationError::StandInMismatch(dependency.name.clone()));
+            }
+            if let Some(digest) = dependency.stand_in.as_ref().and_then(|s| s.history_digest.as_deref())
+                && !is_history_digest(digest)
+            {
+                return Err(AttestationError::BadHistoryDigest(dependency.name.clone()));
             }
         }
         Ok(())

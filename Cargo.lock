@@ -1840,6 +1840,7 @@ dependencies = [
  "async-trait",
  "aws-config",
  "aws-sdk-appconfig",
+ "axum",
  "base64 0.22.1",
  "google-cloud-gax",
  "google-cloud-parametermanager-v1",

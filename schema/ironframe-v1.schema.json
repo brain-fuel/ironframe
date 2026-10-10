@@ -60,7 +60,7 @@
         "runtime": { "enum": ["podman", "aws", "gcp", "azure"] },
         "cloud": {
           "type": "object",
-          "description": "Inputs for a cloud runtime, passed to the provider and every module. aws needs region, vpc_id and subnet_ids; gcp needs project and region; azure needs location and resource_group_name.",
+          "description": "Inputs for a cloud runtime, passed to the provider and every module that takes them. aws needs region, vpc_id and subnet_ids; gcp needs project and region; azure needs location and resource_group_name.",
           "properties": {
             "modules": { "type": "string", "description": "A module source to use instead of the released modules." }
           }
@@ -114,11 +114,57 @@
         "image": { "type": "string", "minLength": 1, "description": "The image name without a tag." },
         "version": { "type": "string", "minLength": 1, "description": "The image tag, which is the twin's version." },
         "config": { "type": "object", "description": "Handed to the twin as JSON in TWIN_CONFIG." },
-        "conformance": { "type": "string", "minLength": 1, "description": "The conformance level the twin's release declares." },
+        "conformance": {
+          "description": "The conformance level the twin's release declares, or where to read it: a report beside the manifest, or an image label. A declared level must match the report's.",
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "level": { "type": "string", "minLength": 1, "description": "The level declared: the report's level name, its number, or <number>-<name>." },
+                "report": { "type": "string", "minLength": 1, "description": "The twin release's conformance report, a JSON file relative to the manifest." },
+                "image_label": { "type": "string", "minLength": 1, "description": "The image label holding the level, read by up." }
+              }
+            }
+          ]
+        },
         "ports": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/port" } },
         "env": { "$ref": "#/$defs/stringMap" },
         "endpoint": { "type": "string", "minLength": 1 },
-        "credentials": { "$ref": "#/$defs/credentials" }
+        "credentials": { "$ref": "#/$defs/credentials" },
+        "seed": { "type": "integer", "minimum": 0, "description": "The seed of the twin's random choices, handed over as seed in TWIN_CONFIG." },
+        "contract": { "type": "string", "minLength": 1, "description": "The contract a twin serving several should serve, handed over as contract in TWIN_CONFIG." },
+        "state": {
+          "description": "A state to force once the twin answers: a JSON file relative to the manifest, or the state itself.",
+          "oneOf": [{ "type": "object" }, { "type": "string", "minLength": 1 }]
+        },
+        "faults": {
+          "type": "array",
+          "description": "Faults to raise once the twin answers, in order.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "params": { "type": "object", "additionalProperties": { "oneOf": [{ "type": "string" }, { "type": "integer" }] } }
+            }
+          }
+        },
+        "admin": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Where the twin's control plane is reached: a port published on podman, or a URL.",
+          "properties": {
+            "port": { "$ref": "#/$defs/port" },
+            "container_port": { "$ref": "#/$defs/port" },
+            "url": { "type": "string", "minLength": 1 }
+          }
+        },
+        "protocol": { "enum": ["http", "tcp"], "description": "What the twin serves on its first port; on gcp, tcp runs it on Compute Engine rather than Cloud Run. Default http." },
+        "advertise_variable": { "type": "string", "minLength": 1, "description": "An environment variable the twin reads the address to advertise from, set to the endpoint's host:port." }
       }
     },
     "syncTarget": {

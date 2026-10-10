@@ -102,24 +102,29 @@ fn required_provider(runtime: Runtime) -> (&'static str, Value) {
 pub fn root_module(manifest: &Manifest, name: &str, manifest_dir: &Path) -> Result<Value, TofuError> {
     let environment: &Environment = manifest.environment(name).map_err(|e| TofuError::Output(e.to_string()))?;
     let runtime = environment.runtime;
-    let module = runtime.module().ok_or_else(|| TofuError::NotCloud(name.to_string()))?;
+    if !runtime.is_cloud() {
+        return Err(TofuError::NotCloud(name.to_string()));
+    }
     let cloud = environment.cloud.clone().unwrap_or_default();
     let base = cloud.modules.clone().unwrap_or_else(|| RELEASED_MODULES.to_string());
-    let source = module_source(&base, module, manifest_dir);
     let mut modules = Map::new();
     let mut endpoints = Map::new();
     for (dependency, binding) in &environment.dependencies {
         let Binding::Twin(twin) = binding else { continue };
+        let module = runtime.module(twin.protocol()).ok_or_else(|| TofuError::NotCloud(name.to_string()))?;
+        let source = module_source(&base, module, manifest_dir);
         let mut env: BTreeMap<String, String> = twin.env.clone();
-        let config = twin.config.clone().unwrap_or_else(|| json!({}));
-        env.insert(TWIN_CONFIG_VARIABLE.to_string(), config.to_string());
+        env.insert(TWIN_CONFIG_VARIABLE.to_string(), twin.twin_config().to_string());
         let mut inputs = Map::new();
         inputs.insert("source".into(), json!(source));
         inputs.insert("name".into(), json!(deployment_name(&manifest.project, name, dependency)));
         inputs.insert("image".into(), json!(qualify_image(&twin.image_ref())));
         inputs.insert("ports".into(), json!(twin.ports));
         inputs.insert("environment".into(), json!(env));
-        for input in runtime.module_inputs() {
+        if let Some(variable) = &twin.advertise_variable {
+            inputs.insert("advertise_variable".into(), json!(variable));
+        }
+        for input in crate::manifest::inputs_of_module(module) {
             if let Some(value) = cloud.inputs.get(*input) {
                 inputs.insert((*input).to_string(), value.clone());
             }

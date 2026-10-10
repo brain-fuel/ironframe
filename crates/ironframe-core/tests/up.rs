@@ -136,7 +136,8 @@ async fn attest_records_the_same_run_that_up_started() {
     .await
     .unwrap();
     let output = directory.path().join("evidence/attestation.json");
-    let (attestation, path) = ops::attest_now(&common::manifest(), directory.path(), "local", Some(&output)).unwrap();
+    let (attestation, path) =
+        ops::attest_now(&common::manifest(), directory.path(), "local", Some(&output)).await.unwrap();
     assert_eq!(path, output);
     assert_eq!(attestation.run.id, report.attestation.run.id);
     assert_eq!(attestation.run.started_at, report.attestation.run.started_at);
@@ -154,7 +155,7 @@ async fn a_reachable_endpoint_is_attested_as_reached() {
     .unwrap();
     let directory = tempfile::tempdir().unwrap();
     let held = std::thread::spawn(move || listener.accept().map(|(stream, _)| stream));
-    let (attestation, _) = ops::attest_now(&manifest, directory.path(), "local", None).unwrap();
+    let (attestation, _) = ops::attest_now(&manifest, directory.path(), "local", None).await.unwrap();
     drop(held.join());
     assert!(attestation.dependencies[0].reached);
     assert_eq!(attestation.dependencies[0].kind, Kind::Real);
