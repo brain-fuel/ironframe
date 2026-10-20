@@ -7,6 +7,7 @@
 pub mod export;
 pub mod model;
 pub mod resolve;
+pub mod run;
 
 pub use model::{Architecture, CalmError, CalmProblem, Decorators};
 pub use resolve::{Resolution, ResolvedTopology, resolve};

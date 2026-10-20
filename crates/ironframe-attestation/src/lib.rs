@@ -36,6 +36,115 @@ pub struct Attestation {
     pub producer: Option<Producer>,
     /// One record per dependency, named uniquely.
     pub dependencies: Vec<DependencyRecord>,
+    /// The architecture the wiring was resolved from, when it was resolved from one: each
+    /// document's digest, the resolved topology's and the elements the run involved.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub architecture: Option<ArchitectureRef>,
+    /// The application the run exercised, when the writer knows it: its node, contract and
+    /// implementation.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub application: Option<ApplicationRef>,
+    /// What the document records: wiring alone, a run under way, or a run that completed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution: Option<Execution>,
+}
+
+/// The architecture a run's wiring was resolved from, by identity. ref:DEC-attestation-architecture
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ArchitectureRef {
+    /// The architecture document, by file name or URL.
+    pub document: String,
+    /// `sha256:` digest of the architecture document.
+    pub digest: String,
+    /// The architecture's own unique-id, when it gives one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unique_id: Option<String>,
+    /// The decorators document, by file name or URL.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub decorators: Option<String>,
+    /// `sha256:` digest of the decorators document.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub decorators_digest: Option<String>,
+    /// `sha256:` digest of the resolved topology: the planned wiring.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub topology_digest: Option<String>,
+    /// The unique-ids of the architecture elements the run involved: the application node, its
+    /// relationships and the dependency nodes they reach.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub elements: Vec<String>,
+}
+
+/// A contract identity: a package, its version or version requirement, and abilities by their
+/// resolved identity. ref:DEC-attestation-architecture
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ContractRef {
+    /// The package.
+    pub package: String,
+    /// An exact version, or a requirement.
+    pub version: String,
+    /// The abilities, such as `unit::ability::Name`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub abilities: Vec<String>,
+}
+
+/// What implemented an application or a dependency in the run. ref:DEC-attestation-architecture
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct Implementation {
+    /// `real-provider`, `fixture` or `application`.
+    pub kind: String,
+    /// The product, such as an image name or a module path.
+    pub product: String,
+    /// Its version.
+    pub version: String,
+    /// The commit it was built from, when known.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub commit: Option<String>,
+    /// The digest of the image it ran from, when known.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image_digest: Option<String>,
+}
+
+/// The application a run exercised. ref:DEC-attestation-architecture
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ApplicationRef {
+    /// The architecture node it is.
+    pub node: String,
+    /// The contract it implements.
+    pub contract: ContractRef,
+    /// What implemented it.
+    pub implementation: Implementation,
+}
+
+/// What an attestation records: the wiring alone, a run under way, or a completed run.
+/// ref:DEC-calm-planned-vs-completed
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ExecutionStatus {
+    /// The environment was wired and its endpoints probed; nothing ran.
+    Wired,
+    /// The run had started when the document was written.
+    Running,
+    /// The run completed; its outcome is recorded.
+    Completed,
+}
+
+/// The run's execution: its status and, once completed, its outcome. ref:DEC-calm-planned-vs-completed
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Execution {
+    /// Wired, running or completed.
+    pub status: ExecutionStatus,
+    /// The command the run executed, as words.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub command: Vec<String>,
+    /// The command's exit code; present exactly when the run completed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub exit_code: Option<i32>,
+    /// When the run completed.
+    #[serde(default, skip_serializing_if = "Option::is_none", with = "time::serde::rfc3339::option")]
+    pub finished_at: Option<OffsetDateTime>,
+    /// The environment run it happened in, such as the run `up` started.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment_run: Option<String>,
 }
 
 /// The run an attestation belongs to: an id chosen by the writer and the times it started and was
@@ -77,6 +186,37 @@ pub struct DependencyRecord {
     /// is `stand-in`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub stand_in: Option<StandIn>,
+    /// The architecture node the dependency is, when the wiring came from an architecture.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub node: Option<String>,
+    /// The relationship the application reached it through.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub edge: Option<String>,
+    /// The contract the dependency's binding had to satisfy.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contract: Option<ContractRef>,
+    /// What implemented the dependency: the real provider or a fixture, with its identity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub implementation: Option<Implementation>,
+    /// What was observed of the dependency when the run completed; present only on a completed run.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub completed: Option<Completed>,
+}
+
+/// A dependency as observed once the run completed: whether it still answered and, for a stand-in,
+/// the digest of its history then. The stand-in's own fields record it as the run began, so the
+/// wiring a reader keys its results by is the same in the running and the completed document.
+/// ref:DEC-calm-planned-vs-completed ref:DEC-history-digest
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct Completed {
+    /// Whether the endpoint answered when the run completed.
+    pub reached: bool,
+    /// `sha256:` digest of the stand-in's history when the run completed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub history_digest: Option<String>,
+    /// How many entries that history held.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub history_entries: Option<u64>,
 }
 
 /// Whether an endpoint served the real dependency or a stand-in, which is what evidence needs to
@@ -115,6 +255,9 @@ pub struct StandIn {
     /// How many entries that history held.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub history_entries: Option<u64>,
+    /// The contract identity the stand-in stands in for, when its binding says.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stands_in_for: Option<ContractRef>,
 }
 
 /// Whether `digest` is `sha256:` followed by 64 lowercase hexadecimal digits, the one digest form
@@ -153,6 +296,9 @@ pub enum AttestationError {
     /// A history digest is not `sha256:` and 64 lowercase hexadecimal digits.
     #[error("dependency {0:?}: stand_in.history_digest must be sha256: followed by 64 lowercase hex digits")]
     BadHistoryDigest(String),
+    /// The execution's outcome disagrees with its status.
+    #[error("execution: {0}")]
+    Execution(String),
 }
 
 impl Attestation {
@@ -165,6 +311,9 @@ impl Attestation {
             run,
             producer: None,
             dependencies: Vec::new(),
+            architecture: None,
+            application: None,
+            execution: None,
         }
     }
 
@@ -205,6 +354,29 @@ impl Attestation {
                 && !is_history_digest(digest)
             {
                 return Err(AttestationError::BadHistoryDigest(dependency.name.clone()));
+            }
+            let completed = self.execution.as_ref().is_some_and(|e| e.status == ExecutionStatus::Completed);
+            if let Some(after) = &dependency.completed {
+                if !completed {
+                    return Err(AttestationError::Execution(format!(
+                        "dependency {:?} records what was observed after the run, but the run has not completed",
+                        dependency.name
+                    )));
+                }
+                if after.history_digest.as_deref().is_some_and(|d| !is_history_digest(d)) {
+                    return Err(AttestationError::BadHistoryDigest(dependency.name.clone()));
+                }
+            }
+        }
+        if let Some(execution) = &self.execution {
+            let completed = execution.status == ExecutionStatus::Completed;
+            if completed != execution.exit_code.is_some() || completed != execution.finished_at.is_some() {
+                return Err(AttestationError::Execution(
+                    "exit_code and finished_at are present exactly when the run completed".into(),
+                ));
+            }
+            if execution.finished_at.is_some_and(|f| f < self.run.started_at) {
+                return Err(AttestationError::Execution("finished_at is before run.started_at".into()));
             }
         }
         Ok(())

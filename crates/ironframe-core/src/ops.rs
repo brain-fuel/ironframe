@@ -62,7 +62,7 @@ pub enum OpsError {
     Io(PathBuf, std::io::Error),
 }
 
-fn io(path: &Path) -> impl FnOnce(std::io::Error) -> OpsError + '_ {
+pub(crate) fn io(path: &Path) -> impl FnOnce(std::io::Error) -> OpsError + '_ {
     move |error| OpsError::Io(path.to_path_buf(), error)
 }
 
@@ -206,7 +206,7 @@ fn write_settings(workdir: &WorkDir, environment: &ResolvedEnvironment) -> Resul
     Ok(path)
 }
 
-fn write_attestation(path: &Path, attestation: &Attestation) -> Result<(), OpsError> {
+pub(crate) fn write_attestation(path: &Path, attestation: &Attestation) -> Result<(), OpsError> {
     write_atomically(path, &attestation.to_json()?).map_err(io(path))?;
     Ok(())
 }
@@ -482,7 +482,7 @@ pub async fn attest_now(
 }
 
 /// The control-plane URL of each twin: the one `up` recorded, else the one the manifest gives.
-fn admin_urls(environment: &ResolvedEnvironment, records: &BTreeMap<String, TwinRecord>) -> BTreeMap<String, String> {
+pub(crate) fn admin_urls(environment: &ResolvedEnvironment, records: &BTreeMap<String, TwinRecord>) -> BTreeMap<String, String> {
     environment
         .dependencies
         .iter()
@@ -497,7 +497,7 @@ fn admin_urls(environment: &ResolvedEnvironment, records: &BTreeMap<String, Twin
 /// Reads each twin's seed and history from its control plane and keeps the history in the working
 /// directory, where the attestation's digest can be checked against it. A twin whose control plane
 /// does not answer is recorded without them. ref:DEC-history-digest
-async fn observe_twins(
+pub(crate) async fn observe_twins(
     environment: &ResolvedEnvironment,
     workdir: &WorkDir,
     records: &BTreeMap<String, TwinRecord>,

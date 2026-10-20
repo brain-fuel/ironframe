@@ -5,7 +5,7 @@
 
 use crate::settings::{BindingKind, ResolvedEnvironment, split_endpoint};
 use crate::twin::{Observation, TwinRecord};
-use ironframe_attestation::{Attestation, DependencyRecord, Kind, Producer, Run};
+use ironframe_attestation::{Attestation, DependencyRecord, Execution, ExecutionStatus, Kind, Producer, Run};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::io::Read;
@@ -68,8 +68,20 @@ pub fn attest(
                 stand_in.history_entries = observation.and_then(|o| o.history_entries);
                 stand_in
             }),
+            node: None,
+            edge: None,
+            contract: None,
+            implementation: None,
+            completed: None,
         })
         .collect();
+    attestation.execution = Some(Execution {
+        status: ExecutionStatus::Wired,
+        command: Vec::new(),
+        exit_code: None,
+        finished_at: None,
+        environment_run: None,
+    });
     attestation
 }
 

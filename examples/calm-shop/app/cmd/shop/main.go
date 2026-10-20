@@ -3,7 +3,8 @@
 // adoption it published and read back. It reads its settings as the adapter does; it is the same
 // program whether Ironframe runs it, another tool deploys it or a person runs it by hand.
 //
-//	shop <pet-name> <customer>
+//	shop [<pet-name> <customer>]   adopt a pet
+//	shop audit                     count the adoptions on the log, as the audit application
 package main
 
 import (
@@ -15,6 +16,19 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "audit" {
+		count, err := adoptions.Audit()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "shop audit: %v\n", err)
+			os.Exit(1)
+		}
+		if count == 0 {
+			fmt.Fprintln(os.Stderr, "shop audit: the log holds no adoption")
+			os.Exit(1)
+		}
+		fmt.Printf("{\"adoptions\":%d}\n", count)
+		return
+	}
 	name, customer := "rex", "ada"
 	if len(os.Args) == 3 {
 		name, customer = os.Args[1], os.Args[2]

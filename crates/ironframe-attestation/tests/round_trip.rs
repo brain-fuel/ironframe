@@ -26,6 +26,11 @@ fn sample() -> Attestation {
                 conformance: "unrated".into(),
                 ..StandIn::default()
             }),
+            node: None,
+            edge: None,
+            contract: None,
+            implementation: None,
+            completed: None,
         },
         DependencyRecord {
             name: "payments".into(),
@@ -33,6 +38,11 @@ fn sample() -> Attestation {
             reached: false,
             kind: Kind::Real,
             stand_in: None,
+            node: None,
+            edge: None,
+            contract: None,
+            implementation: None,
+            completed: None,
         },
     ];
     attestation

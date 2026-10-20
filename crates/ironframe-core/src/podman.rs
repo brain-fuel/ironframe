@@ -170,6 +170,32 @@ impl<'a> Podman<'a> {
             .map_err(|e| PodmanError::Failed { command: format!("image inspect {image}"), reason: e.to_string() })
     }
 
+    /// The digest of an image that is present, `sha256:<hex>`, the identity of what a container
+    /// ran from; none when podman does not have it. ref:DEC-attestation-architecture
+    pub fn image_digest(&self, image: &str) -> Option<String> {
+        let output = self.run(&["image", "inspect", "--format", "{{.Digest}}", image], false).ok()?;
+        let digest = output.stdout.trim();
+        (output.success && digest.starts_with("sha256:")).then(|| digest.to_string())
+    }
+
+    /// Whether podman has the image.
+    pub fn has_image(&self, image: &str) -> bool {
+        self.run(&["image", "exists", image], false).is_ok_and(|o| o.success)
+    }
+
+    /// Builds an image from a context directory, with its Containerfile if one is named.
+    /// ref:DEC-calm-deployment
+    pub fn build(&self, context: &Path, containerfile: Option<&Path>, tag: &str) -> Result<(), PodmanError> {
+        let context = context.to_string_lossy();
+        let mut args = vec!["build", "-t", tag];
+        let file = containerfile.map(|f| f.to_string_lossy().into_owned());
+        if let Some(file) = &file {
+            args.extend(["-f", file.as_str()]);
+        }
+        args.push(&context);
+        self.run_checked(&args, true).map(|_| ())
+    }
+
     /// Brings the compose project up in the background.
     pub fn compose_up(&self, file: &Path, project: &str) -> Result<(), PodmanError> {
         let file = file.to_string_lossy();

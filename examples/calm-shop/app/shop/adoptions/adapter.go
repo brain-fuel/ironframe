@@ -247,3 +247,45 @@ func (handler *AdoptionsHandler) Lookup(value0 int64) LawSpecMaybe[Adoption] {
 	}
 	return LawSpecJust(Adoption(*found))
 }
+
+// Audit reads every adoption on the topic and returns how many there are, failing on a record that
+// is not an adoption. The audit application runs it; it is not part of an ability, so no law
+// depends on it.
+func Audit() (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	ends, err := kadm.NewClient(kafka()).ListEndOffsets(ctx, topic)
+	if err != nil {
+		return 0, err
+	}
+	end, _ := ends.Lookup(topic, 0)
+	if end.Err != nil {
+		return 0, end.Err
+	}
+	reader, err := kgo.NewClient(
+		kgo.SeedBrokers(strings.Split(setting("KAFKA_BOOTSTRAP_SERVERS"), ",")...),
+		kgo.ClientID("calm-shop-audit"),
+		kgo.ConsumePartitions(map[string]map[int32]kgo.Offset{topic: {0: kgo.NewOffset().AtStart()}}),
+	)
+	if err != nil {
+		return 0, err
+	}
+	defer reader.Close()
+	count := 0
+	var bad error
+	for next := int64(0); next < end.Offset; {
+		fetches := reader.PollFetches(ctx)
+		if errs := fetches.Errors(); len(errs) > 0 {
+			return count, errs[0].Err
+		}
+		fetches.EachRecord(func(record *kgo.Record) {
+			next = record.Offset + 1
+			var decoded adoptionRecord
+			if err := json.Unmarshal(record.Value, &decoded); err != nil {
+				bad = fmt.Errorf("offset %d is not an adoption: %w", record.Offset, err)
+			}
+			count++
+		})
+	}
+	return count, bad
+}
