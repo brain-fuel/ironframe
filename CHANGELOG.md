@@ -8,6 +8,36 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- CALM 1.2 architectures as the source of wiring (`--architecture`): the
+  architecture is checked against the embedded CALM 1.2 meta schemas (and by
+  `calm validate` with `validate --calm-cli`); `ironframe-contract`,
+  `ironframe-binding` and `ironframe-environment` decorators, each a JSON
+  Schema extending CALM's base decorator, give nodes and edges their LawSpec
+  contract identities and nodes their real or twin binding per environment.
+- `ironframe resolve`: one environment's resolved topology, or a refusal
+  naming every unresolved, ambiguous or incompatible element (a twin's
+  stand-in package, version range, abilities and accepted conformance levels
+  are checked against its node's contract).
+- `ironframe export topology | diagram | settings | tofu | compose`, each from
+  the resolved topology and without deploying: Mermaid and Graphviz diagrams
+  marking real and twin, an annotated CALM architecture and its rendering by
+  the CALM CLI's block-architecture widget, per-application settings, the
+  OpenTofu root.
+- `ironframe run`, `ironframe app` (managed applications, as a process or a
+  podman image) and `ironframe attest --app | --complete` (applications
+  deployed by other tooling): settings injected, the run attested as it begins
+  and when it completes.
+- The attestation, still version 1, gains optional `architecture`,
+  `application` and `execution` (wired, running, completed), and per
+  dependency `node`, `edge`, `contract`, `implementation` (real provider or
+  fixture), `completed` and `stand_in.stands_in_for`.
+- `ironframe twin <dependency> replay`.
+- `examples/calm-shop` and `make e2e-calm`: one Go application's LawSpec laws
+  run unchanged against twin, real and mixed bindings of Kafka and a Petstore
+  API, with a shared dependency, faults, resets and deterministic replay, and
+  `lawspec evidence` reading each completed attestation.
+- `proposals/lawspec-completed-run-attestations.md`.
+
 - The manifest, `ironframe.yaml`: environments, and per environment each
   dependency bound to `real` (endpoint, credentials reference, optionally an
   image to run locally) or `twin` (image, version, configuration, declared

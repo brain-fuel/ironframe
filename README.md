@@ -35,6 +35,19 @@ and Ironframe never contains contracts or twin internals.
   stand-in, with the stand-in's level, seed and the SHA-256 digest of its
   history, for tools such as `lawspec evidence`.
 
+- **CALM architectures as the source of wiring.** A CALM 1.2 architecture
+  names the services and the edges between them; Ironframe's decorators,
+  attached by unique-id, give each node and edge its LawSpec contract identity
+  and each node its real or twin binding per environment. `ironframe resolve`
+  refuses unresolved, ambiguous or incompatible bindings by element; diagrams
+  (Mermaid, Graphviz, or CALM's own widgets), each application's settings and
+  the OpenTofu root are exported from the one resolved topology without
+  deploying anything; `ironframe run` and `ironframe app` run an application
+  with its settings and attest the completed run with architecture, contract,
+  implementation and run identities, which `lawspec evidence` reads.
+  `examples/calm-shop` runs one application's unchanged laws against real,
+  twin and mixed bindings: `docs/how-to/run-the-calm-demonstrations.md`.
+
 ## Quick start
 
 LawTwin's images, `lawtwin/kafka:0.1.0` and `lawtwin/http:0.1.0`, are built in
@@ -67,6 +80,9 @@ walks through both, and `make e2e` runs them as a test.
 | `schema/` | The JSON Schemas of the manifest and the attestation. |
 | `examples/kafka-app` | A tiny application reading its Kafka bootstrap servers from configuration, its manifest, and LawTwin's conformance report for the Kafka twin. |
 | `examples/petstore-app` | A tiny application reading its Petstore API's URL from configuration, its manifest, and a conformance report for the Petstore twin. |
+| `examples/calm-shop` | A Go application whose LawSpec laws use Kafka and Petstore abilities, its CALM architecture and decorators for twin, real, mixed and staging environments. |
+| `schema/calm/` | The Ironframe decorator schemas and the CALM 1.2 meta schemas they extend. |
+| `proposals/` | Changes proposed to the family's other projects. |
 | `docs/` | Tutorials, how-to guides, reference and explanation. |
 
 ## Developing
