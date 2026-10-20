@@ -32,7 +32,11 @@ pub const ATTESTATION_VARIABLE: &str = "IRONFRAME_ATTESTATION";
 pub const RUN_VARIABLE: &str = "IRONFRAME_RUN_ID";
 
 fn contract_ref(identity: &ContractIdentity) -> ContractRef {
-    ContractRef { package: identity.package.clone(), version: identity.version.clone(), abilities: identity.abilities.clone() }
+    ContractRef {
+        package: identity.package.clone(),
+        version: identity.version.clone(),
+        abilities: identity.abilities.clone(),
+    }
 }
 
 /// The application `node` of the resolution, or an error naming those there are.
@@ -108,7 +112,11 @@ pub async fn begin(
             (None, provider) => Implementation {
                 // A real provider: the one the binding names, else its image, else its endpoint.
                 kind: "real-provider".into(),
-                product: provider.as_ref().map(|p| p.name.clone()).or_else(|| wired.image.clone()).unwrap_or_else(|| wired.endpoint.clone()),
+                product: provider
+                    .as_ref()
+                    .map(|p| p.name.clone())
+                    .or_else(|| wired.image.clone())
+                    .unwrap_or_else(|| wired.endpoint.clone()),
                 version: provider.as_ref().map(|p| p.version.clone()).unwrap_or_else(|| "unknown".into()),
                 commit: None,
                 image_digest,
@@ -298,13 +306,21 @@ pub async fn run_managed(
             let image = crate::settings::qualify_image(image);
             if !podman.has_image(&image) {
                 let Some(context) = build_context else {
-                    return Err(OpsError::Usage(format!("podman has no image {image} and the binding names no build context")));
+                    return Err(OpsError::Usage(format!(
+                        "podman has no image {image} and the binding names no build context"
+                    )));
                 };
                 let context = resolution.dir.join(context);
                 podman.build(&context, containerfile.as_ref().map(|f| context.join(f)).as_deref(), &image)?;
             }
             let settings = settings_of(resolution, node)?;
-            let mut words = vec![podman.program.to_string_lossy().into_owned(), "run".into(), "--rm".into(), "--network".into(), "host".into()];
+            let mut words = vec![
+                podman.program.to_string_lossy().into_owned(),
+                "run".into(),
+                "--rm".into(),
+                "--network".into(),
+                "host".into(),
+            ];
             for (key, value) in &settings {
                 words.push("-e".into());
                 words.push(format!("{key}={value}"));

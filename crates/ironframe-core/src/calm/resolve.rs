@@ -256,6 +256,8 @@ pub struct Resolution {
     pub manifest: Manifest,
     /// The directory relative paths in bindings are read against: the decorators'.
     pub dir: PathBuf,
+    /// The architecture it was resolved from.
+    pub architecture: Architecture,
 }
 
 /// The contract decorator's data, by what it applies to. ref:DEC-calm-decorators
@@ -266,6 +268,10 @@ enum ContractData {
     Dependency { package: String, version: String, abilities: Vec<String>, conformance: Option<Accept> },
     Connection { consumes: Vec<String>, settings: BTreeMap<String, String> },
 }
+
+/// A dependency node's contract as read: package, version requirement, abilities and the
+/// conformance levels it accepts.
+type DependencyContract = (String, String, Vec<String>, Option<Vec<String>>);
 
 #[derive(Debug, Clone, Deserialize)]
 struct Accept {
@@ -338,10 +344,8 @@ pub fn resolve(
 
     // The environment.
     let environments: Vec<&Decorator> = decorators.of_type(ENVIRONMENT_TYPE).collect();
-    let declared: BTreeSet<String> = environments
-        .iter()
-        .filter_map(|d| d.data["environment"].as_str().map(str::to_string))
-        .collect();
+    let declared: BTreeSet<String> =
+        environments.iter().filter_map(|d| d.data["environment"].as_str().map(str::to_string)).collect();
     let mine: Vec<&&Decorator> =
         environments.iter().filter(|d| d.data["environment"].as_str() == Some(environment)).collect();
     let environment_data = match mine.as_slice() {
@@ -389,7 +393,10 @@ pub fn resolve(
         }
     };
     if !is_name(environment) {
-        found.push(calm_problem(format!("environment {environment:?}"), "an environment name is lowercase letters, digits and -"));
+        found.push(calm_problem(
+            format!("environment {environment:?}"),
+            "an environment name is lowercase letters, digits and -",
+        ));
     }
 
     // Contracts, one per element.
@@ -416,14 +423,17 @@ pub fn resolve(
 
     // Classify nodes, and check contracts are on the right kind of element.
     let mut applications: BTreeMap<String, (String, String)> = BTreeMap::new();
-    let mut dependencies: BTreeMap<String, (String, String, Vec<String>, Option<Vec<String>>)> = BTreeMap::new();
+    let mut dependencies: BTreeMap<String, DependencyContract> = BTreeMap::new();
     for (element, (decorator, data)) in &contracts {
         let at = format!("decorator {decorator:?}");
         let is_node = architecture.node(element).is_some();
         match data {
             ContractData::Application { package, version } => {
                 if !is_node {
-                    found.push(calm_problem(&at, format!("an application contract applies to a node, and {element:?} is not one")));
+                    found.push(calm_problem(
+                        &at,
+                        format!("an application contract applies to a node, and {element:?} is not one"),
+                    ));
                 } else if semver::Version::parse(version).is_err() {
                     found.push(calm_problem(&at, format!("version {version:?} is not an exact semantic version")));
                 } else {
@@ -432,7 +442,10 @@ pub fn resolve(
             }
             ContractData::Dependency { package, version, abilities, conformance } => {
                 if !is_node {
-                    found.push(calm_problem(&at, format!("a dependency contract applies to a node, and {element:?} is not one")));
+                    found.push(calm_problem(
+                        &at,
+                        format!("a dependency contract applies to a node, and {element:?} is not one"),
+                    ));
                     continue;
                 }
                 if semver::VersionReq::parse(version).is_err() {
@@ -441,7 +454,10 @@ pub fn resolve(
                 }
                 for ability in abilities {
                     if !is_ability_identity(ability) {
-                        found.push(calm_problem(&at, format!("{ability:?} is not an ability identity, unit::ability::Name")));
+                        found.push(calm_problem(
+                            &at,
+                            format!("{ability:?} is not an ability identity, unit::ability::Name"),
+                        ));
                     } else if !unit_in_package(ability_unit(ability), package) {
                         found.push(calm_problem(&at, format!("{ability} is not an ability of package {package}")));
                     }
@@ -454,12 +470,20 @@ pub fn resolve(
                 }
                 dependencies.insert(
                     element.clone(),
-                    (package.clone(), version.clone(), abilities.clone(), conformance.as_ref().map(|c| c.accept.clone())),
+                    (
+                        package.clone(),
+                        version.clone(),
+                        abilities.clone(),
+                        conformance.as_ref().map(|c| c.accept.clone()),
+                    ),
                 );
             }
             ContractData::Connection { .. } => {
                 if architecture.relationship(element).is_none() {
-                    found.push(calm_problem(&at, format!("a connection contract applies to a relationship, and {element:?} is not one")));
+                    found.push(calm_problem(
+                        &at,
+                        format!("a connection contract applies to a relationship, and {element:?} is not one"),
+                    ));
                 }
             }
         }
@@ -477,7 +501,10 @@ pub fn resolve(
         };
         let RelationshipKind::Connects { source, destination } = &relationship.kind else {
             if connection.is_some() {
-                found.push(calm_problem(&at, "carries a connection contract, but only a connects relationship reaches a dependency"));
+                found.push(calm_problem(
+                    &at,
+                    "carries a connection contract, but only a connects relationship reaches a dependency",
+                ));
             }
             continue;
         };
@@ -536,7 +563,10 @@ pub fn resolve(
         let at = format!("decorator {:?}", decorator.id);
         let bound_environment = decorator.data["environment"].as_str().unwrap_or_default();
         if !declared.contains(bound_environment) {
-            found.push(calm_problem(&at, format!("binds environment {bound_environment:?}, which no ironframe-environment decorator declares")));
+            found.push(calm_problem(
+                &at,
+                format!("binds environment {bound_environment:?}, which no ironframe-environment decorator declares"),
+            ));
             continue;
         }
         if bound_environment != environment {
@@ -547,7 +577,10 @@ pub fn resolve(
             let is_dependency = dependencies.contains_key(element);
             let says_application = decorator.data.get("application").is_some();
             if !is_application && !is_dependency {
-                found.push(calm_problem(&at, format!("binds {element:?}, which has no application or dependency contract")));
+                found.push(calm_problem(
+                    &at,
+                    format!("binds {element:?}, which has no application or dependency contract"),
+                ));
                 continue;
             }
             if is_application && !says_application {
@@ -561,7 +594,10 @@ pub fn resolve(
             if let Some(other) = bindings.insert(element.clone(), decorator) {
                 found.push(calm_problem(
                     format!("node {element:?}"),
-                    format!("has two bindings in environment {environment:?}, decorators {:?} and {:?}; it is ambiguous", other.id, decorator.id),
+                    format!(
+                        "has two bindings in environment {environment:?}, decorators {:?} and {:?}; it is ambiguous",
+                        other.id, decorator.id
+                    ),
                 ));
             }
         }
@@ -574,13 +610,17 @@ pub fn resolve(
         let at = format!("node {node:?}");
         let consumers = edges.iter().filter(|(_, _, d, _, _)| d == node).count();
         if consumers == 0 {
-            found.push(calm_problem(&at, "has a dependency contract, but no application's connects relationship reaches it"));
+            found.push(calm_problem(
+                &at,
+                "has a dependency contract, but no application's connects relationship reaches it",
+            ));
         }
         let Some(decorator) = bindings.get(node) else {
             found.push(calm_problem(&at, format!("has no binding in environment {environment:?}; it is unresolved")));
             continue;
         };
-        let contract = ContractIdentity { package: package.clone(), version: requirement.clone(), abilities: abilities.clone() };
+        let contract =
+            ContractIdentity { package: package.clone(), version: requirement.clone(), abilities: abilities.clone() };
         let binding_at = format!("decorator {:?}", decorator.id);
         if let Some(real) = decorator.data.get("real") {
             let mut fields = real.clone();
@@ -609,7 +649,8 @@ pub fn resolve(
         let stands_in_for: ContractIdentity = match stands_in_for.map(serde_json::from_value) {
             Some(Ok(identity)) => identity,
             _ => {
-                found.push(calm_problem(&binding_at, "a twin says which contract it stands in for under stands-in-for"));
+                found
+                    .push(calm_problem(&binding_at, "a twin says which contract it stands in for under stands-in-for"));
                 continue;
             }
         };
@@ -621,7 +662,15 @@ pub fn resolve(
             }
         };
         let before = found.len();
-        found.extend(compatibility_problems(&binding_at, node, &contract, accept.as_deref(), &mut twin, &stands_in_for, dir));
+        found.extend(compatibility_problems(
+            &binding_at,
+            node,
+            &contract,
+            accept.as_deref(),
+            &mut twin,
+            &stands_in_for,
+            dir,
+        ));
         if found.len() > before {
             continue;
         }
@@ -709,7 +758,10 @@ pub fn resolve(
             {
                 found.push(calm_problem(
                     format!("relationship {:?}", edge.relationship),
-                    format!("reads setting {key} of {:?} as {template:?}, but another relationship reads it as {other:?}", edge.destination),
+                    format!(
+                        "reads setting {key} of {:?} as {template:?}, but another relationship reads it as {other:?}",
+                        edge.destination
+                    ),
                 ));
             }
         }
@@ -765,7 +817,7 @@ pub fn resolve(
         dependencies: resolved_dependencies,
         edges: resolved_edges,
     };
-    Ok(Resolution { topology, manifest, dir: dir.to_path_buf() })
+    Ok(Resolution { topology, manifest, dir: dir.to_path_buf(), architecture: architecture.clone() })
 }
 
 /// Names a problem of the lowered manifest by the CALM element and decorator it came from.
@@ -776,7 +828,10 @@ fn translate(at: &str, message: &str, environment: &str, dependencies: &[Resolve
         let field = rest.strip_prefix(node).unwrap_or_default().trim_start_matches('.');
         let decorator = dependencies.iter().find(|d| d.node == node).map(|d| d.binding.clone()).unwrap_or_default();
         return calm_problem(
-            format!("binding of node {node:?} in environment {environment:?} (decorator {decorator:?}){}", if field.is_empty() { String::new() } else { format!(" at {field}") }),
+            format!(
+                "binding of node {node:?} in environment {environment:?} (decorator {decorator:?}){}",
+                if field.is_empty() { String::new() } else { format!(" at {field}") }
+            ),
             message,
         );
     }
@@ -784,7 +839,10 @@ fn translate(at: &str, message: &str, environment: &str, dependencies: &[Resolve
         let node = rest.split('.').next().unwrap_or(rest);
         return calm_problem(format!("settings of node {node:?}"), message);
     }
-    calm_problem(format!("environment {environment:?}{}", if at.is_empty() { String::new() } else { format!(" at {at}") }), message)
+    calm_problem(
+        format!("environment {environment:?}{}", if at.is_empty() { String::new() } else { format!(" at {at}") }),
+        message,
+    )
 }
 
 /// How a twin fails to satisfy the contract of the node it is bound to: another package, a
@@ -818,21 +876,29 @@ fn compatibility_problems(
                 stands_in_for.package, stands_in_for.version, contract.version
             ),
         )),
-        (Err(_), _) => found.push(calm_problem(at, format!("stands-in-for version {:?} is not an exact semantic version", stands_in_for.version))),
+        (Err(_), _) => found.push(calm_problem(
+            at,
+            format!("stands-in-for version {:?} is not an exact semantic version", stands_in_for.version),
+        )),
         _ => {}
     }
     for ability in &contract.abilities {
         if !stands_in_for.abilities.contains(ability) {
             found.push(calm_problem(
                 at,
-                format!("node {node:?} requires ability {ability}, which the twin does not stand in for; it is incompatible"),
+                format!(
+                    "node {node:?} requires ability {ability}, which the twin does not stand in for; it is incompatible"
+                ),
             ));
         }
     }
     let mut report: Option<ConformanceReport> = None;
     if let Some(relative) = twin.conformance.report() {
         let path = dir.join(relative);
-        match std::fs::read_to_string(&path).map_err(|e| format!("cannot read it: {e}")).and_then(|t| ConformanceReport::parse(&t)) {
+        match std::fs::read_to_string(&path)
+            .map_err(|e| format!("cannot read it: {e}"))
+            .and_then(|t| ConformanceReport::parse(&t))
+        {
             Ok(read) => {
                 for problem in crate::manifest::report_problems(at, twin, &read) {
                     found.push(calm_problem(at, problem.message));
@@ -857,7 +923,10 @@ fn compatibility_problems(
             (None, None) => false,
         };
         if !ok {
-            let has = report.as_ref().map(ConformanceReport::describe).or_else(|| twin.conformance.declared().map(|d| format!("level {d}")));
+            let has = report
+                .as_ref()
+                .map(ConformanceReport::describe)
+                .or_else(|| twin.conformance.declared().map(|d| format!("level {d}")));
             found.push(calm_problem(
                 at,
                 format!(

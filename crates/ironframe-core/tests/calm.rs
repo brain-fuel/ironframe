@@ -13,7 +13,8 @@ fn example() -> PathBuf {
 #[test]
 fn the_example_resolves_in_every_environment() {
     for environment in ["twin", "real", "mixed", "staging"] {
-        let resolution = load_and_resolve(&example(), None, environment).unwrap_or_else(|e| panic!("{environment}: {e}"));
+        let resolution =
+            load_and_resolve(&example(), None, environment).unwrap_or_else(|e| panic!("{environment}: {e}"));
         println!("{}", serde_json::to_string_pretty(&resolution.topology).unwrap());
     }
 }

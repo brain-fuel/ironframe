@@ -129,7 +129,12 @@ pub fn dot(topology: &ResolvedTopology) -> String {
     }
     for edge in &topology.edges {
         let abilities: Vec<&str> = edge.consumes.iter().map(|a| short_ability(a)).collect();
-        out.push_str(&format!("  \"{}\" -> \"{}\" [label=\"{}\"];\n", edge.source, edge.destination, abilities.join(", ")));
+        out.push_str(&format!(
+            "  \"{}\" -> \"{}\" [label=\"{}\"];\n",
+            edge.source,
+            edge.destination,
+            abilities.join(", ")
+        ));
     }
     out.push_str("}\n");
     out
@@ -178,7 +183,7 @@ pub fn annotated_architecture(document: &Value, topology: &ResolvedTopology) -> 
     annotated
 }
 
-/// The template `calm template` renders the annotated architecture with: CALM's own
+/// The template `calm docify` renders the annotated architecture with: CALM's own
 /// block-architecture widget, a Mermaid diagram of every node and relationship. ref:DEC-calm-exports
 pub const CALM_DIAGRAM_TEMPLATE: &str = "{{block-architecture this}}\n";
 
@@ -191,8 +196,14 @@ pub fn mermaid_problems(topology: &ResolvedTopology, diagram: &str) -> Vec<Strin
         match diagram.lines().find(|l| l.trim_start().starts_with(&start)) {
             None => found.push(format!("the diagram does not draw dependency {}", dependency.node)),
             Some(line) => {
-                if !line.ends_with(&format!(":::{}", dependency.kind.as_str())) || !line.contains(&binding_label(dependency)) {
-                    found.push(format!("the diagram draws {} other than as {}", dependency.node, binding_label(dependency)));
+                if !line.ends_with(&format!(":::{}", dependency.kind.as_str()))
+                    || !line.contains(&binding_label(dependency))
+                {
+                    found.push(format!(
+                        "the diagram draws {} other than as {}",
+                        dependency.node,
+                        binding_label(dependency)
+                    ));
                 }
             }
         }

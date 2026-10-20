@@ -293,7 +293,9 @@ impl Architecture {
             let named: Vec<&String> = match &relationship.kind {
                 RelationshipKind::Connects { source, destination } => vec![source, destination],
                 RelationshipKind::Interacts { actor, nodes } => std::iter::once(actor).chain(nodes).collect(),
-                RelationshipKind::Contains { container, nodes, .. } => std::iter::once(container).chain(nodes).collect(),
+                RelationshipKind::Contains { container, nodes, .. } => {
+                    std::iter::once(container).chain(nodes).collect()
+                }
                 RelationshipKind::Options => Vec::new(),
             };
             for node in named {
@@ -359,7 +361,11 @@ fn read_relationship(value: &Value) -> Relationship {
     } else if let Some((kind, contains)) =
         ["composed-of", "deployed-in"].iter().find_map(|k| kinds.get(*k).map(|v| (k.to_string(), v)))
     {
-        RelationshipKind::Contains { kind, container: text(contains, "container").unwrap_or_default(), nodes: texts(contains, "nodes") }
+        RelationshipKind::Contains {
+            kind,
+            container: text(contains, "container").unwrap_or_default(),
+            nodes: texts(contains, "nodes"),
+        }
     } else {
         RelationshipKind::Options
     };
@@ -426,7 +432,12 @@ impl Decorators {
             Value::Array(items) => items.clone(),
             Value::Object(map) => match map.get("decorators") {
                 Some(Value::Array(items)) => items.clone(),
-                _ => return Err(fail(vec![calm_problem("", "expected an array of decorators, or an object with one under \"decorators\"")])),
+                _ => {
+                    return Err(fail(vec![calm_problem(
+                        "",
+                        "expected an array of decorators, or an object with one under \"decorators\"",
+                    )]));
+                }
             },
             _ => return Err(fail(vec![calm_problem("", "expected an array of decorators")])),
         };
@@ -475,7 +486,11 @@ impl Decorators {
                 data: item["data"].clone(),
             });
         }
-        if problems.is_empty() { Ok(Decorators { path: None, digest: digest(bytes), items }) } else { Err(fail(problems)) }
+        if problems.is_empty() {
+            Ok(Decorators { path: None, digest: digest(bytes), items })
+        } else {
+            Err(fail(problems))
+        }
     }
 
     /// The decorators of one type.

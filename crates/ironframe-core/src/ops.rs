@@ -482,7 +482,10 @@ pub async fn attest_now(
 }
 
 /// The control-plane URL of each twin: the one `up` recorded, else the one the manifest gives.
-pub(crate) fn admin_urls(environment: &ResolvedEnvironment, records: &BTreeMap<String, TwinRecord>) -> BTreeMap<String, String> {
+pub(crate) fn admin_urls(
+    environment: &ResolvedEnvironment,
+    records: &BTreeMap<String, TwinRecord>,
+) -> BTreeMap<String, String> {
     environment
         .dependencies
         .iter()

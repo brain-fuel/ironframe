@@ -241,6 +241,18 @@ impl ControlPlane {
         self.request("GET", &path, None).await?.ok()
     }
 
+    /// `POST /v1/history/replay`: replays a history, JSON lines or a JSON array, through a fresh
+    /// model, or the twin's own history when none is given, and reports the answers that differ and
+    /// the laws that do not hold. ref:DEC-twin-control-plane
+    pub async fn replay(&self, history: Option<String>) -> Result<String, TwinError> {
+        self.request("POST", "/v1/history/replay", history).await?.ok()
+    }
+
+    /// `DELETE /v1/reset`: starts again from an empty state with the same seed.
+    pub async fn reset(&self) -> Result<String, TwinError> {
+        self.request("DELETE", "/v1/reset", None).await?.ok()
+    }
+
     /// `POST /v1/seed`: starts again, empty, with a new seed.
     pub async fn set_seed(&self, seed: u64) -> Result<String, TwinError> {
         self.request("POST", "/v1/seed", Some(serde_json::json!({ "seed": seed }).to_string())).await?.ok()
