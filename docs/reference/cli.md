@@ -17,8 +17,21 @@ ironframe [-f <manifest>] plan <environment>
 ironframe [-f <manifest>] sync <environment>
 ironframe [-f <manifest>] attest <environment> [--output <path>]
 ironframe [-f <manifest>] twin <dependency> [--env <environment>] <action>
+ironframe -a <architecture> [--decorators <file>] validate [--calm-cli]
+ironframe resolve <architecture> --env <environment> [--output <path>]
+ironframe -a <architecture> export topology | diagram | settings | tofu | compose --env <environment> [--format <f>] [--app <node>] [--output <path>]
+ironframe -a <architecture> run --env <environment> --app <node> [--dir <dir>] [--attestation <path>] -- <command>...
+ironframe -a <architecture> app <node> --env <environment> [--attestation <path>] [-- <args>...]
+ironframe -a <architecture> attest <environment> --app <node> | --complete <file> [--exit-code <n>]
+ironframe schema contract | binding | environment
 ironframe --version
 ```
+
+`-a` names a CALM 1.2 architecture to read instead of a manifest; its
+decorators are `<name>.decorators.json` beside it unless `--decorators` names
+them. Every manifest verb takes `-a`, with dependencies named by their node's
+unique-id, and keeps what it generates in `.ironframe/<environment>/` beside
+the decorators. ref:DEC-manifest-compat
 
 `-f` names the manifest; the default is `ironframe.yaml` in the current
 directory. Ironframe keeps what it generates in `.ironframe/<environment>/`
@@ -37,6 +50,12 @@ beside the manifest. ref:DEC-manifest-shape
 | `sync` | Writes the environment's settings to its sync targets. ref:DEC-config-sync |
 | `attest` | Writes the attestation now, for the run `up` started, reading each twin's seed and history digest from its control plane, and lists each dependency: kind, whether it was reached, endpoint, and for a stand-in its product, version, level, seed and digest. ref:DEC-attestation-format ref:DEC-history-digest |
 | `twin` | Drives the twin standing in for a dependency through its control plane; below. ref:DEC-twin-control-plane |
+| `validate -a` | Checks the architecture against CALM 1.2, its decorators against their schemas, and resolves every environment they declare; `--calm-cli` also runs `calm validate`. ref:DEC-calm-architecture |
+| `resolve` | Prints the [resolved topology](resolved-topology.md) of an environment, or refuses it naming every element at fault; exit 2. ref:DEC-calm-refusals |
+| `export` | Writes the topology, a diagram, settings, the OpenTofu root or the compose file, without deploying anything; see [resolved topology](resolved-topology.md#exports). ref:DEC-calm-exports |
+| `run` | Runs a command as the application node, its settings and `IRONFRAME_ATTESTATION` (the running attestation's path) and `IRONFRAME_RUN_ID` in its environment; writes the attestation as `running` before it starts and `completed` after, under `.ironframe/<environment>/runs/` and at `--attestation`; exits with the command's code. ref:DEC-calm-run |
+| `app` | Runs a managed application as its binding says, a process in its directory or a podman image on the host's network (built first when podman lacks it), and attests it as `run` does. ref:DEC-calm-deployment |
+| `attest --app`, `--complete` | Begins a run of an application deployed by other tooling (a `running` attestation for it to read), and completes it with `--exit-code` after it ends. |
 
 `up` also sets up each twin that has `admin`: it waits up to `--wait` seconds
 for the control plane's `/healthz`, sets the seed when the twin reports
@@ -63,6 +82,7 @@ JSON. ref:lawtwin-control-plane
 | `seed [<n>]` | `GET` or `POST /v1/seed` | Shows the seed, or starts again from an empty state with a new one. |
 | `reset` | `DELETE /v1/reset` | Starts again from an empty state with the same seed. |
 | `laws` | `GET /v1/laws` | Checks the contract's laws; exit 1 if one does not hold. |
+| `replay [<file> \| -]` | `POST /v1/history/replay` | Replays the twin's own history, or a file's (JSON lines or an array), through a fresh model; exit 1 on a divergence or a broken law. |
 
 ## Exit status
 
@@ -81,6 +101,7 @@ answer, as `lawtwin` does.
 | --- | --- |
 | `IRONFRAME_PODMAN` | The podman binary. Otherwise `podman` on `PATH`, then `/opt/podman/bin/podman`. |
 | `IRONFRAME_TOFU` | The OpenTofu binary. Otherwise `tofu`, then `terraform`, on `PATH`. |
+| `IRONFRAME_CALM` | The FINOS CALM CLI, for `validate --calm-cli` and `export diagram --format calm-template`. Otherwise `calm` on `PATH`. ref:calm-cli |
 | `AWS_*`, `AWS_ENDPOINT_URL` | AWS credentials and endpoint for `aws_appconfig`, as the AWS CLI reads them. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Google credentials for `gcp_parameter_manager`, or Application Default Credentials. |
 | `AZURE_APPCONFIG_CONNECTION_STRING` | The App Configuration store's connection string, or the variable a target names. |

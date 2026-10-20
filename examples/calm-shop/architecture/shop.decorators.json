@@ -387,14 +387,15 @@
         "environment": "real",
         "application": {
           "managed": {
-            "process": {
-              "command": [
-                "go",
-                "run",
-                "./cmd/shop",
+            "image": {
+              "image": "localhost/calm-shop:0.1.0",
+              "args": [
                 "audit"
               ],
-              "dir": "../app"
+              "build": {
+                "context": "../app",
+                "containerfile": "Containerfile"
+              }
             }
           }
         }

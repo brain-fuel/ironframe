@@ -162,3 +162,27 @@ REQ-end-to-end-with-twins:
   kind: requirement
   title: ironframe up local starts LawTwin's Kafka and HTTP twins in podman, both example applications run against them, ironframe attest lists each stand-in with its level, seed and history digest, and ironframe down removes them
   locator: docs/tutorials/wire-the-kafka-example.md
+calm-1-2:
+  kind: article
+  title: FINOS Common Architecture Language Model (CALM) 1.2 meta schemas
+  locator: https://calm.finos.org/release/1.2/meta/calm.json
+calm-decorators:
+  kind: article
+  title: CALM decorators, typed data attached to architecture elements by unique-id
+  locator: https://calm.finos.org/core-concepts/decorators/
+calm-cli:
+  kind: package
+  title: The FINOS CALM CLI, @finos/calm-cli, version 1.64.0
+  locator: https://calm.finos.org/working-with-calm/cli/
+semver-cargo:
+  kind: article
+  title: Cargo's semantic version requirements, as the semver crate reads them
+  locator: https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#version-requirement-syntax
+lawspec-pre-1-0-path:
+  kind: article
+  title: LawSpec pre-1.0 review, approved cross-project path to 1.0 (20 October 2026)
+  locator: https://github.com/brain-fuel/lawspec/blob/main/LAWSPEC-PRE-1.0-REVIEW.md
+REQ-calm-end-to-end:
+  kind: requirement
+  title: One application's unchanged LawSpec laws run against real, twin and mixed bindings resolved from its CALM architecture, with shared dependencies, faults, resets and deterministic replay, and LawSpec reads each completed attestation
+  locator: docs/how-to/run-the-calm-demonstrations.md

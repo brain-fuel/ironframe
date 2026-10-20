@@ -139,3 +139,108 @@ DEC-gce-for-tcp-twins:
   opened: 0.1.0
   revisit: 1.0.0
   refs: [cloud-run-ports, gce-container-optimized-os, cos-cloud-init]
+
+DEC-calm-architecture:
+  status: open
+  question: The cross-project path to 1.0 makes Ironframe own CALM service nodes and dependency edges. What is the source of an application's wiring, and how is it checked?
+  answer: |
+    Proposed for gate 2 of the 1.0 path, until the owner decides. A CALM 1.2 architecture document: service and dependency nodes, connects relationships from an application to each dependency it reaches, and any other CALM element, which Ironframe keeps but does not read. Ironframe checks the document against the CALM 1.2 meta schemas published by FINOS, embedded unchanged (schema/calm/1.2, Apache-2.0) so a check needs neither the network nor the CALM CLI, then that every unique-id is unique across nodes, interfaces, relationships and flows and that every relationship names nodes the document has. ironframe validate --calm-cli also runs the CALM CLI's own calm validate when it is installed.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [calm-1-2, calm-cli, lawspec-pre-1-0-path]
+
+DEC-calm-decorators:
+  status: open
+  question: How are LawSpec contracts and per-environment bindings attached to a CALM architecture without changing the architecture or CALM?
+  answer: |
+    Proposed for gate 2, until the owner decides. As CALM 1.2 decorators, standalone documents that apply to elements by unique-id, kept in a decorators file beside the architecture (<name>.decorators.json by default, an array or {"decorators": [...]}) so other tools' decorators may share it. Three types, each a JSON Schema that extends CALM's base decorator and owns its data: ironframe-contract (on an application node, the LawSpec package it implements; on a dependency node, the package, version requirement, abilities and accepted conformance levels its binding must satisfy; on a connects relationship, the application abilities whose production handler reaches the destination and the settings the application reads it through), ironframe-binding (one node in one environment: real with its provider, a twin with the contract identity it stands in for, or an application's deployment, external or managed) and ironframe-environment (applied to the system node: the project, runtime, cloud inputs, sync targets and configuration service). A decorator must target the architecture by file name or unique-id. CALM's documentation gives decorators a $schema that its base schema's closed top level does not list; Ironframe accepts it.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [calm-decorators, calm-1-2]
+
+DEC-calm-identity:
+  status: open
+  question: Evidence must carry architecture, contract, implementation and run identities. What identifies each?
+  answer: |
+    Proposed for gate 2, until the owner decides. The architecture by its document's and its decorators' sha256 digests over their bytes, its own unique-id and the unique-ids of the elements a run involved; the planned wiring by the sha256 digest of the resolved topology's JSON; a contract by LawSpec package name, version (exact for what an application implements and what a twin stands in for, a Cargo-style requirement for what a dependency accepts) and abilities by resolved identity, unit::ability::Name; an implementation by kind (application, real-provider or fixture), product, version, commit (git HEAD, -dirty when the application's directory has changes) and image digest when podman has the image; a run by a fresh UUID, its start and its completion.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawspec, semver-cargo, fips-180-4]
+
+DEC-calm-resolution:
+  status: open
+  question: How does Ironframe turn an architecture and its decorators into what one environment is?
+  answer: |
+    Proposed for gate 2, until the owner decides. ironframe resolve resolves one environment into a resolved topology (format ironframe-resolved-topology, version 1): the architecture identity, the environment, project and runtime, each application node with its contract and deployment, each dependency node with its contract, its binding decorator, real or twin, the provider or the twin's identity, and how many application edges reach it (a shared dependency has more than one), and each application-to-dependency edge with the abilities and settings it carries. The topology is planned wiring, the identity every later run refers to. It is lowered onto the manifest model, one dependency per dependency node, so up, down, status, plan, sync, attest and twin work on it unchanged.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [calm-1-2]
+
+DEC-calm-refusals:
+  status: open
+  question: What does Ironframe refuse to resolve, and how does it say so?
+  answer: |
+    Proposed for gate 2, until the owner decides. Every problem of a resolution is reported at once, each naming the element or decorator at fault: an architecture that breaks CALM 1.2, repeats a unique-id or relates nodes it lacks; a decorator that breaks its schema, targets another architecture or applies to an element the architecture lacks; an environment no decorator declares (naming those declared) or declared twice; two contracts on one element, or a contract on the wrong kind of element; a connects relationship from an application to a dependency without a connection contract (unresolved); a dependency without a binding in the environment (unresolved), with two bindings (ambiguous), or that no application reaches; a binding of an undeclared environment or of a node without a contract; an ability consumed that is not of the application's package, or consumed over two edges by one application (ambiguous); one setting read two ways; a twin incompatible with its node's contract (DEC-calm-compatibility); and every rule ironframe.yaml applies to a binding's own fields, named by node and decorator.
+  opened: 0.1.0
+  revisit: 1.0.0
+
+DEC-calm-compatibility:
+  status: open
+  question: When is a twin a compatible stand-in for a dependency node?
+  answer: |
+    Proposed for gate 2, until the owner decides. When the contract identity its binding says it stands in for has the node's package, a version within the node's requirement and every ability the node requires; when its conformance report, read when the architecture is resolved, agrees with the twin's declared level, release and image and checked the same package; and when its level, by the report's name or number or else as declared, is one the node accepts. A real binding is the dependency itself and satisfies its contract by definition; its provider name and version are recorded, not judged.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawtwin, semver-cargo]
+
+DEC-manifest-compat:
+  status: open
+  question: What becomes of ironframe.yaml now that a CALM architecture is the source of wiring?
+  answer: |
+    Proposed for gate 2, until the owner decides. ironframe.yaml stays, unchanged, as the compatibility layer for an application without an architecture, and as Ironframe's internal model: a resolved CALM environment is lowered onto it, its bindings checked by the same rules, so every verb takes either --manifest or --architecture. A manifest has no contract identities, so its attestations name dependencies, not abilities, and carry no architecture; new projects should use an architecture. Migration is by hand: each dependency becomes a node, its settings move to the connection contract of each edge reaching it, and each environment's bindings become binding decorators.
+  opened: 0.1.0
+  revisit: 1.0.0
+
+DEC-calm-exports:
+  status: open
+  question: What is generated from a resolved topology, and how is it kept true to it?
+  answer: |
+    Proposed for gate 2, until the owner decides. Each export is generated from the one resolved topology and works without Ironframe deploying anything, so another deployment tool can use it: the topology as JSON; a Mermaid or Graphviz diagram with each dependency labelled and classed real or twin; a copy of the architecture with each binding in its node's name and metadata, still CALM 1.2, for CALM's own tooling, and that copy rendered through calm docify with CALM's block-architecture widget (only docify registers CALM's widgets); each application's settings, as dotenv or JSON, rendered from its own edges only; the OpenTofu root of a cloud environment from the existing modules; and the compose file of a podman environment. Ironframe's tests compare the diagram, the root and the settings against the topology, so an export that drops a node, an edge, a twin or a setting is caught.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [calm-cli, opentofu]
+
+DEC-calm-deployment:
+  status: open
+  question: Who deploys the application in an environment?
+  answer: |
+    Proposed for gate 2, until the owner decides. Its own tooling by default (external): Ironframe injects its settings through the application's normal configuration, synced env files and cloud stores, and the exported settings, and never needs to run it. Optionally Ironframe runs it (managed), as a local process in a directory or as a podman image on the host's network, built from a context when podman lacks it, with the application's settings in its environment; ironframe app runs it once and attests the run.
+  opened: 0.1.0
+  revisit: 1.0.0
+
+DEC-calm-run:
+  status: open
+  question: How is a run of an application against a resolved environment attested so that LawSpec 0.26 reads it?
+  answer: |
+    Proposed for gate 2, until the owner decides. ironframe run (and ironframe app for a managed application) writes a running attestation before the command starts, hands the command the application's settings and the attestation's path in IRONFRAME_ATTESTATION, runs it, and rewrites the attestation as completed when it exits; ironframe attest --app and --complete do the same around a run another tool performs. Each dependency record is named by the application ability that reaches it, as LawSpec matches what a law relies on, one record per consumed ability. The attestation is kept outside the application's project, under .ironframe/<environment>/runs, since LawSpec digests the project's files into the inputs its native results are keyed by.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawspec]
+
+DEC-calm-planned-vs-completed:
+  status: open
+  question: How does evidence tell planned wiring from completed execution?
+  answer: |
+    Proposed for gate 2, until the owner decides. The planned wiring is the resolved topology, written by up to .ironframe/<environment>/topology.json and cited by digest. An attestation's execution says what it records: wired (up and attest: endpoints probed, nothing ran), running (a run under way) or completed (with exit code and finish time). The version 1 fields of a run's attestation, including each stand-in's history digest, record the run as it began and stay the same when it completes, because LawSpec keys a law's native result by them; what was observed at completion, whether each endpoint still answered and each twin's history digest and length then, is under each dependency's completed. A reader that knows execution can refuse anything but a completed run as evidence; LawSpec 0.26 does not yet, and proposals/lawspec-completed-run-attestations.md proposes it.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawspec]
+
+DEC-attestation-architecture:
+  status: open
+  question: Does the attestation change version to carry architecture, contract, implementation and run identities?
+  answer: |
+    Proposed for gate 2, until the owner decides. No: version 1 gains optional fields, which LawSpec 0.26 and every version 1 reader ignore, so the same document is evidence for them unchanged: architecture (documents, digests, topology digest, elements), application (node, contract, implementation), execution (DEC-calm-planned-vs-completed), and per dependency node, edge, contract, implementation (real-provider or fixture, product, version, image digest), completed, and stand_in.stands_in_for. A version 2 would be needed only by a change that misleads a version 1 reader.
+  opened: 0.1.0
+  revisit: 1.0.0
+  refs: [lawspec]

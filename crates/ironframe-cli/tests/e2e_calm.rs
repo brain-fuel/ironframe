@@ -30,7 +30,8 @@ fn copy_tree(from: &Path, to: &Path) {
     for entry in std::fs::read_dir(from).unwrap() {
         let entry = entry.unwrap();
         let name = entry.file_name().to_string_lossy().into_owned();
-        if [".ironframe", ".lawspec", "node_modules", "lawspec", ".env", "shop-bin"].contains(&name.as_str())
+        if [".ironframe", ".lawspec", "node_modules", "lawspec", ".env", "shop-bin", "shop-linux"]
+            .contains(&name.as_str())
             || name.starts_with("lawspec_")
         {
             continue;
@@ -303,6 +304,10 @@ fn the_same_application_runs_against_real_twin_and_mixed_bindings() {
     assert!(exec("npm", &["ci", "--no-audit", "--no-fund"], &dir.join("app"), &[]).status.success());
     assert!(exec("npx", &["--no-install", "lawspec", "generate"], &dir.join("app"), &[]).status.success());
     assert!(exec("go", &["build", "-o", "shop-bin", "./cmd/shop"], &dir.join("app"), &[]).status.success());
+    // The static Linux executable the managed image holds, for podman's own architecture.
+    let arch = if cfg!(target_arch = "aarch64") { "arm64" } else { "amd64" };
+    let linux = [("GOOS", "linux"), ("GOARCH", arch), ("CGO_ENABLED", "0")];
+    assert!(exec("go", &["build", "-o", "shop-linux", "./cmd/shop"], &dir.join("app"), &linux).status.success());
 
     for environment in ["twin", "real", "mixed"] {
         let output = ironframe(dir, &["up", environment, "--wait", "180"]);
@@ -330,6 +335,11 @@ fn the_same_application_runs_against_real_twin_and_mixed_bindings() {
             Attestation::from_json(&std::fs::read_to_string(attestation_path(&audit)).unwrap()).unwrap();
         assert_eq!(audit_attestation.dependencies.len(), 1);
         assert_eq!(audit_attestation.dependencies[0].node.as_deref(), Some("adoptions-log"));
+        if environment == "real" {
+            // Here the audit is a managed image, built from its Containerfile when podman lacks it.
+            let implementation = &audit_attestation.application.as_ref().unwrap().implementation;
+            assert!(implementation.image_digest.as_deref().is_some_and(|d| d.starts_with("sha256:")));
+        }
 
         // The service as an external deployment: it reads the .env itself, and Ironframe records
         // the run it did not start.

@@ -72,6 +72,29 @@ attestation` prints it. ref:json-schema-2020-12
 | `stand_in.history_digest` | string, optional | `sha256:` and 64 lowercase hex digits: the SHA-256 of the stand-in's history of the run, as its maker's tool exports it, when the document was recorded. ref:DEC-history-digest ref:fips-180-4 |
 | `stand_in.history_entries` | integer, optional | How many entries that history held. |
 
+## Runs resolved from an architecture
+
+A run of an application resolved from a CALM architecture (`ironframe run`,
+`ironframe app`, or `ironframe attest --app` and `--complete` around a run
+another tool performs) adds optional fields, which a version 1 reader that
+does not know them ignores. ref:DEC-attestation-architecture ref:DEC-calm-run
+
+| Field | Meaning |
+| --- | --- |
+| `architecture` | `document`, `digest` (sha256 of the architecture's bytes), `unique_id`, `decorators`, `decorators_digest`, `topology_digest` (the resolved topology: the planned wiring) and `elements`, the unique-ids of the application node, its relationships and the dependency nodes they reach. ref:DEC-calm-identity |
+| `application` | `node`, `contract` (`package`, `version`) and `implementation` (`kind` `application`, `product`, `version`, `commit`, `image_digest`). |
+| `execution` | `status`: `wired` (up and attest: endpoints probed, nothing ran), `running` (the run had begun) or `completed`; `command`; `exit_code` and `finished_at`, present exactly when completed; `environment_run`, the run `up` started. ref:DEC-calm-planned-vs-completed |
+| `dependencies[].name` | The application ability that reaches the dependency, `unit::ability::Name`, as LawSpec matches it; one record per ability. |
+| `dependencies[].node`, `.edge` | The dependency node and the relationship the application reached it through. |
+| `dependencies[].contract` | The contract the binding had to satisfy: `package`, version requirement, `abilities`. |
+| `dependencies[].implementation` | `kind` `real-provider` or `fixture`, `product`, `version`, `image_digest`. |
+| `stand_in.stands_in_for` | The contract identity the twin stands in for. |
+| `dependencies[].completed` | Only on a completed run: `reached` when it completed, and a stand-in's `history_digest` and `history_entries` then. |
+
+The version 1 fields record the run as it began, including each stand-in's
+`history_digest`, and stay the same when it completes, because LawSpec keys a
+law's native result by them; what was seen at completion is under `completed`.
+
 ## Rules for readers and writers
 
 - A reader rejects a document whose `format` is not

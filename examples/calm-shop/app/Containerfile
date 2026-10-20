@@ -1,0 +1,7 @@
+# The shop as an image, for an environment where Ironframe runs it as a managed application. It
+# holds only the static Linux executable, built first on the host:
+#   GOOS=linux CGO_ENABLED=0 go build -o shop-linux ./cmd/shop
+# It reads its settings from its environment, which Ironframe passes with podman run -e.
+FROM scratch
+COPY shop-linux /shop
+ENTRYPOINT ["/shop"]
