@@ -11,7 +11,7 @@ PODMAN ?= $(shell command -v podman || echo /opt/podman/bin/podman)
 MODULES = $(wildcard modules/*)
 
 .DEFAULT_GOAL := help
-.PHONY: help build test e2e lint tofu-check canon check config-service-image clean
+.PHONY: help build test e2e e2e-calm lint tofu-check canon check config-service-image clean
 
 # | What you can ask for, read from the help lines of the rules below.
 help: ## what you can ask for
@@ -29,6 +29,12 @@ test: ## run the cargo tests
 # | everything down; needs podman and the images. ref:REQ-end-to-end-with-twins
 e2e: ## run the end-to-end test against LawTwin's images in podman
 	cargo test -p ironframe-cli --test e2e -- --ignored --nocapture
+
+# | Run the calm-shop example's laws against real, twin and mixed bindings resolved from its CALM
+# | architecture, with faults, resets and replay; needs podman, Go, npm, LawTwin's images and the
+# | real products' images. ref:REQ-calm-end-to-end
+e2e-calm: ## run the CALM end-to-end test: real, twin and mixed bindings
+	cargo test -p ironframe-cli --test e2e_calm -- --ignored --nocapture
 
 # | Formatting and clippy, warnings as errors. ref:DEC-rust
 lint: ## check formatting and clippy

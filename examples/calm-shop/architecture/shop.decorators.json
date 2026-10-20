@@ -343,7 +343,7 @@
         "environment": "real",
         "real": {
           "endpoint": "http://localhost:8080/api/v3",
-          "image": "lawtwin/petstore3-native:latest",
+          "image": "localhost/lawtwin/petstore3-native:latest",
           "ports": [
             8080
           ],
