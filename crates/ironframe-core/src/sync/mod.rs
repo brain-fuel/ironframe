@@ -73,7 +73,7 @@ pub fn sync_env_file(
 ) -> Result<SyncOutcome, SyncError> {
     let path = manifest_dir.join(&target.path);
     let header = format!(
-        "Settings of environment {environment} of {project}, written by ironframe from the manifest.\nEdits are overwritten; change ironframe.yaml instead."
+        "Settings of environment {environment} of {project}, written by ironframe from the manifest or architecture.\nEdits are overwritten; change those instead."
     );
     let text = render_dotenv(&header, settings);
     match write_atomically(&path, &text) {

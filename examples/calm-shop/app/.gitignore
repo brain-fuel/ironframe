@@ -6,3 +6,5 @@
 /shop/adoptions/lawspec_test.go
 /.env
 /shop-bin
+/node_modules/
+/.lawspec-attestation.json
