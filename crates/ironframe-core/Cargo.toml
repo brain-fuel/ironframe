@@ -24,6 +24,7 @@ thiserror.workspace = true
 time.workspace = true
 uuid.workspace = true
 jsonschema.workspace = true
+semver.workspace = true
 tokio.workspace = true
 aws-config = { workspace = true, optional = true }
 aws-sdk-appconfig = { workspace = true, optional = true }

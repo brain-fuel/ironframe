@@ -1,0 +1,6 @@
+These five files are the CALM 1.2 meta schemas (`core.json`, `control.json`, `flow.json`,
+`interface.json`, `decorators.json`) of the FINOS Common Architecture Language Model, copied
+unchanged from `@finos/calm-cli` 1.64.0 (`dist/calm/release/1.2/meta`). They are © FINOS and its
+contributors, licensed under the Apache License 2.0
+(https://github.com/finos/architecture-as-code/blob/main/LICENSE). Ironframe embeds them so it can
+check an architecture against CALM 1.2 without the network or the CALM CLI.

@@ -1,0 +1,59 @@
+unit shop.adoptions
+
+-- A pet the shop finds a home for, and the adoption it publishes.
+refinement PetName is (v :: Text where v matches regex "[a-z]{1,12}") end refinement
+refinement Customer is (v :: Text where v matches regex "[a-z]{3,10}") end refinement
+
+type Adoption is a record{
+  pet :: Int64
+  petName :: Text
+  customer :: Text}
+end type
+
+-- The pet registry the shop keeps its pets in: a Petstore API.
+ability Pets is
+  register :: Text -> Int64
+  nameOf :: Int64 -> Maybe Text
+end ability
+
+-- The log the shop publishes adoptions on: a Kafka topic.
+ability Adoptions is
+  publish :: Adoption -> Unit
+  lookup :: Int64 -> Maybe Adoption
+end ability
+
+function find (pet :: Int64) (adoptions :: List Adoption) -> Maybe Adoption is
+  first matching case of adoptions :
+    when Nil then Nothing
+    when Cons first rest then if first.pet = pet then Just first else find pet rest end if
+  end case
+end function
+
+handler memoryAdoptions for Adoptions with state adoptions :: List Adoption start [] is
+  operation publish adoption is ~adoptions := Cons adoption adoptions; unitValue end operation
+  operation lookup pet is find pet adoptions end operation
+end handler
+
+procedure adopt (name :: PetName) (customer :: Customer) -> Adoption uses Pets, Adoptions is
+  let pet = register name in
+  let adoption = Adoption pet name customer in
+  publish adoption;
+  adoption end let end let
+end procedure
+
+law "|an adoption is published under its pet| is
+  definition :
+    for all (name :: PetName) (customer :: Customer) =>
+      (let adoption = adopt name customer in lookup (adoption.pet) = Just adoption end let)
+    end for all
+  end definition
+end law
+
+law "|an adopted pet keeps its name| is
+  definition :
+    for all (name :: PetName) (customer :: Customer) =>
+      (let adoption = adopt name customer in nameOf (adoption.pet) = Just name end let)
+    end for all
+  end definition
+end law
+end unit

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/brain-fuel/ironframe/schema/calm/ironframe-environment.decorator.schema.json",
+  "title": "Ironframe environment decorator",
+  "description": "One environment of the architecture: the project name its resources are prefixed with, where its twins run, where its settings are synced and whether it runs a configuration service. Applies to the system node (or nodes) the environment deploys. Extends CALM 1.2's base decorator.",
+  "allOf": [
+    {
+      "$ref": "#/$defs/calm-decorator"
+    }
+  ],
+  "properties": {
+    "type": {
+      "const": "ironframe-environment"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "project",
+        "runtime"
+      ],
+      "properties": {
+        "environment": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "project": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "runtime": {
+          "enum": [
+            "podman",
+            "aws",
+            "gcp",
+            "azure"
+          ]
+        },
+        "cloud": {
+          "type": "object"
+        },
+        "sync": {
+          "type": "array"
+        },
+        "config_service": {
+          "type": "object"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "calm-decorator": {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "unique-id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string"
+        },
+        "target": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "applies-to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "data": {
+          "type": "object",
+          "minProperties": 1
+        }
+      },
+      "required": [
+        "unique-id",
+        "type",
+        "target",
+        "applies-to",
+        "data"
+      ]
+    }
+  }
+}

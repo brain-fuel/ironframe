@@ -1,0 +1,646 @@
+{
+  "decorators": [
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "shop-application-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-service",
+        "adoptions-audit"
+      ],
+      "data": {
+        "application": {
+          "package": "shop.adoptions",
+          "version": "0.1.0",
+          "description": "spec/shop.lawspec of example.com/calm-shop"
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-log-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-log"
+      ],
+      "data": {
+        "dependency": {
+          "package": "lawtwin.kafka",
+          "version": ">=0.1.0, <0.2.0",
+          "abilities": [
+            "lawtwin.kafka::ability::Broker"
+          ],
+          "conformance": {
+            "accept": [
+              "answers",
+              "exact"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "pet-registry-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "pet-registry"
+      ],
+      "data": {
+        "dependency": {
+          "package": "lawtwin.petstore",
+          "version": "^0.1",
+          "abilities": [
+            "lawtwin.petstore::ability::PetApi"
+          ],
+          "conformance": {
+            "accept": [
+              "conformant"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "service-publishes-adoptions-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "service-publishes-adoptions"
+      ],
+      "data": {
+        "connection": {
+          "consumes": [
+            "shop.adoptions::ability::Adoptions"
+          ],
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "${endpoint}"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "service-registers-pets-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "service-registers-pets"
+      ],
+      "data": {
+        "connection": {
+          "consumes": [
+            "shop.adoptions::ability::Pets"
+          ],
+          "settings": {
+            "PETSTORE_URL": "${endpoint}"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "audit-reads-adoptions-contract",
+      "type": "ironframe-contract",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "audit-reads-adoptions"
+      ],
+      "data": {
+        "connection": {
+          "consumes": [
+            "shop.adoptions::ability::Adoptions"
+          ],
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "${endpoint}"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "twin-environment",
+      "type": "ironframe-environment",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "calm-shop"
+      ],
+      "data": {
+        "environment": "twin",
+        "project": "calm-shop",
+        "runtime": "podman",
+        "sync": [
+          {
+            "env_file": {
+              "path": "../app/.env"
+            }
+          }
+        ],
+        "description": "Both dependencies are LawTwin fixtures on this machine, seeded so a run replays exactly."
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-log-twin",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-log"
+      ],
+      "data": {
+        "environment": "twin",
+        "twin": {
+          "image": "lawtwin/kafka",
+          "version": "0.1.0",
+          "stands-in-for": {
+            "package": "lawtwin.kafka",
+            "version": "0.1.0",
+            "abilities": [
+              "lawtwin.kafka::ability::Broker"
+            ]
+          },
+          "conformance": {
+            "report": "conformance/lawtwin-kafka-0.1.0.json"
+          },
+          "ports": [
+            9092
+          ],
+          "seed": 42,
+          "config": {
+            "clock": "frozen"
+          },
+          "admin": {
+            "port": 9644
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "pet-registry-twin",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "pet-registry"
+      ],
+      "data": {
+        "environment": "twin",
+        "twin": {
+          "image": "lawtwin/http",
+          "version": "0.1.0",
+          "stands-in-for": {
+            "package": "lawtwin.petstore",
+            "version": "0.1.0",
+            "abilities": [
+              "lawtwin.petstore::ability::PetApi"
+            ]
+          },
+          "contract": "petstore",
+          "conformance": {
+            "report": "conformance/lawtwin-http-0.1.0-petstore.json"
+          },
+          "ports": [
+            8080
+          ],
+          "endpoint": "http://localhost:8080",
+          "seed": 42,
+          "advertise_variable": "LAWTWIN_ADVERTISE",
+          "admin": {
+            "port": 9645,
+            "container_port": 9644
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-service-twin",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-service"
+      ],
+      "data": {
+        "environment": "twin",
+        "application": {
+          "external": {
+            "description": "lawspec test and the shop's own tooling run it; they read ../app/.env"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-audit-twin",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-audit"
+      ],
+      "data": {
+        "environment": "twin",
+        "application": {
+          "managed": {
+            "process": {
+              "command": [
+                "go",
+                "run",
+                "./cmd/shop",
+                "audit"
+              ],
+              "dir": "../app"
+            }
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "real-environment",
+      "type": "ironframe-environment",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "calm-shop"
+      ],
+      "data": {
+        "environment": "real",
+        "project": "calm-shop",
+        "runtime": "podman",
+        "sync": [
+          {
+            "env_file": {
+              "path": "../app/.env"
+            }
+          }
+        ],
+        "description": "Both dependencies are the real products on this machine: Apache Kafka and the Swagger Petstore."
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-log-real",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-log"
+      ],
+      "data": {
+        "environment": "real",
+        "real": {
+          "endpoint": "localhost:9092",
+          "image": "apache/kafka:4.1.0",
+          "ports": [
+            9092
+          ],
+          "provider": {
+            "name": "apache/kafka",
+            "version": "4.1.0"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "pet-registry-real",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "pet-registry"
+      ],
+      "data": {
+        "environment": "real",
+        "real": {
+          "endpoint": "http://localhost:8080/api/v3",
+          "image": "lawtwin/petstore3-native:latest",
+          "ports": [
+            8080
+          ],
+          "provider": {
+            "name": "swagger-api/swagger-petstore",
+            "version": "1.0.27"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-service-real",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-service"
+      ],
+      "data": {
+        "environment": "real",
+        "application": {
+          "external": {
+            "description": "lawspec test and the shop's own tooling run it; they read ../app/.env"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-audit-real",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-audit"
+      ],
+      "data": {
+        "environment": "real",
+        "application": {
+          "managed": {
+            "process": {
+              "command": [
+                "go",
+                "run",
+                "./cmd/shop",
+                "audit"
+              ],
+              "dir": "../app"
+            }
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "mixed-environment",
+      "type": "ironframe-environment",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "calm-shop"
+      ],
+      "data": {
+        "environment": "mixed",
+        "project": "calm-shop",
+        "runtime": "podman",
+        "sync": [
+          {
+            "env_file": {
+              "path": "../app/.env"
+            }
+          }
+        ],
+        "description": "The real Kafka and the Petstore twin."
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-log-mixed",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-log"
+      ],
+      "data": {
+        "environment": "mixed",
+        "real": {
+          "endpoint": "localhost:9092",
+          "image": "apache/kafka:4.1.0",
+          "ports": [
+            9092
+          ],
+          "provider": {
+            "name": "apache/kafka",
+            "version": "4.1.0"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "pet-registry-mixed",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "pet-registry"
+      ],
+      "data": {
+        "environment": "mixed",
+        "twin": {
+          "image": "lawtwin/http",
+          "version": "0.1.0",
+          "stands-in-for": {
+            "package": "lawtwin.petstore",
+            "version": "0.1.0",
+            "abilities": [
+              "lawtwin.petstore::ability::PetApi"
+            ]
+          },
+          "contract": "petstore",
+          "conformance": {
+            "report": "conformance/lawtwin-http-0.1.0-petstore.json"
+          },
+          "ports": [
+            8080
+          ],
+          "endpoint": "http://localhost:8080",
+          "seed": 42,
+          "advertise_variable": "LAWTWIN_ADVERTISE",
+          "admin": {
+            "port": 9645,
+            "container_port": 9644
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-service-mixed",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-service"
+      ],
+      "data": {
+        "environment": "mixed",
+        "application": {
+          "external": {
+            "description": "lawspec test and the shop's own tooling run it; they read ../app/.env"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-audit-mixed",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-audit"
+      ],
+      "data": {
+        "environment": "mixed",
+        "application": {
+          "managed": {
+            "process": {
+              "command": [
+                "go",
+                "run",
+                "./cmd/shop",
+                "audit"
+              ],
+              "dir": "../app"
+            }
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "staging-environment",
+      "type": "ironframe-environment",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "calm-shop"
+      ],
+      "data": {
+        "environment": "staging",
+        "project": "calm-shop",
+        "runtime": "aws",
+        "cloud": {
+          "modules": "../../../modules",
+          "region": "us-east-1",
+          "vpc_id": "vpc-0123456789abcdef0",
+          "subnet_ids": [
+            "subnet-0123456789abcdef0",
+            "subnet-0fedcba9876543210"
+          ]
+        },
+        "sync": [
+          {
+            "aws_appconfig": {
+              "region": "us-east-1",
+              "application": "calm-shop",
+              "profile": "connections"
+            }
+          }
+        ],
+        "description": "The Kafka twin on AWS ECS Fargate and the hosted Petstore."
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-log-staging",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-log"
+      ],
+      "data": {
+        "environment": "staging",
+        "twin": {
+          "image": "lawtwin/kafka",
+          "version": "0.1.0",
+          "stands-in-for": {
+            "package": "lawtwin.kafka",
+            "version": "0.1.0",
+            "abilities": [
+              "lawtwin.kafka::ability::Broker"
+            ]
+          },
+          "conformance": {
+            "report": "conformance/lawtwin-kafka-0.1.0.json"
+          },
+          "ports": [
+            9092
+          ],
+          "seed": 42,
+          "protocol": "tcp"
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "pet-registry-staging",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "pet-registry"
+      ],
+      "data": {
+        "environment": "staging",
+        "real": {
+          "endpoint": "https://petstore3.swagger.io/api/v3",
+          "provider": {
+            "name": "swagger-api/swagger-petstore",
+            "version": "1.0.27"
+          }
+        }
+      }
+    },
+    {
+      "$schema": "https://calm.finos.org/release/1.2/meta/decorators.json#/defs/decorator",
+      "unique-id": "adoptions-service-staging",
+      "type": "ironframe-binding",
+      "target": [
+        "shop.calm.json"
+      ],
+      "applies-to": [
+        "adoptions-service"
+      ],
+      "data": {
+        "environment": "staging",
+        "application": {
+          "external": {
+            "description": "deployed by the shop's own pipeline, which reads AWS AppConfig"
+          }
+        }
+      }
+    }
+  ]
+}

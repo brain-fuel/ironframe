@@ -5,6 +5,7 @@
 //! inside. ref:DEC-three-planes ref:DEC-wiring-in-ironframe
 
 pub mod attest;
+pub mod calm;
 pub mod compose;
 pub mod manifest;
 pub mod ops;

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+  "unique-id": "calm-shop",
+  "metadata": [
+    { "description": "A shop that finds homes for pets: it registers each pet with a Petstore API and publishes each adoption on a Kafka topic, which an audit reads back. The wiring of each environment is in shop.decorators.json." }
+  ],
+  "nodes": [
+    {
+      "unique-id": "calm-shop",
+      "node-type": "system",
+      "name": "Calm shop",
+      "description": "The shop and the dependencies it reaches."
+    },
+    {
+      "unique-id": "adoptions-service",
+      "node-type": "service",
+      "name": "Adoptions service",
+      "description": "Registers each adopted pet and publishes the adoption (example.com/calm-shop, cmd/shop)."
+    },
+    {
+      "unique-id": "adoptions-audit",
+      "node-type": "service",
+      "name": "Adoptions audit",
+      "description": "Reads adoptions back from the log (example.com/calm-shop, cmd/shop audit)."
+    },
+    {
+      "unique-id": "adoptions-log",
+      "node-type": "message-broker",
+      "name": "Adoptions log",
+      "description": "The Kafka cluster holding the adoptions topic, shared by the service and the audit.",
+      "interfaces": [
+        { "unique-id": "adoptions-log-bootstrap", "host": "kafka", "port": 9092 }
+      ]
+    },
+    {
+      "unique-id": "pet-registry",
+      "node-type": "service",
+      "name": "Pet registry",
+      "description": "A Petstore API the service registers pets with.",
+      "interfaces": [
+        { "unique-id": "pet-registry-api", "url": "/pet" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "service-publishes-adoptions",
+      "description": "The service publishes each adoption on the adoptions topic.",
+      "protocol": "TCP",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "adoptions-service" },
+          "destination": { "node": "adoptions-log", "interfaces": ["adoptions-log-bootstrap"] }
+        }
+      }
+    },
+    {
+      "unique-id": "service-registers-pets",
+      "description": "The service registers each pet and reads its name back.",
+      "protocol": "HTTP",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "adoptions-service" },
+          "destination": { "node": "pet-registry", "interfaces": ["pet-registry-api"] }
+        }
+      }
+    },
+    {
+      "unique-id": "audit-reads-adoptions",
+      "description": "The audit reads adoptions back from the same topic.",
+      "protocol": "TCP",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "adoptions-audit" },
+          "destination": { "node": "adoptions-log", "interfaces": ["adoptions-log-bootstrap"] }
+        }
+      }
+    },
+    {
+      "unique-id": "calm-shop-composition",
+      "relationship-type": {
+        "composed-of": {
+          "container": "calm-shop",
+          "nodes": ["adoptions-service", "adoptions-audit", "adoptions-log", "pet-registry"]
+        }
+      }
+    }
+  ]
+}
