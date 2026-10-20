@@ -1,7 +1,10 @@
 //! The attestation survives a write and a read unchanged, agrees with its published schema, and
 //! refuses the documents that would mislead a reader. ref:DEC-attestation-format
 
-use ironframe_attestation::{Attestation, AttestationError, DependencyRecord, Kind, Producer, Run, SCHEMA_V1, StandIn};
+use ironframe_attestation::{
+    ApplicationRef, ArchitectureRef, Attestation, AttestationError, Completed, ContractRef, DependencyRecord,
+    Execution, ExecutionStatus, Implementation, Kind, Producer, Run, SCHEMA_V1, StandIn,
+};
 use time::macros::datetime;
 
 fn sample() -> Attestation {
@@ -147,4 +150,101 @@ fn a_history_digest_of_another_form_is_refused_by_reader_and_schema() {
     value["dependencies"][0]["stand_in"]["history_digest"] = "sha256:XYZ".into();
     assert!(!schema_accepts(&value.to_string()));
     assert_eq!(Attestation::from_json(&value.to_string()), Err(AttestationError::BadHistoryDigest("kafka".into())));
+}
+
+/// A completed run of an application resolved from an architecture: every identity filled in.
+fn completed_run() -> Attestation {
+    let mut attestation = sample();
+    attestation.architecture = Some(ArchitectureRef {
+        document: "shop.calm.json".into(),
+        digest: format!("sha256:{}", "a".repeat(64)),
+        unique_id: Some("calm-shop".into()),
+        decorators: Some("shop.decorators.json".into()),
+        decorators_digest: Some(format!("sha256:{}", "b".repeat(64))),
+        topology_digest: Some(format!("sha256:{}", "c".repeat(64))),
+        elements: vec!["adoptions-service".into(), "service-publishes-adoptions".into(), "adoptions-log".into()],
+    });
+    attestation.application = Some(ApplicationRef {
+        node: "adoptions-service".into(),
+        contract: ContractRef { package: "shop.adoptions".into(), version: "0.1.0".into(), abilities: vec![] },
+        implementation: Implementation {
+            kind: "application".into(),
+            product: "shop.adoptions".into(),
+            version: "0.1.0".into(),
+            commit: Some("69f9de1".into()),
+            image_digest: None,
+        },
+    });
+    let first = &mut attestation.dependencies[0];
+    first.node = Some("adoptions-log".into());
+    first.edge = Some("service-publishes-adoptions".into());
+    first.contract = Some(ContractRef {
+        package: "lawtwin.kafka".into(),
+        version: ">=0.1.0, <0.2.0".into(),
+        abilities: vec!["lawtwin.kafka::ability::Broker".into()],
+    });
+    first.implementation = Some(Implementation {
+        kind: "fixture".into(),
+        product: "lawtwin/kafka".into(),
+        version: "0.1.0".into(),
+        ..Implementation::default()
+    });
+    first.completed = Some(Completed {
+        reached: true,
+        history_digest: Some(format!("sha256:{}", "d".repeat(64))),
+        history_entries: Some(12),
+    });
+    attestation.execution = Some(Execution {
+        status: ExecutionStatus::Completed,
+        command: vec!["lawspec".into(), "test".into()],
+        exit_code: Some(0),
+        finished_at: Some(datetime!(2026-10-09 12:00:05 UTC)),
+        environment_run: Some("up-run".into()),
+    });
+    attestation
+}
+
+/// The fields a CALM run adds round-trip and agree with the schema, and a version 1 reader that
+/// does not know them still reads the document. ref:DEC-attestation-architecture
+#[test]
+fn a_completed_run_round_trips_and_older_readers_ignore_its_additions() {
+    let attestation = completed_run();
+    let text = attestation.to_json().unwrap();
+    assert!(schema_accepts(&text));
+    assert_eq!(Attestation::from_json(&text).unwrap(), attestation);
+    let mut value: serde_json::Value = serde_json::from_str(&text).unwrap();
+    for key in ["architecture", "application", "execution"] {
+        value.as_object_mut().unwrap().remove(key);
+    }
+    for dependency in value["dependencies"].as_array_mut().unwrap() {
+        for key in ["node", "edge", "contract", "implementation", "completed"] {
+            dependency.as_object_mut().unwrap().remove(key);
+        }
+    }
+    let plain = Attestation::from_json(&value.to_string()).unwrap();
+    assert_eq!(plain.dependencies, sample().dependencies);
+}
+
+/// A completed run carries its outcome, and only a completed run carries what was observed after
+/// it. ref:DEC-calm-planned-vs-completed
+#[test]
+fn execution_outcome_agrees_with_its_status() {
+    let mut no_exit = completed_run();
+    no_exit.execution.as_mut().unwrap().exit_code = None;
+    assert!(matches!(no_exit.validate(), Err(AttestationError::Execution(_))));
+
+    let mut running_with_outcome = completed_run();
+    let execution = running_with_outcome.execution.as_mut().unwrap();
+    execution.status = ExecutionStatus::Running;
+    execution.exit_code = None;
+    execution.finished_at = None;
+    assert!(matches!(running_with_outcome.validate(), Err(AttestationError::Execution(_))));
+
+    let mut early = completed_run();
+    early.execution.as_mut().unwrap().finished_at = Some(datetime!(2026-10-09 11:00:00 UTC));
+    assert!(matches!(early.validate(), Err(AttestationError::Execution(_))));
+
+    let mut bad_digest = completed_run();
+    bad_digest.dependencies[0].completed.as_mut().unwrap().history_digest = Some("sha256:XYZ".into());
+    assert!(matches!(bad_digest.validate(), Err(AttestationError::BadHistoryDigest(_))));
 }
