@@ -30,6 +30,7 @@ module Ironframe.Manifest.Types
   ) where
 
 import Data.Map.Strict (Map)
+import Prelude hiding (Real)
 import Data.Text (Text)
 import Ironframe.Json (Value)
 
