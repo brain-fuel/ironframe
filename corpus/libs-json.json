@@ -1,0 +1,1013 @@
+[
+  {
+    "method": "json.decode",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": " "
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "null"
+    },
+    "expected": {
+      "compact": "null",
+      "pretty": "null"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "true"
+    },
+    "expected": {
+      "compact": "true",
+      "pretty": "true"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "false"
+    },
+    "expected": {
+      "compact": "false",
+      "pretty": "false"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "nul"
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "tru"
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "0"
+    },
+    "expected": {
+      "compact": "0",
+      "pretty": "0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-0"
+    },
+    "expected": {
+      "compact": "-0.0",
+      "pretty": "-0.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "01"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-"
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1."
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1.5"
+    },
+    "expected": {
+      "compact": "1.5",
+      "pretty": "1.5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e3"
+    },
+    "expected": {
+      "compact": "1000.0",
+      "pretty": "1000.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1E+3"
+    },
+    "expected": {
+      "compact": "1000.0",
+      "pretty": "1000.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e-3"
+    },
+    "expected": {
+      "compact": "0.001",
+      "pretty": "0.001"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1.5e"
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-1.25e-7"
+    },
+    "expected": {
+      "compact": "-1.25e-7",
+      "pretty": "-1.25e-7"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "12345678901234567890"
+    },
+    "expected": {
+      "compact": "12345678901234567890",
+      "pretty": "12345678901234567890"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "18446744073709551615"
+    },
+    "expected": {
+      "compact": "18446744073709551615",
+      "pretty": "18446744073709551615"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "18446744073709551616"
+    },
+    "expected": {
+      "compact": "1.8446744073709552e+19",
+      "pretty": "1.8446744073709552e+19"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-9223372036854775808"
+    },
+    "expected": {
+      "compact": "-9223372036854775808",
+      "pretty": "-9223372036854775808"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-9223372036854775809"
+    },
+    "expected": {
+      "compact": "-9.223372036854776e+18",
+      "pretty": "-9.223372036854776e+18"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e400"
+    },
+    "expected": {
+      "error": "number out of range at line 1 column 5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "-1e400"
+    },
+    "expected": {
+      "error": "number out of range at line 1 column 6"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "0.1"
+    },
+    "expected": {
+      "compact": "0.1",
+      "pretty": "0.1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "123456789012345678901234567890.0"
+    },
+    "expected": {
+      "compact": "1.2345678901234568e+29",
+      "pretty": "1.2345678901234568e+29"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "2.5e-324"
+    },
+    "expected": {
+      "compact": "5e-324",
+      "pretty": "5e-324"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e-400"
+    },
+    "expected": {
+      "compact": "0.0",
+      "pretty": "0.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "3.141592653589793238462643383279"
+    },
+    "expected": {
+      "compact": "3.141592653589793",
+      "pretty": "3.141592653589793"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "5e-324"
+    },
+    "expected": {
+      "compact": "5e-324",
+      "pretty": "5e-324"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1.7976931348623157e308"
+    },
+    "expected": {
+      "compact": "1.7976931348623157e+308",
+      "pretty": "1.7976931348623157e+308"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "100000000000000000000"
+    },
+    "expected": {
+      "compact": "1e+20",
+      "pretty": "1e+20"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e16"
+    },
+    "expected": {
+      "compact": "1e+16",
+      "pretty": "1e+16"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1e15"
+    },
+    "expected": {
+      "compact": "1000000000000000.0",
+      "pretty": "1000000000000000.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "123456.789e3"
+    },
+    "expected": {
+      "compact": "123456789.0",
+      "pretty": "123456789.0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "0.000001"
+    },
+    "expected": {
+      "compact": "1e-6",
+      "pretty": "1e-6"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "0.0000001"
+    },
+    "expected": {
+      "compact": "1e-7",
+      "pretty": "1e-7"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\""
+    },
+    "expected": {
+      "compact": "\"\"",
+      "pretty": "\"\""
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"a\\\"b\""
+    },
+    "expected": {
+      "compact": "\"a\\\"b\"",
+      "pretty": "\"a\\\"b\""
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\u00e9\\u2603\\ud83d\\ude00\""
+    },
+    "expected": {
+      "compact": "\"é☃😀\"",
+      "pretty": "\"é☃😀\""
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\ud800\""
+    },
+    "expected": {
+      "error": "unexpected end of hex escape at line 1 column 8"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\udc00\""
+    },
+    "expected": {
+      "error": "lone leading surrogate in hex escape at line 1 column 7"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\ud800\\u0041\""
+    },
+    "expected": {
+      "error": "lone leading surrogate in hex escape at line 1 column 13"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\x\""
+    },
+    "expected": {
+      "error": "invalid escape at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\u12\""
+    },
+    "expected": {
+      "error": "EOF while parsing a string at line 1 column 6"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\u12g4\""
+    },
+    "expected": {
+      "error": "invalid escape at line 1 column 7"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"a\nb\""
+    },
+    "expected": {
+      "error": "control character (\\u0000-\\u001F) found while parsing a string at line 2 column 0"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\/\""
+    },
+    "expected": {
+      "compact": "\"/\"",
+      "pretty": "\"/\""
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"tab\there\""
+    },
+    "expected": {
+      "error": "control character (\\u0000-\\u001F) found while parsing a string at line 1 column 5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"unterminated"
+    },
+    "expected": {
+      "error": "EOF while parsing a string at line 1 column 13"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[]"
+    },
+    "expected": {
+      "compact": "[]",
+      "pretty": "[]"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1,]"
+    },
+    "expected": {
+      "error": "trailing comma at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1 2]"
+    },
+    "expected": {
+      "error": "expected `,` or `]` at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "["
+    },
+    "expected": {
+      "error": "EOF while parsing a list at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1"
+    },
+    "expected": {
+      "error": "EOF while parsing a list at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{}"
+    },
+    "expected": {
+      "compact": "{}",
+      "pretty": "{}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\":1,}"
+    },
+    "expected": {
+      "error": "trailing comma at line 1 column 8"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\" 1}"
+    },
+    "expected": {
+      "error": "expected `:` at line 1 column 6"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{a:1}"
+    },
+    "expected": {
+      "error": "key must be a string at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\":1 \"b\":2}"
+    },
+    "expected": {
+      "error": "expected `,` or `}` at line 1 column 8"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\":"
+    },
+    "expected": {
+      "error": "EOF while parsing a value at line 1 column 5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\""
+    },
+    "expected": {
+      "error": "EOF while parsing an object at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{"
+    },
+    "expected": {
+      "error": "EOF while parsing an object at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\":1,\"a\":2,\"b\":3}"
+    },
+    "expected": {
+      "compact": "{\"a\":2,\"b\":3}",
+      "pretty": "{\n  \"a\": 2,\n  \"b\": 3\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"z\":1,\"a\":[1,{\"y\":null}],\"m\":{}}"
+    },
+    "expected": {
+      "compact": "{\"z\":1,\"a\":[1,{\"y\":null}],\"m\":{}}",
+      "pretty": "{\n  \"z\": 1,\n  \"a\": [\n    1,\n    {\n      \"y\": null\n    }\n  ],\n  \"m\": {}\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1] x"
+    },
+    "expected": {
+      "error": "trailing characters at line 1 column 5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "1 2"
+    },
+    "expected": {
+      "error": "trailing characters at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\n\n  [\n 1,\n x]"
+    },
+    "expected": {
+      "error": "expected value at line 5 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"k\": [true, false, null, 1.0, -2, \"s\"]}"
+    },
+    "expected": {
+      "compact": "{\"k\":[true,false,null,1.0,-2,\"s\"]}",
+      "pretty": "{\n  \"k\": [\n    true,\n    false,\n    null,\n    1.0,\n    -2,\n    \"s\"\n  ]\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "  {\"nested\": {\"deep\": {\"deeper\": [[[]]]}}}  "
+    },
+    "expected": {
+      "compact": "{\"nested\":{\"deep\":{\"deeper\":[[[]]]}}}",
+      "pretty": "{\n  \"nested\": {\n    \"deep\": {\n      \"deeper\": [\n        [\n          []\n        ]\n      ]\n    }\n  }\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "﻿{}"
+    },
+    "expected": {
+      "error": "expected value at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[\"\", \"\u001f\"]"
+    },
+    "expected": {
+      "error": "control character (\\u0000-\\u001F) found while parsing a string at line 1 column 8"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"a\":\"\\u0000\\u001f\\b\\f\\n\\r\\t\\\\\\\"\"}"
+    },
+    "expected": {
+      "compact": "{\"a\":\"\\u0000\\u001f\\b\\f\\n\\r\\t\\\\\\\"\"}",
+      "pretty": "{\n  \"a\": \"\\u0000\\u001f\\b\\f\\n\\r\\t\\\\\\\"\"\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "nan"
+    },
+    "expected": {
+      "error": "expected ident at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "Infinity"
+    },
+    "expected": {
+      "error": "expected value at line 1 column 1"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[-]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[--1]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[+1]"
+    },
+    "expected": {
+      "error": "expected value at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[.5]"
+    },
+    "expected": {
+      "error": "expected value at line 1 column 2"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1.e3]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[0x10]"
+    },
+    "expected": {
+      "error": "expected `,` or `]` at line 1 column 3"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "\"\\uD83D\\uDE00\""
+    },
+    "expected": {
+      "compact": "\"😀\"",
+      "pretty": "\"😀\""
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "{\"\\u0041\":1}"
+    },
+    "expected": {
+      "compact": "{\"A\":1}",
+      "pretty": "{\n  \"A\": 1\n}"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1e]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 4"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1e+]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 5"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[1.5e-]"
+    },
+    "expected": {
+      "error": "invalid number at line 1 column 7"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    },
+    "expected": {
+      "error": "recursion limit exceeded at line 1 column 128"
+    }
+  },
+  {
+    "method": "json.decode",
+    "input": {
+      "text": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    },
+    "expected": {
+      "compact": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
+      "pretty": "[\n  [\n    [\n      [\n        [\n          [\n            [\n              [\n                [\n                  [\n                    [\n                      [\n                        [\n                          [\n                            [\n                              [\n                                [\n                                  [\n                                    [\n                                      [\n                                        [\n                                          [\n                                            [\n                                              [\n                                                [\n                                                  [\n                                                    [\n                                                      [\n                                                        [\n                                                          [\n                                                            [\n                                                              [\n                                                                [\n                                                                  [\n                                                                    [\n                                                                      [\n                                                                        [\n                                                                          [\n                                                                            [\n                                                                              [\n                                                                                [\n                                                                                  [\n                                                                                    [\n                                                                                      [\n                                                                                        [\n                                                                                          [\n                                                                                            [\n                                                                                              [\n                                                                                                [\n                                                                                                  [\n                                                                                                    [\n                                                                                                      [\n                                                                                                        [\n                                                                                                          [\n                                                                                                            [\n                                                                                                              [\n                                                                                                                [\n                                                                                                                  [\n                                                                                                                    [\n                                                                                                                      [\n                                                                                                                        [\n                                                                                                                          [\n                                                                                                                            [\n                                                                                                                              [\n                                                                                                                                [\n                                                                                                                                  [\n                                                                                                                                    [\n                                                                                                                                      [\n                                                                                                                                        [\n                                                                                                                                          [\n                                                                                                                                            [\n                                                                                                                                              [\n                                                                                                                                                [\n                                                                                                                                                  [\n                                                                                                                                                    [\n                                                                                                                                                      [\n                                                                                                                                                        [\n                                                                                                                                                          [\n                                                                                                                                                            [\n                                                                                                                                                              [\n                                                                                                                                                                [\n                                                                                                                                                                  [\n                                                                                                                                                                    [\n                                                                                                                                                                      [\n                                                                                                                                                                        [\n                                                                                                                                                                          [\n                                                                                                                                                                            [\n                                                                                                                                                                              [\n                                                                                                                                                                                [\n                                                                                                                                                                                  [\n                                                                                                                                                                                    [\n                                                                                                                                                                                      [\n                                                                                                                                                                                        [\n                                                                                                                                                                                          [\n                                                                                                                                                                                            [\n                                                                                                                                                                                              [\n                                                                                                                                                                                                [\n                                                                                                                                                                                                  [\n                                                                                                                                                                                                    [\n                                                                                                                                                                                                      [\n                                                                                                                                                                                                        [\n                                                                                                                                                                                                          [\n                                                                                                                                                                                                            [\n                                                                                                                                                                                                              [\n                                                                                                                                                                                                                [\n                                                                                                                                                                                                                  [\n                                                                                                                                                                                                                    [\n                                                                                                                                                                                                                      [\n                                                                                                                                                                                                                        [\n                                                                                                                                                                                                                          [\n                                                                                                                                                                                                                            [\n                                                                                                                                                                                                                              [\n                                                                                                                                                                                                                                [\n                                                                                                                                                                                                                                  [\n                                                                                                                                                                                                                                    [\n                                                                                                                                                                                                                                      [\n                                                                                                                                                                                                                                        [\n                                                                                                                                                                                                                                          [\n                                                                                                                                                                                                                                            [\n                                                                                                                                                                                                                                              [\n                                                                                                                                                                                                                                                [\n                                                                                                                                                                                                                                                  [\n                                                                                                                                                                                                                                                    [\n                                                                                                                                                                                                                                                      [\n                                                                                                                                                                                                                                                        [\n                                                                                                                                                                                                                                                          [\n                                                                                                                                                                                                                                                            []\n                                                                                                                                                                                                                                                          ]\n                                                                                                                                                                                                                                                        ]\n                                                                                                                                                                                                                                                      ]\n                                                                                                                                                                                                                                                    ]\n                                                                                                                                                                                                                                                  ]\n                                                                                                                                                                                                                                                ]\n                                                                                                                                                                                                                                              ]\n                                                                                                                                                                                                                                            ]\n                                                                                                                                                                                                                                          ]\n                                                                                                                                                                                                                                        ]\n                                                                                                                                                                                                                                      ]\n                                                                                                                                                                                                                                    ]\n                                                                                                                                                                                                                                  ]\n                                                                                                                                                                                                                                ]\n                                                                                                                                                                                                                              ]\n                                                                                                                                                                                                                            ]\n                                                                                                                                                                                                                          ]\n                                                                                                                                                                                                                        ]\n                                                                                                                                                                                                                      ]\n                                                                                                                                                                                                                    ]\n                                                                                                                                                                                                                  ]\n                                                                                                                                                                                                                ]\n                                                                                                                                                                                                              ]\n                                                                                                                                                                                                            ]\n                                                                                                                                                                                                          ]\n                                                                                                                                                                                                        ]\n                                                                                                                                                                                                      ]\n                                                                                                                                                                                                    ]\n                                                                                                                                                                                                  ]\n                                                                                                                                                                                                ]\n                                                                                                                                                                                              ]\n                                                                                                                                                                                            ]\n                                                                                                                                                                                          ]\n                                                                                                                                                                                        ]\n                                                                                                                                                                                      ]\n                                                                                                                                                                                    ]\n                                                                                                                                                                                  ]\n                                                                                                                                                                                ]\n                                                                                                                                                                              ]\n                                                                                                                                                                            ]\n                                                                                                                                                                          ]\n                                                                                                                                                                        ]\n                                                                                                                                                                      ]\n                                                                                                                                                                    ]\n                                                                                                                                                                  ]\n                                                                                                                                                                ]\n                                                                                                                                                              ]\n                                                                                                                                                            ]\n                                                                                                                                                          ]\n                                                                                                                                                        ]\n                                                                                                                                                      ]\n                                                                                                                                                    ]\n                                                                                                                                                  ]\n                                                                                                                                                ]\n                                                                                                                                              ]\n                                                                                                                                            ]\n                                                                                                                                          ]\n                                                                                                                                        ]\n                                                                                                                                      ]\n                                                                                                                                    ]\n                                                                                                                                  ]\n                                                                                                                                ]\n                                                                                                                              ]\n                                                                                                                            ]\n                                                                                                                          ]\n                                                                                                                        ]\n                                                                                                                      ]\n                                                                                                                    ]\n                                                                                                                  ]\n                                                                                                                ]\n                                                                                                              ]\n                                                                                                            ]\n                                                                                                          ]\n                                                                                                        ]\n                                                                                                      ]\n                                                                                                    ]\n                                                                                                  ]\n                                                                                                ]\n                                                                                              ]\n                                                                                            ]\n                                                                                          ]\n                                                                                        ]\n                                                                                      ]\n                                                                                    ]\n                                                                                  ]\n                                                                                ]\n                                                                              ]\n                                                                            ]\n                                                                          ]\n                                                                        ]\n                                                                      ]\n                                                                    ]\n                                                                  ]\n                                                                ]\n                                                              ]\n                                                            ]\n                                                          ]\n                                                        ]\n                                                      ]\n                                                    ]\n                                                  ]\n                                                ]\n                                              ]\n                                            ]\n                                          ]\n                                        ]\n                                      ]\n                                    ]\n                                  ]\n                                ]\n                              ]\n                            ]\n                          ]\n                        ]\n                      ]\n                    ]\n                  ]\n                ]\n              ]\n            ]\n          ]\n        ]\n      ]\n    ]\n  ]\n]"
+    }
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "0"
+    },
+    "expected": "0.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "9223372036854775808"
+    },
+    "expected": "-0.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4607182418800017408"
+    },
+    "expected": "1.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4602678819172646912"
+    },
+    "expected": "0.5"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4652007308841189376"
+    },
+    "expected": "1000.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4831355200913801216"
+    },
+    "expected": "1000000000000000.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4846369599423283200"
+    },
+    "expected": "1e+16"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4861130398305394688"
+    },
+    "expected": "1e+17"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4921056587992461136"
+    },
+    "expected": "1e+21"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4936209963552724370"
+    },
+    "expected": "1e+22"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4532020583610935537"
+    },
+    "expected": "0.00001"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4517329193108106637"
+    },
+    "expected": "1e-6"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4502148214488346440"
+    },
+    "expected": "1e-7"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4638387860618067575"
+    },
+    "expected": "123.456"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4599676419421066581"
+    },
+    "expected": "0.3333333333333333"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "9218868437227405311"
+    },
+    "expected": "1.7976931348623157e+308"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4503599627370496"
+    },
+    "expected": "2.2250738585072014e-308"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "1"
+    },
+    "expected": "5e-324"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4612811918334230528"
+    },
+    "expected": "2.5"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4845873199050653696"
+    },
+    "expected": "9007199254740992.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4599075939470750516"
+    },
+    "expected": "0.30000000000000004"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4636737291354636288"
+    },
+    "expected": "100.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "4757767320795873280"
+    },
+    "expected": "12340000000.0"
+  },
+  {
+    "method": "json.formatDouble",
+    "input": {
+      "bits": "13663889135472162879"
+    },
+    "expected": "-7.25e-12"
+  }
+]

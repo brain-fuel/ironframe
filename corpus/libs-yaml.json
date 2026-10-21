@@ -1,0 +1,2716 @@
+[
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "~"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "null"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "Null"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "NULL"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "true"
+    },
+    "expected": {
+      "ok": "true"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "True"
+    },
+    "expected": {
+      "ok": "true"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "TRUE"
+    },
+    "expected": {
+      "ok": "true"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "yes"
+    },
+    "expected": {
+      "ok": "\"yes\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "no"
+    },
+    "expected": {
+      "ok": "\"no\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "on"
+    },
+    "expected": {
+      "ok": "\"on\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "off"
+    },
+    "expected": {
+      "ok": "\"off\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "y"
+    },
+    "expected": {
+      "ok": "\"y\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "n"
+    },
+    "expected": {
+      "ok": "\"n\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1"
+    },
+    "expected": {
+      "ok": "1"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "-1"
+    },
+    "expected": {
+      "ok": "-1"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "+1"
+    },
+    "expected": {
+      "ok": "1"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "0x1F"
+    },
+    "expected": {
+      "ok": "31"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "0o17"
+    },
+    "expected": {
+      "ok": "15"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "017"
+    },
+    "expected": {
+      "ok": "\"017\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1_000"
+    },
+    "expected": {
+      "ok": "\"1_000\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1.5"
+    },
+    "expected": {
+      "ok": "1.5"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1."
+    },
+    "expected": {
+      "ok": "1.0"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": ".5"
+    },
+    "expected": {
+      "ok": "0.5"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "-.5"
+    },
+    "expected": {
+      "ok": "-0.5"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1e3"
+    },
+    "expected": {
+      "ok": "1000.0"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1E3"
+    },
+    "expected": {
+      "ok": "1000.0"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1.0e+3"
+    },
+    "expected": {
+      "ok": "1000.0"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": ".inf"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "-.Inf"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": ".NaN"
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "0.1"
+    },
+    "expected": {
+      "ok": "0.1"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "18446744073709551615"
+    },
+    "expected": {
+      "ok": "18446744073709551615"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "18446744073709551616"
+    },
+    "expected": {
+      "error": "JSON number out of range"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "-9223372036854775809"
+    },
+    "expected": {
+      "error": "JSON number out of range"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "'1'"
+    },
+    "expected": {
+      "ok": "\"1\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "\"1\""
+    },
+    "expected": {
+      "ok": "\"1\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "abc"
+    },
+    "expected": {
+      "ok": "\"abc\""
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: 1"
+    },
+    "expected": {
+      "ok": "{\"a\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: [1, 'b', \"c\", d]"
+    },
+    "expected": {
+      "ok": "{\"a\":[1,\"b\",\"c\",\"d\"]}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "{a: {b: c}}"
+    },
+    "expected": {
+      "ok": "{\"a\":{\"b\":\"c\"}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "- 1\n- 2\n"
+    },
+    "expected": {
+      "ok": "[1,2]"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a:\n  - x\n  - y\nb: z\n"
+    },
+    "expected": {
+      "ok": "{\"a\":[\"x\",\"y\"],\"b\":\"z\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: &x 1\nb: *x\n"
+    },
+    "expected": {
+      "ok": "{\"a\":1,\"b\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: &m {k: v}\nb:\n  <<: *m\n  j: w\n"
+    },
+    "expected": {
+      "ok": "{\"a\":{\"k\":\"v\"},\"b\":{\"<<\":{\"k\":\"v\"},\"j\":\"w\"}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: 1\na: 2\n"
+    },
+    "expected": {
+      "ok": "{\"a\":2}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "? [1, 2]\n: x\n"
+    },
+    "expected": {
+      "error": "invalid type: sequence, expected a string key at line 1 column 3"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1: one\n2: two\n"
+    },
+    "expected": {
+      "ok": "{\"1\":\"one\",\"2\":\"two\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "true: t\n"
+    },
+    "expected": {
+      "ok": "{\"true\":\"t\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "null: n\n"
+    },
+    "expected": {
+      "ok": "{\"null\":\"n\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "1.5: f\n"
+    },
+    "expected": {
+      "ok": "{\"1.5\":\"f\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: !!str 1\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"1\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: !!int '1'\n"
+    },
+    "expected": {
+      "ok": "{\"a\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: !custom x\n"
+    },
+    "expected": {
+      "error": "a: invalid type: enum, expected any valid JSON value at line 1 column 4"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "--- 1\n--- 2\n"
+    },
+    "expected": {
+      "error": "deserializing from YAML containing more than one document is not supported"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "---\na: 1\n...\n"
+    },
+    "expected": {
+      "ok": "{\"a\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: |\n  line one\n  line two\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"line one\\nline two\\n\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: >\n  folded\n  text\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"folded text\\n\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: 'it''s'\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"it's\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: \"tab\\there\\u00e9\"\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"tab\\thereé\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: b: c\n"
+    },
+    "expected": {
+      "error": "mapping values are not allowed in this context at line 1 column 5"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: [1, 2\n"
+    },
+    "expected": {
+      "error": "did not find expected ',' or ']' at line 2 column 1, while parsing a flow sequence at line 1 column 4"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "\tindented: tab\n"
+    },
+    "expected": {
+      "error": "found character that cannot start any token, while scanning for the next token"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a:\n  b: 1\n c: 2\n"
+    },
+    "expected": {
+      "error": "did not find expected key at line 3 column 2, while parsing a block mapping"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "key with spaces: v\n"
+    },
+    "expected": {
+      "ok": "{\"key with spaces\":\"v\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: \"x${endpoint}y\"\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"x${endpoint}y\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "a: ${endpoint}\n"
+    },
+    "expected": {
+      "ok": "{\"a\":\"${endpoint}\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "ports: [9092, 9644]\n"
+    },
+    "expected": {
+      "ok": "{\"ports\":[9092,9644]}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 2001-12-14\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"2001-12-14\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 12:30\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"12:30\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 0b101\n"
+    },
+    "expected": {
+      "ok": "{\"x\":5}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: -0\n"
+    },
+    "expected": {
+      "ok": "{\"x\":0}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 00\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"00\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 1e400\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"1e400\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: +.5\n"
+    },
+    "expected": {
+      "ok": "{\"x\":0.5}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 1__0\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"1__0\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 0x\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"0x\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 0xg\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"0xg\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "empty:\n"
+    },
+    "expected": {
+      "ok": "{\"empty\":null}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "list:\n- \n- a\n"
+    },
+    "expected": {
+      "ok": "{\"list\":[null,\"a\"]}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "s: 'single \"q\"'\n"
+    },
+    "expected": {
+      "ok": "{\"s\":\"single \\\"q\\\"\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "u: café\n"
+    },
+    "expected": {
+      "ok": "{\"u\":\"café\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "n: -0.0\n"
+    },
+    "expected": {
+      "ok": "{\"n\":-0.0}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 9223372036854775807\n"
+    },
+    "expected": {
+      "ok": "{\"x\":9223372036854775807}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: -9223372036854775808\n"
+    },
+    "expected": {
+      "ok": "{\"x\":-9223372036854775808}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 123456789012345678901234567890\n"
+    },
+    "expected": {
+      "error": "x: JSON number out of range at line 1 column 4"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 1.7976931348623157e309\n"
+    },
+    "expected": {
+      "ok": "{\"x\":\"1.7976931348623157e309\"}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 6.02e23\n"
+    },
+    "expected": {
+      "ok": "{\"x\":6.02e+23}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: 1e-10\n"
+    },
+    "expected": {
+      "ok": "{\"x\":1e-10}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "x: .1e2\n"
+    },
+    "expected": {
+      "ok": "{\"x\":10.0}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: petstore-app\n\ndependencies:\n  petstore:\n    description: The Petstore API the app adds pets to.\n    settings:\n      PETSTORE_URL: ${endpoint}\n\nenvironments:\n  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the\n  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as\n  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.\n  # Build the image in the lawtwin repository with `make image-http` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            level: conformant\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          endpoint: http://localhost:8080\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n          faults:\n            - name: latency\n              params:\n                delay: 5ms\n          admin:\n            port: 9645\n            container_port: 9644\n    sync:\n      - env_file:\n          path: .env\n\n  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.\n  staging:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: petstore-app-staging\n      region: europe-west1\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          seed: 42\n    sync:\n      - gcp_parameter_manager:\n          project: petstore-app-staging\n          parameter: petstore-app-connections\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"petstore-app\",\"dependencies\":{\"petstore\":{\"description\":\"The Petstore API the app adds pets to.\",\"settings\":{\"PETSTORE_URL\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"petstore\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"contract\":\"petstore\",\"conformance\":{\"level\":\"conformant\",\"report\":\"conformance/lawtwin-http-0.1.0-petstore.json\"},\"ports\":[8080],\"endpoint\":\"http://localhost:8080\",\"seed\":42,\"advertise_variable\":\"LAWTWIN_ADVERTISE\",\"faults\":[{\"name\":\"latency\",\"params\":{\"delay\":\"5ms\"}}],\"admin\":{\"port\":9645,\"container_port\":9644}}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}]},\"staging\":{\"runtime\":\"gcp\",\"cloud\":{\"modules\":\"../../modules\",\"project\":\"petstore-app-staging\",\"region\":\"europe-west1\"},\"dependencies\":{\"petstore\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"contract\":\"petstore\",\"conformance\":{\"report\":\"conformance/lawtwin-http-0.1.0-petstore.json\"},\"ports\":[8080],\"seed\":42}}},\"sync\":[{\"gcp_parameter_manager\":{\"project\":\"petstore-app-staging\",\"parameter\":\"petstore-app-connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"kafka-app\",\"dependencies\":{\"kafka\":{\"description\":\"The Kafka cluster the app talks to.\",\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"level\":\"answers\",\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092],\"seed\":42,\"config\":{\"clock\":\"frozen\"},\"admin\":{\"port\":9644}}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}],\"config_service\":{\"port\":8700}},\"local-broker\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\",\"image\":\"apache/kafka:4.1.0\",\"ports\":[9092]}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}],\"config_service\":{\"port\":8700}},\"staging\":{\"runtime\":\"aws\",\"cloud\":{\"modules\":\"../../modules\",\"region\":\"us-east-1\",\"vpc_id\":\"vpc-0123456789abcdef0\",\"subnet_ids\":[\"subnet-0123456789abcdef0\",\"subnet-0fedcba9876543210\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092]}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"us-east-1\",\"application\":\"kafka-app\",\"profile\":\"connections\"}}]},\"staging-gcp\":{\"runtime\":\"gcp\",\"cloud\":{\"modules\":\"../../modules\",\"project\":\"kafka-app-staging\",\"region\":\"europe-west1\",\"allowed_cidr_blocks\":[\"10.0.0.0/8\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092],\"protocol\":\"tcp\",\"seed\":42,\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}},\"sync\":[{\"gcp_parameter_manager\":{\"project\":\"kafka-app-staging\",\"parameter\":\"kafka-app-connections\"}}]},\"production\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"us-east-1\",\"vpc_id\":\"vpc-0123456789abcdef0\",\"subnet_ids\":[\"subnet-0123456789abcdef0\"]},\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b-1.kafka-app.example.internal:9092\",\"credentials\":\"aws-secretsmanager:kafka-app/production/kafka\"}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"us-east-1\",\"application\":\"kafka-app\",\"profile\":\"connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\",\"KAFKA_KIND\":\"${kind}\"}},\"payments\":{\"settings\":{\"PAYMENTS_URL\":\"${endpoint}\",\"PAYMENTS_HOST\":\"${host}\",\"PAYMENTS_PORT\":\"${port}\",\"PAYMENTS_CREDENTIALS\":\"${credentials}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"ports\":[9092,9644],\"config\":{\"seed\":42},\"env\":{\"LOG_LEVEL\":\"debug\"}}},\"payments\":{\"twin\":{\"image\":\"ghcr.io/example/payments-twin\",\"version\":\"2.0.0\",\"conformance\":\"L1\",\"ports\":[8080],\"endpoint\":\"http://localhost:8080/v1\",\"credentials\":\"env:PAYMENTS_TOKEN\"}}},\"sync\":[{\"env_file\":{\"path\":\".env.local\"}}]},\"staging\":{\"runtime\":\"aws\",\"cloud\":{\"modules\":\"../modules\",\"region\":\"eu-west-1\",\"vpc_id\":\"vpc-1\",\"subnet_ids\":[\"subnet-1\",\"subnet-2\"],\"cpu\":512},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"ports\":[9092]}},\"payments\":{\"real\":{\"endpoint\":\"https://payments.example.com\",\"credentials\":\"aws-secretsmanager:shop/payments\"}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"eu-west-1\",\"application\":\"shop\",\"profile\":\"connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"kafka-app\",\"dependencies\":{\"kafka\":{\"description\":\"The Kafka cluster the app talks to.\",\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"level\":\"answers\",\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092],\"seed\":42,\"config\":{\"clock\":\"frozen\"},\"admin\":{\"port\":9644}}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}],\"config_service\":{\"port\":8700}},\"local-broker\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\",\"image\":\"apache/kafka:4.1.0\",\"ports\":[9092]}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}],\"config_service\":{\"port\":8700}},\"staging\":{\"runtime\":\"aws\",\"cloud\":{\"modules\":\"../../modules\",\"region\":\"us-east-1\",\"vpc_id\":\"vpc-0123456789abcdef0\",\"subnet_ids\":[\"subnet-0123456789abcdef0\",\"subnet-0fedcba9876543210\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092]}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"us-east-1\",\"application\":\"kafka-app\",\"profile\":\"connections\"}}]},\"staging-gcp\":{\"runtime\":\"gcp\",\"cloud\":{\"modules\":\"../../modules\",\"project\":\"kafka-app-staging\",\"region\":\"europe-west1\",\"allowed_cidr_blocks\":[\"10.0.0.0/8\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"report\":\"conformance/lawtwin-kafka-0.1.0.json\"},\"ports\":[9092],\"protocol\":\"tcp\",\"seed\":42,\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}},\"sync\":[{\"gcp_parameter_manager\":{\"project\":\"kafka-app-staging\",\"parameter\":\"kafka-app-connections\"}}]},\"production\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"us-east-1\",\"vpc_id\":\"vpc-0123456789abcdef0\",\"subnet_ids\":[\"subnet-0123456789abcdef0\"]},\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b-1.kafka-app.example.internal:9092\",\"credentials\":\"aws-secretsmanager:kafka-app/production/kafka\"}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"us-east-1\",\"application\":\"kafka-app\",\"profile\":\"connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: petstore-app\n\ndependencies:\n  petstore:\n    description: The Petstore API the app adds pets to.\n    settings:\n      PETSTORE_URL: ${endpoint}\n\nenvironments:\n  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the\n  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as\n  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.\n  # Build the image in the lawtwin repository with `make image-http` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            level: conformant\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          endpoint: http://localhost:8080\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n          faults:\n            - name: latency\n              params:\n                delay: 5ms\n          admin:\n            port: 9645\n            container_port: 9644\n    sync:\n      - env_file:\n          path: .env\n\n  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.\n  staging:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: petstore-app-staging\n      region: europe-west1\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          seed: 42\n    sync:\n      - gcp_parameter_manager:\n          project: petstore-app-staging\n          parameter: petstore-app-connections\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"petstore-app\",\"dependencies\":{\"petstore\":{\"description\":\"The Petstore API the app adds pets to.\",\"settings\":{\"PETSTORE_URL\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"petstore\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"contract\":\"petstore\",\"conformance\":{\"level\":\"conformant\",\"report\":\"conformance/lawtwin-http-0.1.0-petstore.json\"},\"ports\":[8080],\"endpoint\":\"http://localhost:8080\",\"seed\":42,\"advertise_variable\":\"LAWTWIN_ADVERTISE\",\"faults\":[{\"name\":\"latency\",\"params\":{\"delay\":\"5ms\"}}],\"admin\":{\"port\":9645,\"container_port\":9644}}}},\"sync\":[{\"env_file\":{\"path\":\".env\"}}]},\"staging\":{\"runtime\":\"gcp\",\"cloud\":{\"modules\":\"../../modules\",\"project\":\"petstore-app-staging\",\"region\":\"europe-west1\"},\"dependencies\":{\"petstore\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"contract\":\"petstore\",\"conformance\":{\"report\":\"conformance/lawtwin-http-0.1.0-petstore.json\"},\"ports\":[8080],\"seed\":42}}},\"sync\":[{\"gcp_parameter_manager\":{\"project\":\"petstore-app-staging\",\"parameter\":\"petstore-app-connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  db:\n    settings: {D: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'localhost:9092', image: 'apache/kafka:4.1.0', ports: [9092]}}\n      db: {real: {endpoint: 'db.example.com:5432'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}},\"db\":{\"settings\":{\"D\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\",\"image\":\"apache/kafka:4.1.0\",\"ports\":[9092]}},\"db\":{\"real\":{\"endpoint\":\"db.example.com:5432\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  orders:\n    settings: {O: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {modules: ../modules, project: p, region: europe-west1, zone: europe-west1-c, cpu: '2', allowed_cidr_blocks: [10.0.0.0/8]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: answers, ports: [9092], protocol: tcp, seed: 42, advertise_variable: LAWTWIN_ADVERTISE}\n      orders:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: conformant, ports: [8080], contract: petstore}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}},\"orders\":{\"settings\":{\"O\":\"${endpoint}\"}}},\"environments\":{\"dev\":{\"runtime\":\"gcp\",\"cloud\":{\"modules\":\"../modules\",\"project\":\"p\",\"region\":\"europe-west1\",\"zone\":\"europe-west1-c\",\"cpu\":\"2\",\"allowed_cidr_blocks\":[\"10.0.0.0/8\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"protocol\":\"tcp\",\"seed\":42,\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}},\"orders\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"conformant\",\"ports\":[8080],\"contract\":\"petstore\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: shop-dev, region: europe-west1, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"orders_api\":{\"settings\":{\"ORDERS\":\"${endpoint}\"}}},\"environments\":{\"dev\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"shop-dev\",\"region\":\"europe-west1\",\"modules\":\"/m\"},\"dependencies\":{\"orders_api\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"L1\",\"ports\":[8080],\"config\":{\"spec\":\"orders\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: shop-dev, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"orders_api\":{\"settings\":{\"ORDERS\":\"${endpoint}\"}}},\"environments\":{\"dev\":{\"runtime\":\"azure\",\"cloud\":{\"location\":\"westeurope\",\"resource_group_name\":\"shop-dev\",\"modules\":\"/m\"},\"dependencies\":{\"orders_api\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"L1\",\"ports\":[8080],\"config\":{\"spec\":\"orders\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"orders_api\":{\"settings\":{\"ORDERS\":\"${endpoint}\"}}},\"environments\":{\"dev\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"r\"},\"dependencies\":{\"orders_api\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"L1\",\"ports\":[8080],\"config\":{\"spec\":\"orders\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 2\nproject: Shop\ndependencies: {}\nenvironments:\n  local:\n    runtime: kubernetes\n    dependencies: {}\n    extra: true\n"
+    },
+    "expected": {
+      "ok": "{\"version\":2,\"project\":\"Shop\",\"dependencies\":{},\"environments\":{\"local\":{\"runtime\":\"kubernetes\",\"dependencies\":{},\"extra\":true}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: a:1}\n        twin: {image: t, version: '1', conformance: c, ports: [1]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"a:1\"},\"twin\":{\"image\":\"t\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: 'lawtwin/kafka:0.1.0', version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka:0.1.0\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: 'lawtwin/kafka@sha256:00', version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka@sha256:00\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      redis:\n        real: {endpoint: 'localhost:6379'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"redis\":{\"real\":{\"endpoint\":\"localhost:6379\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA: ${endpiont}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA\":\"${endpiont}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA: 'x${endpoint'\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA\":\"x${endpoint\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a:\n    settings: {URL: '${endpoint}'}\n  b:\n    settings: {URL: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {real: {endpoint: 'x:1'}}\n      b: {real: {endpoint: 'y:1'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"a\":{\"settings\":{\"URL\":\"${endpoint}\"}},\"b\":{\"settings\":{\"URL\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"a\":{\"real\":{\"endpoint\":\"x:1\"}},\"b\":{\"real\":{\"endpoint\":\"y:1\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  db:\n    settings: {DB_PASSWORD_REF: '${credentials}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      db: {real: {endpoint: 'localhost:5432'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"db\":{\"settings\":{\"DB_PASSWORD_REF\":\"${credentials}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"db\":{\"real\":{\"endpoint\":\"localhost:5432\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  db:\n    settings: {DB_PASSWORD_REF: '${credentials}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      db: {real: {endpoint: 'localhost:5432', credentials: 'hunter2'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"db\":{\"settings\":{\"DB_PASSWORD_REF\":\"${credentials}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"db\":{\"real\":{\"endpoint\":\"localhost:5432\",\"credentials\":\"hunter2\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: us-east-1, subnets: [a]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"us-east-1\",\"subnets\":[\"a\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"aws\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b:9092\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    cloud: {region: x}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"cloud\":{\"region\":\"x\"},\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b:9092\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092', image: 'apache/kafka:4.1.0', ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"r\"},\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b:9092\",\"image\":\"apache/kafka:4.1.0\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092', image: 'apache/kafka:4.1.0'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\",\"image\":\"apache/kafka:4.1.0\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092', ports: [1], env: {A: b}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"localhost:9092\",\"ports\":[1],\"env\":{\"A\":\"b\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: '  '}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"  \"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a:\n    settings: {A: '${endpoint}'}\n  b:\n    settings: {B: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: c, ports: [9092]}}\n      b: {twin: {image: t/b, version: '1', conformance: c, ports: [9092]}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"a\":{\"settings\":{\"A\":\"${endpoint}\"}},\"b\":{\"settings\":{\"B\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"a\":{\"twin\":{\"image\":\"t/a\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[9092]}},\"b\":{\"twin\":{\"image\":\"t/b\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    config_service: {port: 9092}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"config_service\":{\"port\":9092},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    config_service: {}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"r\"},\"config_service\":{},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [9092, 9093]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"r\"},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"t/k\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[9092,9093]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "ok": "null"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "- a\n- b\n"
+    },
+    "expected": {
+      "ok": "[\"a\",\"b\"]"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: [shop\n"
+    },
+    "expected": {
+      "error": "did not find expected ',' or ']' at line 3 column 1, while parsing a flow sequence at line 2 column 10"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: '1'\nproject: shop\ndependencies: {}\nenvironments: {}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":\"1\",\"project\":\"shop\",\"dependencies\":{},\"environments\":{}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: 123\ndependencies: {}\nenvironments:\n  local: {runtime: podman, dependencies: {}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":123,\"dependencies\":{},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  Kafka:\n    settings: {}\n  db:\n    settings: {1BAD: x, OK: 5}\n    other: 1\nenvironments: {}\nextra: 1\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"Kafka\":{\"settings\":{}},\"db\":{\"settings\":{\"1BAD\":\"x\",\"OK\":5},\"other\":1}},\"environments\":{},\"extra\":1}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {modules: 5, region: r, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:1'}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"aws\",\"cloud\":{\"modules\":5,\"region\":\"r\",\"vpc_id\":\"v\",\"subnet_ids\":[\"s\"]},\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"b:1\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: '', credentials: 'nope', image: '', ports: [0, 70000, a], env: {A: 1}, other: x}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"\",\"credentials\":\"nope\",\"image\":\"\",\"ports\":[0,70000,\"a\"],\"env\":{\"A\":1},\"other\":\"x\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\n  c: {settings: {C: x}}\n  d: {settings: {D: x}}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: {}, ports: [1]}}\n      b: {twin: {image: t/b, version: '1', conformance: 5, ports: [2]}}\n      c: {twin: {image: t/c, version: '1', conformance: {level: ''}, ports: [3]}}\n      d: {twin: {image: t/d, version: '1', conformance: {foo: 1}, ports: [4]}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"a\":{\"settings\":{\"A\":\"x\"}},\"b\":{\"settings\":{\"B\":\"x\"}},\"c\":{\"settings\":{\"C\":\"x\"}},\"d\":{\"settings\":{\"D\":\"x\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"a\":{\"twin\":{\"image\":\"t/a\",\"version\":\"1\",\"conformance\":{},\"ports\":[1]}},\"b\":{\"twin\":{\"image\":\"t/b\",\"version\":\"1\",\"conformance\":5,\"ports\":[2]}},\"c\":{\"twin\":{\"image\":\"t/c\",\"version\":\"1\",\"conformance\":{\"level\":\"\"},\"ports\":[3]}},\"d\":{\"twin\":{\"image\":\"t/d\",\"version\":\"1\",\"conformance\":{\"foo\":1},\"ports\":[4]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [], seed: -1, state: 5, faults: [{}, {name: x, params: {a: 1.5, b: [1]}}], admin: {port: 0, url: '', foo: 1}, protocol: udp, config: [], env: {A: 1}, contract: '', advertise_variable: ''}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"t/k\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[],\"seed\":-1,\"state\":5,\"faults\":[{},{\"name\":\"x\",\"params\":{\"a\":1.5,\"b\":[1]}}],\"admin\":{\"port\":0,\"url\":\"\",\"foo\":1},\"protocol\":\"udp\",\"config\":[],\"env\":{\"A\":1},\"contract\":\"\",\"advertise_variable\":\"\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], seed: 1.5}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"t/k\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1],\"seed\":1.5}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], state: ''}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"t/k\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1],\"state\":\"\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - {}\n      - env_file: {}\n      - env_file: {path: a}\n        aws_appconfig: {region: r, application: a, profile: p}\n      - gcp_parameter_manager: {project: p, parameter: 'bad name!'}\n      - azure_app_configuration: {endpoint: 'http://x'}\n      - aws_appconfig: {region: r}\n      - nope: {}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"sync\":[{},{\"env_file\":{}},{\"env_file\":{\"path\":\"a\"},\"aws_appconfig\":{\"region\":\"r\",\"application\":\"a\",\"profile\":\"p\"}},{\"gcp_parameter_manager\":{\"project\":\"p\",\"parameter\":\"bad name!\"}},{\"azure_app_configuration\":{\"endpoint\":\"http://x\"}},{\"aws_appconfig\":{\"region\":\"r\"}},{\"nope\":{}}],\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: '  '}\n      - aws_appconfig: {region: ' ', application: a, profile: p}\n      - gcp_parameter_manager: {project: ' ', location: ' ', parameter: x}\n      - azure_app_configuration: {endpoint: 'https:// ', connection_string_env: ' '}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"sync\":[{\"env_file\":{\"path\":\"  \"}},{\"aws_appconfig\":{\"region\":\" \",\"application\":\"a\",\"profile\":\"p\"}},{\"gcp_parameter_manager\":{\"project\":\" \",\"location\":\" \",\"parameter\":\"x\"}},{\"azure_app_configuration\":{\"endpoint\":\"https:// \",\"connection_string_env\":\" \"}}],\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: config/.env}\n      - aws_appconfig: {region: eu-west-1, application: shop, environment: Staging-EU, profile: connections, deployment_strategy: AppConfig.Linear50PercentEvery30Seconds}\n      - gcp_parameter_manager: {project: shop-prod, parameter: shop-staging}\n      - gcp_parameter_manager: {project: shop-prod, location: europe-west1, parameter: shop-eu}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', prefix: 'shop:'}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', label: green, connection_string_env: SHOP_APPCONFIG}\n    config_service: {image: 'ghcr.io/x/config:1', port: 8800}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"sync\":[{\"env_file\":{\"path\":\"config/.env\"}},{\"aws_appconfig\":{\"region\":\"eu-west-1\",\"application\":\"shop\",\"environment\":\"Staging-EU\",\"profile\":\"connections\",\"deployment_strategy\":\"AppConfig.Linear50PercentEvery30Seconds\"}},{\"gcp_parameter_manager\":{\"project\":\"shop-prod\",\"parameter\":\"shop-staging\"}},{\"gcp_parameter_manager\":{\"project\":\"shop-prod\",\"location\":\"europe-west1\",\"parameter\":\"shop-eu\"}},{\"azure_app_configuration\":{\"endpoint\":\"https://shop.azconfig.io\",\"prefix\":\"shop:\"}},{\"azure_app_configuration\":{\"endpoint\":\"https://shop.azconfig.io\",\"label\":\"green\",\"connection_string_env\":\"SHOP_APPCONFIG\"}}],\"config_service\":{\"image\":\"ghcr.io/x/config:1\",\"port\":8800},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    config_service: {image: '', port: 0, extra: 1}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"config_service\":{\"image\":\"\",\"port\":0,\"extra\":1},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies: {}\nenvironments: {}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{},\"environments\":{}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies: {}\nenvironments:\n  Local: {runtime: podman, dependencies: {}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{},\"environments\":{\"Local\":{\"runtime\":\"podman\",\"dependencies\":{}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\n  c: {settings: {C: x}}\n  d: {settings: {D: x}}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: ' ', conformance: ' ', ports: [1], contract: ' ', env: {TWIN_CONFIG: x}}}\n      b: {twin: {image: t/b, version: '1', conformance: {level: ' ', image_label: ' '}, ports: [2], admin: {url: 'ftp://x'}, state: ' '}}\n      c: {twin: {image: t/c, version: '1', conformance: c, ports: [3, 9644], admin: {}, faults: [{name: ' '}]}}\n      d: {twin: {image: t/d, version: '1', conformance: c, ports: [4], seed: 1, contract: k, config: {seed: 2, contract: j}, advertise_variable: 1X, env: {1X: y}}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"a\":{\"settings\":{\"A\":\"x\"}},\"b\":{\"settings\":{\"B\":\"x\"}},\"c\":{\"settings\":{\"C\":\"x\"}},\"d\":{\"settings\":{\"D\":\"x\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"a\":{\"twin\":{\"image\":\"t/a\",\"version\":\" \",\"conformance\":\" \",\"ports\":[1],\"contract\":\" \",\"env\":{\"TWIN_CONFIG\":\"x\"}}},\"b\":{\"twin\":{\"image\":\"t/b\",\"version\":\"1\",\"conformance\":{\"level\":\" \",\"image_label\":\" \"},\"ports\":[2],\"admin\":{\"url\":\"ftp://x\"},\"state\":\" \"}},\"c\":{\"twin\":{\"image\":\"t/c\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[3,9644],\"admin\":{},\"faults\":[{\"name\":\" \"}]}},\"d\":{\"twin\":{\"image\":\"t/d\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[4],\"seed\":1,\"contract\":\"k\",\"config\":{\"seed\":2,\"contract\":\"j\"},\"advertise_variable\":\"1X\",\"env\":{\"1X\":\"y\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\nenvironments:\n  stage:\n    runtime: aws\n    cloud: {region: r, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: c, ports: [1], admin: {}, state: {x: 1}, faults: [{name: f}], advertise_variable: ADV}}\n      b: {twin: {image: t/b, version: '1', conformance: c, ports: [2], admin: {url: 'https://admin.example/'}, state: s.json, protocol: tcp}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"a\":{\"settings\":{\"A\":\"x\"}},\"b\":{\"settings\":{\"B\":\"x\"}}},\"environments\":{\"stage\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"r\",\"vpc_id\":\"v\",\"subnet_ids\":[\"s\"]},\"dependencies\":{\"a\":{\"twin\":{\"image\":\"t/a\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1],\"admin\":{},\"state\":{\"x\":1},\"faults\":[{\"name\":\"f\"}],\"advertise_variable\":\"ADV\"}},\"b\":{\"twin\":{\"image\":\"t/b\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[2],\"admin\":{\"url\":\"https://admin.example/\"},\"state\":\"s.json\",\"protocol\":\"tcp\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], seed: 18446744073709551615, contract: k, config: {clock: frozen, ratio: 0.5, big: 1e3, n: -3, flag: true, none: null, list: [1, 'a', 2.25], nested: {z: 1, a: 2}, unicode: \"café \\u2603\", quote: 'say \"hi\"'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"t/k\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1],\"seed\":18446744073709551615,\"contract\":\"k\",\"config\":{\"clock\":\"frozen\",\"ratio\":0.5,\"big\":1000.0,\"n\":-3,\"flag\":true,\"none\":null,\"list\":[1,\"a\",2.25],\"nested\":{\"z\":1,\"a\":2},\"unicode\":\"café ☃\",\"quote\":\"say \\\"hi\\\"\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    description: yes\n    settings: {K: '${endpoint}', ON: on, NUM: '1'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: \"host:9092\", env: {}}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"description\":\"yes\",\"settings\":{\"K\":\"${endpoint}\",\"ON\":\"on\",\"NUM\":\"1\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"host:9092\",\"env\":{}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: &s {K: '${endpoint}'}\nenvironments:\n  a: &e\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'x:1'}}\n  b: *e\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"a\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"x:1\"}}}},\"b\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"real\":{\"endpoint\":\"x:1\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  api:\n    settings: {E: '${endpoint}', H: '${host}', P: '${port}', C: '${credentials}', K: '${kind}', N: '${name}', MIX: 'pre-${host}-${port}-post', PLAIN: literal}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'https://user@api.example.com/v1?x=1', credentials: 'vault:kv/api'}}\n  noport:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'broker', credentials: 'env:X'}}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"api\":{\"settings\":{\"E\":\"${endpoint}\",\"H\":\"${host}\",\"P\":\"${port}\",\"C\":\"${credentials}\",\"K\":\"${kind}\",\"N\":\"${name}\",\"MIX\":\"pre-${host}-${port}-post\",\"PLAIN\":\"literal\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"api\":{\"real\":{\"endpoint\":\"https://user@api.example.com/v1?x=1\",\"credentials\":\"vault:kv/api\"}}}},\"noport\":{\"runtime\":\"podman\",\"dependencies\":{\"api\":{\"real\":{\"endpoint\":\"broker\",\"credentials\":\"env:X\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          seed: 7\n          contract: petstore\n          config: {clock: frozen}\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"conformant\",\"ports\":[8080],\"seed\":7,\"contract\":\"petstore\",\"config\":{\"clock\":\"frozen\"},\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          endpoint: 'http://twin.local'\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/http\",\"version\":\"0.1.0\",\"conformance\":\"conformant\",\"ports\":[8080],\"endpoint\":\"http://twin.local\",\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: eu-west-1, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"eu-west-1\",\"vpc_id\":\"v\",\"subnet_ids\":[\"s\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: europe-west1}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9093]\n          protocol: tcp\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"europe-west1\"},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092,9093],\"protocol\":\"tcp\",\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: europe-west1}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9093]\n          protocol: http\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"europe-west1\"},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092,9093],\"protocol\":\"http\",\"advertise_variable\":\"LAWTWIN_ADVERTISE\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          state: {topics: []}\n          faults: [{name: consumer-lag}]\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"state\":{\"topics\":[]},\"faults\":[{\"name\":\"consumer-lag\"}]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9644}\n          state: {topics: []}\n          faults: [{name: consumer-lag, params: {lag: 5, topic: orders}}]\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"admin\":{\"port\":9644},\"state\":{\"topics\":[]},\"faults\":[{\"name\":\"consumer-lag\",\"params\":{\"lag\":5,\"topic\":\"orders\"}}]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9644]\n          admin: {}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092,9644],\"admin\":{}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9092}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"admin\":{\"port\":9092}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: eu-west-1, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {}\n          faults: [{name: x}]\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"aws\",\"cloud\":{\"region\":\"eu-west-1\",\"vpc_id\":\"v\",\"subnet_ids\":[\"s\"]},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"admin\":{},\"faults\":[{\"name\":\"x\"}]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 1\n          config: {seed: 2}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"seed\":1,\"config\":{\"seed\":2}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 2\n          config: {seed: 2, contract: x}\n          contract: x\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"seed\":2,\"config\":{\"seed\":2,\"contract\":\"x\"},\"contract\":\"x\"}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {image_label: io.lawtwin.conformance}\n          ports: [19092]\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":{\"image_label\":\"io.lawtwin.conformance\"},\"ports\":[19092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {url: 'http://127.0.0.1:1/', port: 7000, container_port: 7001}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"admin\":{\"url\":\"http://127.0.0.1:1/\",\"port\":7000,\"container_port\":7001}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9700, container_port: 9644}\n          env: {LOG: debug, A: b}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"K\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"answers\",\"ports\":[9092],\"admin\":{\"port\":9700,\"container_port\":9644},\"env\":{\"LOG\":\"debug\",\"A\":\"b\"}}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: rg, subscription_id: sub, transport: tcp, external: true, infrastructure_subnet_id: s, cpu: 0.5, memory: 1Gi}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"azure\",\"cloud\":{\"location\":\"westeurope\",\"resource_group_name\":\"rg\",\"subscription_id\":\"sub\",\"transport\":\"tcp\",\"external\":true,\"infrastructure_subnet_id\":\"s\",\"cpu\":0.5,\"memory\":\"1Gi\"},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r, vpc_id: x}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\"}}},\"environments\":{\"local\":{\"runtime\":\"gcp\",\"cloud\":{\"project\":\"p\",\"region\":\"r\",\"vpc_id\":\"x\"},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"c\",\"ports\":[9092]}}}}}}"
+    }
+  },
+  {
+    "method": "yaml.decode",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n"
+    },
+    "expected": {
+      "ok": "{\"version\":1,\"project\":\"shop\",\"dependencies\":{\"kafka\":{\"settings\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"${endpoint}\",\"KAFKA_KIND\":\"${kind}\"}},\"payments\":{\"settings\":{\"PAYMENTS_URL\":\"${endpoint}\",\"PAYMENTS_HOST\":\"${host}\",\"PAYMENTS_PORT\":\"${port}\",\"PAYMENTS_CREDENTIALS\":\"${credentials}\"}}},\"environments\":{\"local\":{\"runtime\":\"podman\",\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"ports\":[9092,9644],\"config\":{\"seed\":42},\"env\":{\"LOG_LEVEL\":\"debug\"}}},\"payments\":{\"twin\":{\"image\":\"ghcr.io/example/payments-twin\",\"version\":\"2.0.0\",\"conformance\":\"L1\",\"ports\":[8080],\"endpoint\":\"http://localhost:8080/v1\",\"credentials\":\"env:PAYMENTS_TOKEN\"}}},\"sync\":[{\"env_file\":{\"path\":\".env.local\"}}]},\"staging\":{\"runtime\":\"aws\",\"cloud\":{\"modules\":\"../modules\",\"region\":\"eu-west-1\",\"vpc_id\":\"vpc-1\",\"subnet_ids\":[\"subnet-1\",\"subnet-2\"],\"cpu\":512},\"dependencies\":{\"kafka\":{\"twin\":{\"image\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"ports\":[9092]}},\"payments\":{\"real\":{\"endpoint\":\"https://payments.example.com\",\"credentials\":\"aws-secretsmanager:shop/payments\"}}},\"sync\":[{\"aws_appconfig\":{\"region\":\"eu-west-1\",\"application\":\"shop\",\"profile\":\"connections\"}}]}}}"
+    }
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "plain",
+        "plain": "v",
+        "list": [
+          "plain"
+        ]
+      }
+    },
+    "expected": "k: plain\nplain: v\nlist:\n- plain\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "",
+        "": "v",
+        "list": [
+          ""
+        ]
+      }
+    },
+    "expected": "k: ''\n'': v\nlist:\n- ''\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": " lead",
+        " lead": "v",
+        "list": [
+          " lead"
+        ]
+      }
+    },
+    "expected": "k: ' lead'\n' lead': v\nlist:\n- ' lead'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "trail ",
+        "trail ": "v",
+        "list": [
+          "trail "
+        ]
+      }
+    },
+    "expected": "k: 'trail '\n'trail ': v\nlist:\n- 'trail '\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a: b",
+        "a: b": "v",
+        "list": [
+          "a: b"
+        ]
+      }
+    },
+    "expected": "k: 'a: b'\n'a: b': v\nlist:\n- 'a: b'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a #b",
+        "a #b": "v",
+        "list": [
+          "a #b"
+        ]
+      }
+    },
+    "expected": "k: 'a #b'\n'a #b': v\nlist:\n- 'a #b'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "#x",
+        "#x": "v",
+        "list": [
+          "#x"
+        ]
+      }
+    },
+    "expected": "k: '#x'\n'#x': v\nlist:\n- '#x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "- x",
+        "- x": "v",
+        "list": [
+          "- x"
+        ]
+      }
+    },
+    "expected": "k: '- x'\n'- x': v\nlist:\n- '- x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "-x",
+        "-x": "v",
+        "list": [
+          "-x"
+        ]
+      }
+    },
+    "expected": "k: -x\n-x: v\nlist:\n- -x\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x-",
+        "x-": "v",
+        "list": [
+          "x-"
+        ]
+      }
+    },
+    "expected": "k: x-\nx-: v\nlist:\n- x-\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "1",
+        "1": "v",
+        "list": [
+          "1"
+        ]
+      }
+    },
+    "expected": "k: '1'\n'1': v\nlist:\n- '1'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "1.5",
+        "1.5": "v",
+        "list": [
+          "1.5"
+        ]
+      }
+    },
+    "expected": "k: '1.5'\n'1.5': v\nlist:\n- '1.5'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "true",
+        "true": "v",
+        "list": [
+          "true"
+        ]
+      }
+    },
+    "expected": "k: 'true'\n'true': v\nlist:\n- 'true'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "yes",
+        "yes": "v",
+        "list": [
+          "yes"
+        ]
+      }
+    },
+    "expected": "k: yes\nyes: v\nlist:\n- yes\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "no",
+        "no": "v",
+        "list": [
+          "no"
+        ]
+      }
+    },
+    "expected": "k: no\nno: v\nlist:\n- no\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "null",
+        "null": "v",
+        "list": [
+          "null"
+        ]
+      }
+    },
+    "expected": "k: 'null'\n'null': v\nlist:\n- 'null'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "~",
+        "~": "v",
+        "list": [
+          "~"
+        ]
+      }
+    },
+    "expected": "k: '~'\n'~': v\nlist:\n- '~'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "0x1F",
+        "0x1F": "v",
+        "list": [
+          "0x1F"
+        ]
+      }
+    },
+    "expected": "k: '0x1F'\n'0x1F': v\nlist:\n- '0x1F'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "1e3",
+        "1e3": "v",
+        "list": [
+          "1e3"
+        ]
+      }
+    },
+    "expected": "k: '1e3'\n'1e3': v\nlist:\n- '1e3'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "9092:9092",
+        "9092:9092": "v",
+        "list": [
+          "9092:9092"
+        ]
+      }
+    },
+    "expected": "k: 9092:9092\n9092:9092: v\nlist:\n- 9092:9092\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "8700:8700",
+        "8700:8700": "v",
+        "list": [
+          "8700:8700"
+        ]
+      }
+    },
+    "expected": "k: 8700:8700\n8700:8700: v\nlist:\n- 8700:8700\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "localhost:9092",
+        "localhost:9092": "v",
+        "list": [
+          "localhost:9092"
+        ]
+      }
+    },
+    "expected": "k: localhost:9092\nlocalhost:9092: v\nlist:\n- localhost:9092\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "{\"seed\":42}",
+        "{\"seed\":42}": "v",
+        "list": [
+          "{\"seed\":42}"
+        ]
+      }
+    },
+    "expected": "k: '{\"seed\":42}'\n'{\"seed\":42}': v\nlist:\n- '{\"seed\":42}'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "{}",
+        "{}": "v",
+        "list": [
+          "{}"
+        ]
+      }
+    },
+    "expected": "k: '{}'\n'{}': v\nlist:\n- '{}'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "[]",
+        "[]": "v",
+        "list": [
+          "[]"
+        ]
+      }
+    },
+    "expected": "k: '[]'\n'[]': v\nlist:\n- '[]'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "[a]",
+        "[a]": "v",
+        "list": [
+          "[a]"
+        ]
+      }
+    },
+    "expected": "k: '[a]'\n'[a]': v\nlist:\n- '[a]'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a,b",
+        "a,b": "v",
+        "list": [
+          "a,b"
+        ]
+      }
+    },
+    "expected": "k: a,b\na,b: v\nlist:\n- a,b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a'b",
+        "a'b": "v",
+        "list": [
+          "a'b"
+        ]
+      }
+    },
+    "expected": "k: a'b\na'b: v\nlist:\n- a'b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a\"b",
+        "a\"b": "v",
+        "list": [
+          "a\"b"
+        ]
+      }
+    },
+    "expected": "k: a\"b\na\"b: v\nlist:\n- a\"b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "line\nbreak",
+        "line\nbreak": "v",
+        "list": [
+          "line\nbreak"
+        ]
+      }
+    },
+    "expected": "k: |-\n  line\n  break\n? |-\n  line\n  break\n: v\nlist:\n- |-\n  line\n  break\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "tab\there",
+        "tab\there": "v",
+        "list": [
+          "tab\there"
+        ]
+      }
+    },
+    "expected": "k: \"tab\\there\"\n\"tab\\there\": v\nlist:\n- \"tab\\there\"\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "café",
+        "café": "v",
+        "list": [
+          "café"
+        ]
+      }
+    },
+    "expected": "k: café\ncafé: v\nlist:\n- café\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "@x",
+        "@x": "v",
+        "list": [
+          "@x"
+        ]
+      }
+    },
+    "expected": "k: '@x'\n'@x': v\nlist:\n- '@x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "`x",
+        "`x": "v",
+        "list": [
+          "`x"
+        ]
+      }
+    },
+    "expected": "k: '`x'\n'`x': v\nlist:\n- '`x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "%x",
+        "%x": "v",
+        "list": [
+          "%x"
+        ]
+      }
+    },
+    "expected": "k: '%x'\n'%x': v\nlist:\n- '%x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "&x",
+        "&x": "v",
+        "list": [
+          "&x"
+        ]
+      }
+    },
+    "expected": "k: '&x'\n'&x': v\nlist:\n- '&x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "*x",
+        "*x": "v",
+        "list": [
+          "*x"
+        ]
+      }
+    },
+    "expected": "k: '*x'\n'*x': v\nlist:\n- '*x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "!x",
+        "!x": "v",
+        "list": [
+          "!x"
+        ]
+      }
+    },
+    "expected": "k: '!x'\n'!x': v\nlist:\n- '!x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "|x",
+        "|x": "v",
+        "list": [
+          "|x"
+        ]
+      }
+    },
+    "expected": "k: '|x'\n'|x': v\nlist:\n- '|x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": ">x",
+        ">x": "v",
+        "list": [
+          ">x"
+        ]
+      }
+    },
+    "expected": "k: '>x'\n'>x': v\nlist:\n- '>x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "?x",
+        "?x": "v",
+        "list": [
+          "?x"
+        ]
+      }
+    },
+    "expected": "k: ?x\n?x: v\nlist:\n- ?x\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "? x",
+        "? x": "v",
+        "list": [
+          "? x"
+        ]
+      }
+    },
+    "expected": "k: '? x'\n'? x': v\nlist:\n- '? x'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": ":x",
+        ":x": "v",
+        "list": [
+          ":x"
+        ]
+      }
+    },
+    "expected": "k: :x\n:x: v\nlist:\n- :x\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x:",
+        "x:": "v",
+        "list": [
+          "x:"
+        ]
+      }
+    },
+    "expected": "k: 'x:'\n'x:': v\nlist:\n- 'x:'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x: ",
+        "x: ": "v",
+        "list": [
+          "x: "
+        ]
+      }
+    },
+    "expected": "k: 'x: '\n'x: ': v\nlist:\n- 'x: '\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a\\b",
+        "a\\b": "v",
+        "list": [
+          "a\\b"
+        ]
+      }
+    },
+    "expected": "k: a\\b\na\\b: v\nlist:\n- a\\b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "/work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z",
+        "/work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z": "v",
+        "list": [
+          "/work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z"
+        ]
+      }
+    },
+    "expected": "k: /work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z\n/work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z: v\nlist:\n- /work/.ironframe/local/settings.json:/etc/ironframe/settings.json:ro,Z\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "0.0.0.0:8700",
+        "0.0.0.0:8700": "v",
+        "list": [
+          "0.0.0.0:8700"
+        ]
+      }
+    },
+    "expected": "k: 0.0.0.0:8700\n0.0.0.0:8700: v\nlist:\n- 0.0.0.0:8700\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "docker.io/lawtwin/kafka:0.1.0",
+        "docker.io/lawtwin/kafka:0.1.0": "v",
+        "list": [
+          "docker.io/lawtwin/kafka:0.1.0"
+        ]
+      }
+    },
+    "expected": "k: docker.io/lawtwin/kafka:0.1.0\ndocker.io/lawtwin/kafka:0.1.0: v\nlist:\n- docker.io/lawtwin/kafka:0.1.0\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "${endpoint}",
+        "${endpoint}": "v",
+        "list": [
+          "${endpoint}"
+        ]
+      }
+    },
+    "expected": "k: ${endpoint}\n${endpoint}: v\nlist:\n- ${endpoint}\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "y",
+        "y": "v",
+        "list": [
+          "y"
+        ]
+      }
+    },
+    "expected": "k: y\ny: v\nlist:\n- y\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "n",
+        "n": "v",
+        "list": [
+          "n"
+        ]
+      }
+    },
+    "expected": "k: n\nn: v\nlist:\n- n\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "on",
+        "on": "v",
+        "list": [
+          "on"
+        ]
+      }
+    },
+    "expected": "k: on\non: v\nlist:\n- on\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "off",
+        "off": "v",
+        "list": [
+          "off"
+        ]
+      }
+    },
+    "expected": "k: off\noff: v\nlist:\n- off\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "Yes",
+        "Yes": "v",
+        "list": [
+          "Yes"
+        ]
+      }
+    },
+    "expected": "k: Yes\nYes: v\nlist:\n- Yes\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "NO",
+        "NO": "v",
+        "list": [
+          "NO"
+        ]
+      }
+    },
+    "expected": "k: NO\nNO: v\nlist:\n- NO\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "True",
+        "True": "v",
+        "list": [
+          "True"
+        ]
+      }
+    },
+    "expected": "k: 'True'\n'True': v\nlist:\n- 'True'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "FALSE",
+        "FALSE": "v",
+        "list": [
+          "FALSE"
+        ]
+      }
+    },
+    "expected": "k: 'FALSE'\n'FALSE': v\nlist:\n- 'FALSE'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "Null",
+        "Null": "v",
+        "list": [
+          "Null"
+        ]
+      }
+    },
+    "expected": "k: 'Null'\n'Null': v\nlist:\n- 'Null'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": ".inf",
+        ".inf": "v",
+        "list": [
+          ".inf"
+        ]
+      }
+    },
+    "expected": "k: '.inf'\n'.inf': v\nlist:\n- '.inf'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "-.inf",
+        "-.inf": "v",
+        "list": [
+          "-.inf"
+        ]
+      }
+    },
+    "expected": "k: '-.inf'\n'-.inf': v\nlist:\n- '-.inf'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": ".nan",
+        ".nan": "v",
+        "list": [
+          ".nan"
+        ]
+      }
+    },
+    "expected": "k: '.nan'\n'.nan': v\nlist:\n- '.nan'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "0o17",
+        "0o17": "v",
+        "list": [
+          "0o17"
+        ]
+      }
+    },
+    "expected": "k: '0o17'\n'0o17': v\nlist:\n- '0o17'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "017",
+        "017": "v",
+        "list": [
+          "017"
+        ]
+      }
+    },
+    "expected": "k: '017'\n'017': v\nlist:\n- '017'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "+1",
+        "+1": "v",
+        "list": [
+          "+1"
+        ]
+      }
+    },
+    "expected": "k: '+1'\n'+1': v\nlist:\n- '+1'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "-1",
+        "-1": "v",
+        "list": [
+          "-1"
+        ]
+      }
+    },
+    "expected": "k: '-1'\n'-1': v\nlist:\n- '-1'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "1_000",
+        "1_000": "v",
+        "list": [
+          "1_000"
+        ]
+      }
+    },
+    "expected": "k: 1_000\n1_000: v\nlist:\n- 1_000\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "12:30",
+        "12:30": "v",
+        "list": [
+          "12:30"
+        ]
+      }
+    },
+    "expected": "k: 12:30\n12:30: v\nlist:\n- 12:30\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "2001-12-14",
+        "2001-12-14": "v",
+        "list": [
+          "2001-12-14"
+        ]
+      }
+    },
+    "expected": "k: 2001-12-14\n2001-12-14: v\nlist:\n- 2001-12-14\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x\u0007y",
+        "x\u0007y": "v",
+        "list": [
+          "x\u0007y"
+        ]
+      }
+    },
+    "expected": "k: \"x\\ay\"\n\"x\\ay\": v\nlist:\n- \"x\\ay\"\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "﻿x",
+        "﻿x": "v",
+        "list": [
+          "﻿x"
+        ]
+      }
+    },
+    "expected": "k: \"\\uFEFFx\"\n\"\\uFEFFx\": v\nlist:\n- \"\\uFEFFx\"\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x\r\ny",
+        "x\r\ny": "v",
+        "list": [
+          "x\r\ny"
+        ]
+      }
+    },
+    "expected": "k: \"x\\r\\ny\"\n? \"x\\r\\ny\"\n: v\nlist:\n- \"x\\r\\ny\"\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "very long string with many words that goes on and on and on past eighty columns of text to see folding",
+        "very long string with many words that goes on and on and on past eighty columns of text to see folding": "v",
+        "list": [
+          "very long string with many words that goes on and on and on past eighty columns of text to see folding"
+        ]
+      }
+    },
+    "expected": "k: very long string with many words that goes on and on and on past eighty columns of text to see folding\nvery long string with many words that goes on and on and on past eighty columns of text to see folding: v\nlist:\n- very long string with many words that goes on and on and on past eighty columns of text to see folding\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "=",
+        "=": "v",
+        "list": [
+          "="
+        ]
+      }
+    },
+    "expected": "k: =\n=: v\nlist:\n- =\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "<<",
+        "<<": "v",
+        "list": [
+          "<<"
+        ]
+      }
+    },
+    "expected": "k: <<\n<<: v\nlist:\n- <<\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "'",
+        "'": "v",
+        "list": [
+          "'"
+        ]
+      }
+    },
+    "expected": "k: ''''\n'''': v\nlist:\n- ''''\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "\"",
+        "\"": "v",
+        "list": [
+          "\""
+        ]
+      }
+    },
+    "expected": "k: '\"'\n'\"': v\nlist:\n- '\"'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "1.",
+        "1.": "v",
+        "list": [
+          "1."
+        ]
+      }
+    },
+    "expected": "k: '1.'\n'1.': v\nlist:\n- '1.'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": ".5",
+        ".5": "v",
+        "list": [
+          ".5"
+        ]
+      }
+    },
+    "expected": "k: '.5'\n'.5': v\nlist:\n- '.5'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "0b101",
+        "0b101": "v",
+        "list": [
+          "0b101"
+        ]
+      }
+    },
+    "expected": "k: '0b101'\n'0b101': v\nlist:\n- '0b101'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "  ",
+        "  ": "v",
+        "list": [
+          "  "
+        ]
+      }
+    },
+    "expected": "k: '  '\n'  ': v\nlist:\n- '  '\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "\n",
+        "\n": "v",
+        "list": [
+          "\n"
+        ]
+      }
+    },
+    "expected": "k: |2+\n\n? |2+\n\n: v\nlist:\n- |2+\n\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x\n",
+        "x\n": "v",
+        "list": [
+          "x\n"
+        ]
+      }
+    },
+    "expected": "k: |\n  x\n? |\n  x\n: v\nlist:\n- |\n  x\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a  b",
+        "a  b": "v",
+        "list": [
+          "a  b"
+        ]
+      }
+    },
+    "expected": "k: a  b\na  b: v\nlist:\n- a  b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "ends with colon:",
+        "ends with colon:": "v",
+        "list": [
+          "ends with colon:"
+        ]
+      }
+    },
+    "expected": "k: 'ends with colon:'\n'ends with colon:': v\nlist:\n- 'ends with colon:'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "{x}",
+        "{x}": "v",
+        "list": [
+          "{x}"
+        ]
+      }
+    },
+    "expected": "k: '{x}'\n'{x}': v\nlist:\n- '{x}'\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x}",
+        "x}": "v",
+        "list": [
+          "x}"
+        ]
+      }
+    },
+    "expected": "k: x}\nx}: v\nlist:\n- x}\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x]",
+        "x]": "v",
+        "list": [
+          "x]"
+        ]
+      }
+    },
+    "expected": "k: x]\nx]: v\nlist:\n- x]\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "x,",
+        "x,": "v",
+        "list": [
+          "x,"
+        ]
+      }
+    },
+    "expected": "k: x,\nx,: v\nlist:\n- x,\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "k": "a# b",
+        "a# b": "v",
+        "list": [
+          "a# b"
+        ]
+      }
+    },
+    "expected": "k: a# b\na# b: v\nlist:\n- a# b\n"
+  },
+  {
+    "method": "yaml.encode",
+    "input": {
+      "value": {
+        "name": "ironframe-x-local",
+        "services": {
+          "a": {
+            "image": "i",
+            "ports": [
+              "1:1"
+            ],
+            "environment": {
+              "TWIN_CONFIG": "{}",
+              "E": ""
+            },
+            "labels": {
+              "io.ironframe.kind": "twin"
+            }
+          },
+          "b": {
+            "image": "j",
+            "volumes": [
+              "/a:/b:ro,Z"
+            ],
+            "nested": {
+              "deep": [
+                1,
+                2.5,
+                true,
+                null,
+                "s"
+              ]
+            },
+            "empty_map": {},
+            "empty_list": []
+          }
+        }
+      }
+    },
+    "expected": "name: ironframe-x-local\nservices:\n  a:\n    image: i\n    ports:\n    - 1:1\n    environment:\n      TWIN_CONFIG: '{}'\n      E: ''\n    labels:\n      io.ironframe.kind: twin\n  b:\n    image: j\n    volumes:\n    - /a:/b:ro,Z\n    nested:\n      deep:\n      - 1\n      - 2.5\n      - true\n      - null\n      - s\n    empty_map: {}\n    empty_list: []\n"
+  }
+]

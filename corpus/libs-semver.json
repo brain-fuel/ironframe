@@ -1,0 +1,1683 @@
+[
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "0.1.0"
+    },
+    "expected": {
+      "ok": "0.1.0"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3"
+    },
+    "expected": {
+      "ok": "1.2.3"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-alpha.1"
+    },
+    "expected": {
+      "ok": "1.2.3-alpha.1"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3+build.5"
+    },
+    "expected": {
+      "ok": "1.2.3+build.5"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-rc.1+b"
+    },
+    "expected": {
+      "ok": "1.2.3-rc.1+b"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "01.2.3"
+    },
+    "expected": {
+      "error": "invalid leading zero in major version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2"
+    },
+    "expected": {
+      "error": "unexpected end of input while parsing minor version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1"
+    },
+    "expected": {
+      "error": "unexpected end of input while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "v1.2.3"
+    },
+    "expected": {
+      "error": "unexpected character 'v' while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-"
+    },
+    "expected": {
+      "error": "empty identifier segment in pre-release identifier"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-01"
+    },
+    "expected": {
+      "error": "invalid leading zero in pre-release identifier"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-a..b"
+    },
+    "expected": {
+      "error": "empty identifier segment in pre-release identifier"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "empty string, expected a semver version"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": " 1.2.3"
+    },
+    "expected": {
+      "error": "unexpected character ' ' while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3 "
+    },
+    "expected": {
+      "error": "unexpected character ' ' after patch version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "18446744073709551615.0.0"
+    },
+    "expected": {
+      "ok": "18446744073709551615.0.0"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "18446744073709551616.0.0"
+    },
+    "expected": {
+      "error": "value of major version number exceeds u64::MAX"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-alpha.01"
+    },
+    "expected": {
+      "error": "invalid leading zero in pre-release identifier"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "0.0.0"
+    },
+    "expected": {
+      "ok": "0.0.0"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3+"
+    },
+    "expected": {
+      "error": "empty identifier segment in build metadata"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.2.3-x-y"
+    },
+    "expected": {
+      "ok": "1.2.3-x-y"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "0.1.5-beta.1"
+    },
+    "expected": {
+      "ok": "0.1.5-beta.1"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "0.2.0"
+    },
+    "expected": {
+      "ok": "0.2.0"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "0.9.0"
+    },
+    "expected": {
+      "ok": "0.9.0"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.0"
+    },
+    "expected": {
+      "error": "unexpected end of input while parsing minor version number"
+    }
+  },
+  {
+    "method": "semver.version",
+    "input": {
+      "text": "1.a.0"
+    },
+    "expected": {
+      "error": "unexpected character 'a' while parsing minor version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">=0.1.0, <0.2.0"
+    },
+    "expected": {
+      "ok": ">=0.1.0, <0.2.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^0.1.0"
+    },
+    "expected": {
+      "ok": "^0.1.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "~0.1"
+    },
+    "expected": {
+      "ok": "~0.1",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "0.1"
+    },
+    "expected": {
+      "ok": "^0.1",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "0.1.0"
+    },
+    "expected": {
+      "ok": "^0.1.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "=0.1.0"
+    },
+    "expected": {
+      "ok": "=0.1.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "*"
+    },
+    "expected": {
+      "ok": "*",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          true
+        ],
+        [
+          "0.0.0",
+          true
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          true
+        ],
+        [
+          "0.9.0",
+          true
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "1.*"
+    },
+    "expected": {
+      "ok": "1.*",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "1.x"
+    },
+    "expected": {
+      "ok": "1.*",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">1"
+    },
+    "expected": {
+      "ok": ">1",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          true
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "<=1.2"
+    },
+    "expected": {
+      "ok": "<=1.2",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          true
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          true
+        ],
+        [
+          "0.9.0",
+          true
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">=x"
+    },
+    "expected": {
+      "error": "unexpected character 'x' while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "unexpected end of input while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">= 0.1.0"
+    },
+    "expected": {
+      "ok": ">=0.1.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          true
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          true
+        ],
+        [
+          "0.9.0",
+          true
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^1.2.3-alpha"
+    },
+    "expected": {
+      "ok": "^1.2.3-alpha",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          true
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          true
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          true
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">=1.0.0-alpha, <1.0.0"
+    },
+    "expected": {
+      "ok": ">=1.0.0-alpha, <1.0.0",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "0.*.1"
+    },
+    "expected": {
+      "error": "unexpected character after wildcard in version req"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "1.2.3, 1.2.4"
+    },
+    "expected": {
+      "ok": "^1.2.3, ^1.2.4",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^0"
+    },
+    "expected": {
+      "ok": "^0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          true
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          true
+        ],
+        [
+          "0.9.0",
+          true
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^0.0"
+    },
+    "expected": {
+      "ok": "^0.0",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          true
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^0.0.3"
+    },
+    "expected": {
+      "ok": "^0.0.3",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "~1.2.3"
+    },
+    "expected": {
+      "ok": "~1.2.3",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "~1"
+    },
+    "expected": {
+      "ok": "~1",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "=1.2"
+    },
+    "expected": {
+      "ok": "=1.2",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "<1.2.3-beta"
+    },
+    "expected": {
+      "ok": "<1.2.3-beta",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          true
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          true
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          true
+        ],
+        [
+          "0.9.0",
+          true
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">1.2.3-beta"
+    },
+    "expected": {
+      "ok": ">1.2.3-beta",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          true
+        ],
+        [
+          "18446744073709551615.0.0",
+          true
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          true
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "*, <2"
+    },
+    "expected": {
+      "error": "wildcard req (*) must be the only comparator in the version req"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "1.2.3,"
+    },
+    "expected": {
+      "error": "unexpected end of input while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ","
+    },
+    "expected": {
+      "error": "unexpected character ',' while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": ">=0.1.0,<0.2.0"
+    },
+    "expected": {
+      "ok": ">=0.1.0, <0.2.0",
+      "matches": [
+        [
+          "0.1.0",
+          true
+        ],
+        [
+          "1.2.3",
+          false
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          false
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "^ 1.2"
+    },
+    "expected": {
+      "ok": "^1.2",
+      "matches": [
+        [
+          "0.1.0",
+          false
+        ],
+        [
+          "1.2.3",
+          true
+        ],
+        [
+          "1.2.3-alpha.1",
+          false
+        ],
+        [
+          "1.2.3+build.5",
+          true
+        ],
+        [
+          "1.2.3-rc.1+b",
+          false
+        ],
+        [
+          "18446744073709551615.0.0",
+          false
+        ],
+        [
+          "0.0.0",
+          false
+        ],
+        [
+          "1.2.3-x-y",
+          false
+        ],
+        [
+          "0.1.5-beta.1",
+          false
+        ],
+        [
+          "0.2.0",
+          false
+        ],
+        [
+          "0.9.0",
+          false
+        ]
+      ]
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "!1"
+    },
+    "expected": {
+      "error": "unexpected character '!' while parsing major version number"
+    }
+  },
+  {
+    "method": "semver.requirement",
+    "input": {
+      "text": "1 2"
+    },
+    "expected": {
+      "error": "expected comma after major version number, found '2'"
+    }
+  }
+]

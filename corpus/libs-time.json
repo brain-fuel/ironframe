@@ -1,0 +1,279 @@
+[
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00Z",
+      "unixNanos": "1791547200000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00.5Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00.5Z",
+      "unixNanos": "1791547200500000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00.100Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00.1Z",
+      "unixNanos": "1791547200100000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00.123456789Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00.123456789Z",
+      "unixNanos": "1791547200123456789"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00.1234567891Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00.123456789Z",
+      "unixNanos": "1791547200123456789"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T13:00:00+01:00"
+    },
+    "expected": {
+      "ok": "2026-10-09T13:00:00+01:00",
+      "unixNanos": "1791547200000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00-00:30"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00-00:30",
+      "unixNanos": "1791549000000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09t12:00:00z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00Z",
+      "unixNanos": "1791547200000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09 12:00:00Z"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00Z",
+      "unixNanos": "1791547200000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00"
+    },
+    "expected": {
+      "error": "the 'offset hour' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-02-30T00:00:00Z"
+    },
+    "expected": {
+      "error": "day was not in range"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T24:00:00Z"
+    },
+    "expected": {
+      "error": "hour was not in range"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T23:59:60Z"
+    },
+    "expected": {
+      "error": "second was not in range"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "yesterday"
+    },
+    "expected": {
+      "error": "the 'year' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "the 'year' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00+0100"
+    },
+    "expected": {
+      "error": "a character literal was not valid"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00+24:00"
+    },
+    "expected": {
+      "error": "the 'offset hour' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "0001-01-01T00:00:00Z"
+    },
+    "expected": {
+      "ok": "0001-01-01T00:00:00Z",
+      "unixNanos": "-62135596800000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "9999-12-31T23:59:59.999999999Z"
+    },
+    "expected": {
+      "ok": "9999-12-31T23:59:59.999999999Z",
+      "unixNanos": "253402300799999999999"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2024-02-29T12:00:00Z"
+    },
+    "expected": {
+      "ok": "2024-02-29T12:00:00Z",
+      "unixNanos": "1709208000000000000"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2023-02-29T12:00:00Z"
+    },
+    "expected": {
+      "error": "day was not in range"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00.Z"
+    },
+    "expected": {
+      "error": "the 'subsecond' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-1-09T12:00:00Z"
+    },
+    "expected": {
+      "error": "the 'month' component could not be parsed"
+    }
+  },
+  {
+    "method": "time.rfc3339",
+    "input": {
+      "text": "2026-10-09T12:00:00-00:00"
+    },
+    "expected": {
+      "ok": "2026-10-09T12:00:00Z",
+      "unixNanos": "1791547200000000000"
+    }
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 0,
+      "nanos": 0
+    },
+    "expected": "1970-01-01T00:00:00Z"
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 1791633600,
+      "nanos": 0
+    },
+    "expected": "2026-10-10T12:00:00Z"
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 1791633600,
+      "nanos": 500000000
+    },
+    "expected": "2026-10-10T12:00:00.5Z"
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 1791633600,
+      "nanos": 123456789
+    },
+    "expected": "2026-10-10T12:00:00.123456789Z"
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 1791633600,
+      "nanos": 1000
+    },
+    "expected": "2026-10-10T12:00:00.000001Z"
+  },
+  {
+    "method": "time.format",
+    "input": {
+      "seconds": 4070908800,
+      "nanos": 999000000
+    },
+    "expected": "2099-01-01T00:00:00.999Z"
+  }
+]

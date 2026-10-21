@@ -1,0 +1,170 @@
+[
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "plain"
+    },
+    "expected": "\"plain\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": ""
+    },
+    "expected": "\"\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "with \"quotes\""
+    },
+    "expected": "\"with \\\"quotes\\\"\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "back\\slash"
+    },
+    "expected": "\"back\\\\slash\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "new\nline"
+    },
+    "expected": "\"new\\nline\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "tab\t"
+    },
+    "expected": "\"tab\\t\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "cr\r"
+    },
+    "expected": "\"cr\\r\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "nul\u0000"
+    },
+    "expected": "\"nul\\0\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "bell\u0007"
+    },
+    "expected": "\"bell\\u{7}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "del"
+    },
+    "expected": "\"del\\u{7f}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "café"
+    },
+    "expected": "\"café\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "snow☃"
+    },
+    "expected": "\"snow☃\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "emoji😀"
+    },
+    "expected": "\"emoji😀\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "zw​j"
+    },
+    "expected": "\"zw\\u{200b}j\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "combining é"
+    },
+    "expected": "\"combining e\\u{301}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "́lead"
+    },
+    "expected": "\"\\u{301}lead\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "nbsp "
+    },
+    "expected": "\"nbsp\\u{a0}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "bom﻿"
+    },
+    "expected": "\"bom\\u{feff}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "single'quote"
+    },
+    "expected": "\"single'quote\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "line sep"
+    },
+    "expected": "\"line\\u{2028}sep\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "private"
+    },
+    "expected": "\"\\u{e000}private\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "􏿿"
+    },
+    "expected": "\"\\u{10ffff}\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "esc\u001b[0m"
+    },
+    "expected": "\"esc\\u{1b}[0m\""
+  },
+  {
+    "method": "rust.debugStr",
+    "input": {
+      "text": "soft­hyphen"
+    },
+    "expected": "\"soft\\u{ad}hyphen\""
+  }
+]

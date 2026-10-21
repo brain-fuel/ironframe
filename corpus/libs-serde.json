@@ -1,0 +1,471 @@
+[
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "colour": "blue"
+      }
+    },
+    "expected": {
+      "error": "unknown field `colour`, expected one of `image`, `version`, `config`, `conformance`, `ports`, `env`, `endpoint`, `credentials`, `seed`, `contract`, `state`, `faults`, `admin`, `protocol`, `advertise_variable`"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "seed": "seven"
+      }
+    },
+    "expected": {
+      "error": "invalid type: string \"seven\", expected u64"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "seed": -1
+      }
+    },
+    "expected": {
+      "error": "invalid value: integer `-1`, expected u64"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "seed": 1.5
+      }
+    },
+    "expected": {
+      "error": "invalid type: floating point `1.5`, expected u64"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          70000
+        ]
+      }
+    },
+    "expected": {
+      "error": "invalid value: integer `70000`, expected u16"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": "x"
+      }
+    },
+    "expected": {
+      "error": "invalid type: string \"x\", expected a sequence"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c"
+      }
+    },
+    "expected": {
+      "error": "missing field `ports`"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": 1,
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ]
+      }
+    },
+    "expected": {
+      "error": "invalid type: integer `1`, expected a string"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": 5,
+        "ports": [
+          1
+        ]
+      }
+    },
+    "expected": {
+      "error": "data did not match any variant of untagged enum Conformance"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": {
+          "level": "a",
+          "x": 1
+        },
+        "ports": [
+          1
+        ]
+      }
+    },
+    "expected": {
+      "error": "data did not match any variant of untagged enum Conformance"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "protocol": "udp"
+      }
+    },
+    "expected": {
+      "error": "unknown variant `udp`, expected `http` or `tcp`"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "faults": [
+          {
+            "params": {}
+          }
+        ]
+      }
+    },
+    "expected": {
+      "error": "missing field `name`"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "faults": [
+          {
+            "name": "f",
+            "x": 1
+          }
+        ]
+      }
+    },
+    "expected": {
+      "error": "unknown field `x`, expected `name` or `params`"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "admin": {
+          "port": "x"
+        }
+      }
+    },
+    "expected": {
+      "error": "invalid type: string \"x\", expected u16"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "env": {
+          "A": 1
+        }
+      }
+    },
+    "expected": {
+      "error": "invalid type: integer `1`, expected a string"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "admin": null
+      }
+    },
+    "expected": {
+      "ok": "{\"image\":\"i\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1]}"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          1
+        ],
+        "seed": null
+      }
+    },
+    "expected": {
+      "ok": "{\"image\":\"i\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1]}"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": {
+        "image": "i",
+        "version": "1",
+        "conformance": "c",
+        "ports": [
+          -1
+        ]
+      }
+    },
+    "expected": {
+      "error": "invalid value: integer `-1`, expected u16"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": [
+        1
+      ]
+    },
+    "expected": {
+      "error": "invalid type: integer `1`, expected a string"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": "twin"
+    },
+    "expected": {
+      "error": "invalid type: string \"twin\", expected struct Twin"
+    }
+  },
+  {
+    "method": "serde.twin",
+    "input": {
+      "value": null
+    },
+    "expected": {
+      "error": "invalid type: null, expected struct Twin"
+    }
+  },
+  {
+    "method": "serde.real",
+    "input": {
+      "value": {
+        "endpoint": "x",
+        "colour": 1
+      }
+    },
+    "expected": {
+      "error": "unknown field `colour`, expected one of `endpoint`, `credentials`, `image`, `ports`, `env`"
+    }
+  },
+  {
+    "method": "serde.real",
+    "input": {
+      "value": {}
+    },
+    "expected": {
+      "error": "missing field `endpoint`"
+    }
+  },
+  {
+    "method": "serde.real",
+    "input": {
+      "value": {
+        "endpoint": 5
+      }
+    },
+    "expected": {
+      "error": "invalid type: integer `5`, expected a string"
+    }
+  },
+  {
+    "method": "serde.real",
+    "input": {
+      "value": {
+        "endpoint": "x",
+        "ports": [
+          1,
+          "a"
+        ]
+      }
+    },
+    "expected": {
+      "error": "invalid type: string \"a\", expected u16"
+    }
+  },
+  {
+    "method": "serde.real",
+    "input": {
+      "value": {
+        "endpoint": "x",
+        "image": null
+      }
+    },
+    "expected": {
+      "ok": "{\"endpoint\":\"x\"}"
+    }
+  },
+  {
+    "method": "serde.fault",
+    "input": {
+      "value": {
+        "name": "f",
+        "params": {
+          "a": [
+            1
+          ]
+        }
+      }
+    },
+    "expected": {
+      "ok": "{\"name\":\"f\",\"params\":{\"a\":[1]}}"
+    }
+  },
+  {
+    "method": "serde.fault",
+    "input": {
+      "value": {
+        "name": 1
+      }
+    },
+    "expected": {
+      "error": "invalid type: integer `1`, expected a string"
+    }
+  },
+  {
+    "method": "serde.admin",
+    "input": {
+      "value": {}
+    },
+    "expected": {
+      "ok": "{\"container_port\":9644}"
+    }
+  },
+  {
+    "method": "serde.admin",
+    "input": {
+      "value": {
+        "port": 1,
+        "container_port": 2,
+        "url": "u"
+      }
+    },
+    "expected": {
+      "ok": "{\"port\":1,\"container_port\":2,\"url\":\"u\"}"
+    }
+  },
+  {
+    "method": "serde.admin",
+    "input": {
+      "value": {
+        "port": 0
+      }
+    },
+    "expected": {
+      "ok": "{\"port\":0,\"container_port\":9644}"
+    }
+  },
+  {
+    "method": "serde.admin",
+    "input": {
+      "value": {
+        "port": 65536
+      }
+    },
+    "expected": {
+      "error": "invalid value: integer `65536`, expected u16"
+    }
+  }
+]
