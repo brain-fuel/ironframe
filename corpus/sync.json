@@ -1,0 +1,1193 @@
+[
+  {
+    "name": "sync/001-aws",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/staging/connections in eu-west-1",
+              "outcome": {
+                "updated": "version 1, deployment 1"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/staging/connections in eu-west-1",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/staging/connections in eu-west-1",
+              "outcome": {
+                "updated": "version 2, deployment 1"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "staging",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "staging",
+          "result": {
+            "Ok": "env-staging"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": 1
+          }
+        },
+        {
+          "effect": "aws.deploy",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "environment": "env-staging",
+          "profile": "profile-connections",
+          "version": 1,
+          "strategy": "AppConfig.AllAtOnce",
+          "result": {
+            "Ok": 1
+          }
+        },
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "staging",
+          "result": {
+            "Ok": "env-staging"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": {
+              "number": 1,
+              "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+            }
+          }
+        },
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "staging",
+          "result": {
+            "Ok": "env-staging"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": {
+              "number": 1,
+              "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+            }
+          }
+        },
+        {
+          "effect": "aws.createVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k2:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": 2
+          }
+        },
+        {
+          "effect": "aws.deploy",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "environment": "env-staging",
+          "profile": "profile-connections",
+          "version": 2,
+          "strategy": "AppConfig.AllAtOnce",
+          "result": {
+            "Ok": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/002-aws-named",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, environment: Staging-EU, profile: connections, deployment_strategy: AppConfig.Linear50PercentEvery30Seconds}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/Staging-EU/connections in eu-west-1",
+              "outcome": {
+                "updated": "version 1, deployment 1"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/Staging-EU/connections in eu-west-1",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "AWS AppConfig shop/Staging-EU/connections in eu-west-1",
+              "outcome": {
+                "updated": "version 2, deployment 1"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "Staging-EU",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "Staging-EU",
+          "result": {
+            "Ok": "env-Staging-EU"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "aws.createVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": 1
+          }
+        },
+        {
+          "effect": "aws.deploy",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "environment": "env-Staging-EU",
+          "profile": "profile-connections",
+          "version": 1,
+          "strategy": "AppConfig.Linear50PercentEvery30Seconds",
+          "result": {
+            "Ok": 1
+          }
+        },
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "Staging-EU",
+          "result": {
+            "Ok": "env-Staging-EU"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": {
+              "number": 1,
+              "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+            }
+          }
+        },
+        {
+          "effect": "aws.findApplication",
+          "region": "eu-west-1",
+          "name": "shop",
+          "result": {
+            "Ok": "app-shop"
+          }
+        },
+        {
+          "effect": "aws.findEnvironment",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "Staging-EU",
+          "result": {
+            "Ok": "env-Staging-EU"
+          }
+        },
+        {
+          "effect": "aws.findProfile",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "name": "connections",
+          "result": {
+            "Ok": "profile-connections"
+          }
+        },
+        {
+          "effect": "aws.latestVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "result": {
+            "Ok": {
+              "number": 1,
+              "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+            }
+          }
+        },
+        {
+          "effect": "aws.createVersion",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "profile": "profile-connections",
+          "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k2:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": 2
+          }
+        },
+        {
+          "effect": "aws.deploy",
+          "region": "eu-west-1",
+          "application": "app-shop",
+          "environment": "env-Staging-EU",
+          "profile": "profile-connections",
+          "version": 2,
+          "strategy": "AppConfig.Linear50PercentEvery30Seconds",
+          "result": {
+            "Ok": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/003-gcp",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - gcp_parameter_manager: {project: shop-prod, parameter: shop-staging}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/global/parameters/shop-staging",
+              "outcome": {
+                "updated": "version sha256-2a2b45d93c541652ae7edbae0396068c"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/global/parameters/shop-staging",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/global/parameters/shop-staging",
+              "outcome": {
+                "updated": "version sha256-9abd95edfeb5d2fc91645591d8254b55"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "result": {
+            "Ok": false
+          }
+        },
+        {
+          "effect": "gcp.createParameter",
+          "parent": "projects/shop-prod/locations/global",
+          "id": "shop-staging",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "id": "sha256-2a2b45d93c541652ae7edbae0396068c",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "created"
+          }
+        },
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "result": {
+            "Ok": true
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "id": "sha256-2a2b45d93c541652ae7edbae0396068c",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "exists"
+          }
+        },
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "result": {
+            "Ok": true
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/global/parameters/shop-staging",
+          "id": "sha256-9abd95edfeb5d2fc91645591d8254b55",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k2:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "created"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/004-gcp-located",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - gcp_parameter_manager: {project: shop-prod, location: europe-west1, parameter: shop-eu}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+              "outcome": {
+                "updated": "version sha256-2a2b45d93c541652ae7edbae0396068c"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "GCP Parameter Manager projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+              "outcome": {
+                "updated": "version sha256-9abd95edfeb5d2fc91645591d8254b55"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "result": {
+            "Ok": false
+          }
+        },
+        {
+          "effect": "gcp.createParameter",
+          "parent": "projects/shop-prod/locations/europe-west1",
+          "id": "shop-eu",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "id": "sha256-2a2b45d93c541652ae7edbae0396068c",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "created"
+          }
+        },
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "result": {
+            "Ok": true
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "id": "sha256-2a2b45d93c541652ae7edbae0396068c",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "exists"
+          }
+        },
+        {
+          "effect": "gcp.parameterExists",
+          "name": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "result": {
+            "Ok": true
+          }
+        },
+        {
+          "effect": "gcp.createVersion",
+          "parameter": "projects/shop-prod/locations/europe-west1/parameters/shop-eu",
+          "id": "sha256-9abd95edfeb5d2fc91645591d8254b55",
+          "data": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k2:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n",
+          "result": {
+            "Ok": "created"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/005-azure",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', prefix: 'shop:'}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label staging",
+              "outcome": {
+                "updated": "shop:KAFKA_BOOTSTRAP_SERVERS, shop:PAYMENTS_URL"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label staging",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label staging",
+              "outcome": {
+                "updated": "shop:KAFKA_BOOTSTRAP_SERVERS"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:KAFKA_BOOTSTRAP_SERVERS",
+          "label": "staging",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:KAFKA_BOOTSTRAP_SERVERS",
+          "label": "staging",
+          "value": "k:9092",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:PAYMENTS_URL",
+          "label": "staging",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:PAYMENTS_URL",
+          "label": "staging",
+          "value": "https://payments.example.com",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:KAFKA_BOOTSTRAP_SERVERS",
+          "label": "staging",
+          "result": {
+            "Ok": "k:9092"
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:PAYMENTS_URL",
+          "label": "staging",
+          "result": {
+            "Ok": "https://payments.example.com"
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:KAFKA_BOOTSTRAP_SERVERS",
+          "label": "staging",
+          "result": {
+            "Ok": "k:9092"
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:KAFKA_BOOTSTRAP_SERVERS",
+          "label": "staging",
+          "value": "k2:9092",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "AZURE_APPCONFIG_CONNECTION_STRING",
+          "key": "shop:PAYMENTS_URL",
+          "label": "staging",
+          "result": {
+            "Ok": "https://payments.example.com"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/006-azure-labelled",
+    "method": "sync.flow",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {KAFKA_BOOTSTRAP_SERVERS: '${endpoint}'}\n  payments:\n    settings: {PAYMENTS_URL: '${endpoint}'}\nenvironments:\n  staging:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'k:9092'}}\n      payments: {real: {endpoint: 'https://payments.example.com'}}\n    sync:\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', label: green, connection_string_env: SHOP_APPCONFIG}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "steps": [
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label green",
+              "outcome": {
+                "updated": "KAFKA_BOOTSTRAP_SERVERS, PAYMENTS_URL"
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label green",
+              "outcome": {
+                "unchanged": true
+              }
+            }
+          ]
+        },
+        {
+          "settings": {
+            "KAFKA_BOOTSTRAP_SERVERS": "k2:9092",
+            "PAYMENTS_URL": "https://payments.example.com"
+          },
+          "outcomes": [
+            {
+              "target": "Azure App Configuration https://shop.azconfig.io label green",
+              "outcome": {
+                "updated": "KAFKA_BOOTSTRAP_SERVERS"
+              }
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "KAFKA_BOOTSTRAP_SERVERS",
+          "label": "green",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "KAFKA_BOOTSTRAP_SERVERS",
+          "label": "green",
+          "value": "k:9092",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "PAYMENTS_URL",
+          "label": "green",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "PAYMENTS_URL",
+          "label": "green",
+          "value": "https://payments.example.com",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "KAFKA_BOOTSTRAP_SERVERS",
+          "label": "green",
+          "result": {
+            "Ok": "k:9092"
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "PAYMENTS_URL",
+          "label": "green",
+          "result": {
+            "Ok": "https://payments.example.com"
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "KAFKA_BOOTSTRAP_SERVERS",
+          "label": "green",
+          "result": {
+            "Ok": "k:9092"
+          }
+        },
+        {
+          "effect": "azure.put",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "KAFKA_BOOTSTRAP_SERVERS",
+          "label": "green",
+          "value": "k2:9092",
+          "result": {
+            "Ok": null
+          }
+        },
+        {
+          "effect": "azure.get",
+          "endpoint": "https://shop.azconfig.io",
+          "connectionStringEnv": "SHOP_APPCONFIG",
+          "key": "PAYMENTS_URL",
+          "label": "green",
+          "result": {
+            "Ok": "https://payments.example.com"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "sync/007-settings-json",
+    "method": "sync.settingsJson",
+    "input": {
+      "settings": {
+        "KAFKA_BOOTSTRAP_SERVERS": "k:9092",
+        "PAYMENTS_URL": "https://payments.example.com"
+      }
+    },
+    "expected": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+  },
+  {
+    "name": "sync/008-settings-json-empty",
+    "method": "sync.settingsJson",
+    "input": {
+      "settings": {}
+    },
+    "expected": "{}\n"
+  },
+  {
+    "name": "sync/009-version-id",
+    "method": "gcp.versionId",
+    "input": {
+      "content": "{\n  \"KAFKA_BOOTSTRAP_SERVERS\": \"k:9092\",\n  \"PAYMENTS_URL\": \"https://payments.example.com\"\n}\n"
+    },
+    "expected": "sha256-2a2b45d93c541652ae7edbae0396068c"
+  },
+  {
+    "name": "sync/010-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "env_file": {
+          "path": "config/.env"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "env file config/.env"
+  },
+  {
+    "name": "sync/011-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "aws_appconfig": {
+          "region": "eu-west-1",
+          "application": "shop",
+          "environment": "Staging-EU",
+          "profile": "connections",
+          "deployment_strategy": "AppConfig.Linear50PercentEvery30Seconds"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "AWS AppConfig shop/Staging-EU/connections in eu-west-1"
+  },
+  {
+    "name": "sync/012-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "gcp_parameter_manager": {
+          "project": "shop-prod",
+          "location": "global",
+          "parameter": "shop-staging"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "GCP Parameter Manager projects/shop-prod/locations/global/parameters/shop-staging"
+  },
+  {
+    "name": "sync/013-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "gcp_parameter_manager": {
+          "project": "shop-prod",
+          "location": "europe-west1",
+          "parameter": "shop-eu"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "GCP Parameter Manager projects/shop-prod/locations/europe-west1/parameters/shop-eu"
+  },
+  {
+    "name": "sync/014-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "azure_app_configuration": {
+          "endpoint": "https://shop.azconfig.io",
+          "prefix": "shop:",
+          "connection_string_env": "AZURE_APPCONFIG_CONNECTION_STRING"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "Azure App Configuration https://shop.azconfig.io label local"
+  },
+  {
+    "name": "sync/015-describe",
+    "method": "sync.describe",
+    "input": {
+      "target": {
+        "azure_app_configuration": {
+          "endpoint": "https://shop.azconfig.io",
+          "label": "green",
+          "connection_string_env": "SHOP_APPCONFIG"
+        }
+      },
+      "environment": "local"
+    },
+    "expected": "Azure App Configuration https://shop.azconfig.io label green"
+  },
+  {
+    "name": "sync/016-connection-string",
+    "method": "azure.connectionString",
+    "input": {
+      "text": "Endpoint=https://shop.azconfig.io;Id=key-1;Secret=<secret>"
+    },
+    "expected": {
+      "ok": {
+        "endpoint": "https://shop.azconfig.io",
+        "id": "key-1",
+        "secretLength": 44
+      }
+    }
+  },
+  {
+    "name": "sync/017-connection-string",
+    "method": "azure.connectionString",
+    "input": {
+      "text": "Endpoint=https://x;Id=a"
+    },
+    "expected": {
+      "error": "connection string has no secret"
+    }
+  },
+  {
+    "name": "sync/018-connection-string",
+    "method": "azure.connectionString",
+    "input": {
+      "text": "Endpoint=https://x;garbage;Id=a;Secret=b"
+    },
+    "expected": {
+      "error": "connection string part \"garbage\" has no ="
+    }
+  },
+  {
+    "name": "sync/019-connection-string",
+    "method": "azure.connectionString",
+    "input": {
+      "text": " endpoint = https://x ; ID=a;SECRET=b;; "
+    },
+    "expected": {
+      "ok": {
+        "endpoint": "https://x",
+        "id": "a",
+        "secretLength": 1
+      }
+    }
+  },
+  {
+    "name": "sync/020-env-file",
+    "method": "sync.envFile",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: config/.env.local}\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092'}\n",
+      "environment": "local",
+      "manifestDir": "/work"
+    },
+    "expected": {
+      "first": [
+        {
+          "target": "env file config/.env.local",
+          "outcome": {
+            "updated": "/work/config/.env.local"
+          }
+        }
+      ],
+      "second": [
+        {
+          "target": "env file config/.env.local",
+          "outcome": {
+            "unchanged": true
+          }
+        }
+      ],
+      "files": {
+        "config/.env.local": "# Settings of environment local of shop, written by ironframe from the manifest or architecture.\n# Edits are overwritten; change those instead.\nKAFKA_BOOTSTRAP_SERVERS=localhost:9092\n"
+      }
+    }
+  }
+]

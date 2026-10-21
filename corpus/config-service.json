@@ -1,0 +1,380 @@
+[
+  {
+    "name": "config-service/001-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/healthz"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "ok\n"
+    }
+  },
+  {
+    "name": "config-service/002-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "application/json",
+      "body": "{\"project\":\"kafka-app\",\"environments\":[\"local\",\"staging\"]}"
+    }
+  },
+  {
+    "name": "config-service/003-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/local"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "application/json",
+      "body": "{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"}"
+    }
+  },
+  {
+    "name": "config-service/004-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/staging/env"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "# Settings of environment staging\nKAFKA_BOOTSTRAP_SERVERS=b-1.example:9092\n"
+    }
+  },
+  {
+    "name": "config-service/005-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/local/settings/KAFKA_BOOTSTRAP_SERVERS"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "localhost:9092"
+    }
+  },
+  {
+    "name": "config-service/006-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/local/settings/NOPE"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": "application/json",
+      "body": "{\"error\":\"environment \\\"local\\\" has no setting NOPE\"}"
+    }
+  },
+  {
+    "name": "config-service/007-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/production"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": "application/json",
+      "body": "{\"error\":\"no environment \\\"production\\\"; this service has local, staging\"}"
+    }
+  },
+  {
+    "name": "config-service/008-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/v1/environments/production/env"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": "application/json",
+      "body": "{\"error\":\"no environment \\\"production\\\"; this service has local, staging\"}"
+    }
+  },
+  {
+    "name": "config-service/009-document",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/settings.json",
+      "document": "{\"project\":\"kafka-app\",\"environments\":{\"local\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"localhost:9092\",\"QUOTED\":\"a b\"},\"staging\":{\"KAFKA_BOOTSTRAP_SERVERS\":\"b-1.example:9092\"}}}",
+      "path": "/nothing"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": null,
+      "body": ""
+    }
+  },
+  {
+    "name": "config-service/010-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/healthz"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "ok\n"
+    }
+  },
+  {
+    "name": "config-service/011-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/012-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/local"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/013-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/staging/env"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/014-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/local/settings/KAFKA_BOOTSTRAP_SERVERS"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/015-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/local/settings/NOPE"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/016-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/production"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/017-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/v1/environments/production/env"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"/work/broken.json is not a settings document: EOF while parsing an object at line 1 column 1\"}"
+    }
+  },
+  {
+    "name": "config-service/018-broken",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/broken.json",
+      "document": "{",
+      "path": "/nothing"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": null,
+      "body": ""
+    }
+  },
+  {
+    "name": "config-service/019-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/healthz"
+    },
+    "expected": {
+      "status": 200,
+      "contentType": "text/plain; charset=utf-8",
+      "body": "ok\n"
+    }
+  },
+  {
+    "name": "config-service/020-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/021-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/local"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/022-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/staging/env"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/023-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/local/settings/KAFKA_BOOTSTRAP_SERVERS"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/024-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/local/settings/NOPE"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/025-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/production"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/026-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/v1/environments/production/env"
+    },
+    "expected": {
+      "status": 503,
+      "contentType": "application/json",
+      "body": "{\"error\":\"cannot read /work/none.json: No such file or directory (os error 2)\"}"
+    }
+  },
+  {
+    "name": "config-service/027-missing",
+    "method": "configService.get",
+    "input": {
+      "settingsPath": "/work/none.json",
+      "document": null,
+      "path": "/nothing"
+    },
+    "expected": {
+      "status": 404,
+      "contentType": null,
+      "body": ""
+    }
+  }
+]

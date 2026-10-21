@@ -36,5 +36,8 @@ base64 = { workspace = true, optional = true }
 
 [dev-dependencies]
 axum.workspace = true
+ironframe-config-service.workspace = true
+tower.workspace = true
+http-body-util.workspace = true
 tempfile.workspace = true
 serde_yaml.workspace = true

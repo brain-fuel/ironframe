@@ -1,0 +1,1821 @@
+[
+  {
+    "name": "manifest/001-shop",
+    "method": "manifest.parse",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"KAFKA_BOOTSTRAP_SERVERS\": \"${endpoint}\",\n        \"KAFKA_KIND\": \"${kind}\"\n      }\n    },\n    \"payments\": {\n      \"settings\": {\n        \"PAYMENTS_CREDENTIALS\": \"${credentials}\",\n        \"PAYMENTS_HOST\": \"${host}\",\n        \"PAYMENTS_PORT\": \"${port}\",\n        \"PAYMENTS_URL\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"seed\": 42\n            },\n            \"conformance\": \"unrated\",\n            \"ports\": [\n              9092,\n              9644\n            ],\n            \"env\": {\n              \"LOG_LEVEL\": \"debug\"\n            }\n          }\n        },\n        \"payments\": {\n          \"twin\": {\n            \"image\": \"ghcr.io/example/payments-twin\",\n            \"version\": \"2.0.0\",\n            \"conformance\": \"L1\",\n            \"ports\": [\n              8080\n            ],\n            \"endpoint\": \"http://localhost:8080/v1\",\n            \"credentials\": \"env:PAYMENTS_TOKEN\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"env_file\": {\n            \"path\": \".env.local\"\n          }\n        }\n      ]\n    },\n    \"staging\": {\n      \"runtime\": \"aws\",\n      \"cloud\": {\n        \"modules\": \"../modules\",\n        \"cpu\": 512,\n        \"region\": \"eu-west-1\",\n        \"subnet_ids\": [\n          \"subnet-1\",\n          \"subnet-2\"\n        ],\n        \"vpc_id\": \"vpc-1\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"unrated\",\n            \"ports\": [\n              9092\n            ]\n          }\n        },\n        \"payments\": {\n          \"real\": {\n            \"endpoint\": \"https://payments.example.com\",\n            \"credentials\": \"aws-secretsmanager:shop/payments\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"aws_appconfig\": {\n            \"region\": \"eu-west-1\",\n            \"application\": \"shop\",\n            \"profile\": \"connections\"\n          }\n        }\n      ]\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "unrated",
+        "local.payments": "L1",
+        "staging.kafka": "unrated"
+      }
+    }
+  },
+  {
+    "name": "manifest/002-kafka-app",
+    "method": "manifest.parse",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"kafka-app\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"description\": \"The Kafka cluster the app talks to.\",\n      \"settings\": {\n        \"KAFKA_BOOTSTRAP_SERVERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"clock\": \"frozen\"\n            },\n            \"conformance\": {\n              \"level\": \"answers\",\n              \"report\": \"conformance/lawtwin-kafka-0.1.0.json\"\n            },\n            \"ports\": [\n              9092\n            ],\n            \"seed\": 42,\n            \"admin\": {\n              \"port\": 9644,\n              \"container_port\": 9644\n            }\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"env_file\": {\n            \"path\": \".env\"\n          }\n        }\n      ],\n      \"config_service\": {\n        \"image\": \"localhost/ironframe-config-service:0.1.0\",\n        \"port\": 8700\n      }\n    },\n    \"local-broker\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"localhost:9092\",\n            \"image\": \"apache/kafka:4.1.0\",\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"env_file\": {\n            \"path\": \".env\"\n          }\n        }\n      ],\n      \"config_service\": {\n        \"image\": \"localhost/ironframe-config-service:0.1.0\",\n        \"port\": 8700\n      }\n    },\n    \"production\": {\n      \"runtime\": \"aws\",\n      \"cloud\": {\n        \"region\": \"us-east-1\",\n        \"subnet_ids\": [\n          \"subnet-0123456789abcdef0\"\n        ],\n        \"vpc_id\": \"vpc-0123456789abcdef0\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"b-1.kafka-app.example.internal:9092\",\n            \"credentials\": \"aws-secretsmanager:kafka-app/production/kafka\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"aws_appconfig\": {\n            \"region\": \"us-east-1\",\n            \"application\": \"kafka-app\",\n            \"profile\": \"connections\"\n          }\n        }\n      ]\n    },\n    \"staging\": {\n      \"runtime\": \"aws\",\n      \"cloud\": {\n        \"modules\": \"../../modules\",\n        \"region\": \"us-east-1\",\n        \"subnet_ids\": [\n          \"subnet-0123456789abcdef0\",\n          \"subnet-0fedcba9876543210\"\n        ],\n        \"vpc_id\": \"vpc-0123456789abcdef0\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"conformance/lawtwin-kafka-0.1.0.json\"\n            },\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"aws_appconfig\": {\n            \"region\": \"us-east-1\",\n            \"application\": \"kafka-app\",\n            \"profile\": \"connections\"\n          }\n        }\n      ]\n    },\n    \"staging-gcp\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"modules\": \"../../modules\",\n        \"allowed_cidr_blocks\": [\n          \"10.0.0.0/8\"\n        ],\n        \"project\": \"kafka-app-staging\",\n        \"region\": \"europe-west1\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"conformance/lawtwin-kafka-0.1.0.json\"\n            },\n            \"ports\": [\n              9092\n            ],\n            \"seed\": 42,\n            \"protocol\": \"tcp\",\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"gcp_parameter_manager\": {\n            \"project\": \"kafka-app-staging\",\n            \"location\": \"global\",\n            \"parameter\": \"kafka-app-connections\"\n          }\n        }\n      ]\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers",
+        "staging.kafka": "unrated",
+        "staging-gcp.kafka": "unrated"
+      }
+    }
+  },
+  {
+    "name": "manifest/003-petstore-app",
+    "method": "manifest.parse",
+    "input": {
+      "text": "# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: petstore-app\n\ndependencies:\n  petstore:\n    description: The Petstore API the app adds pets to.\n    settings:\n      PETSTORE_URL: ${endpoint}\n\nenvironments:\n  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the\n  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as\n  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.\n  # Build the image in the lawtwin repository with `make image-http` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            level: conformant\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          endpoint: http://localhost:8080\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n          faults:\n            - name: latency\n              params:\n                delay: 5ms\n          admin:\n            port: 9645\n            container_port: 9644\n    sync:\n      - env_file:\n          path: .env\n\n  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.\n  staging:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: petstore-app-staging\n      region: europe-west1\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          seed: 42\n    sync:\n      - gcp_parameter_manager:\n          project: petstore-app-staging\n          parameter: petstore-app-connections\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"petstore-app\",\n  \"dependencies\": {\n    \"petstore\": {\n      \"description\": \"The Petstore API the app adds pets to.\",\n      \"settings\": {\n        \"PETSTORE_URL\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"petstore\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"level\": \"conformant\",\n              \"report\": \"conformance/lawtwin-http-0.1.0-petstore.json\"\n            },\n            \"ports\": [\n              8080\n            ],\n            \"endpoint\": \"http://localhost:8080\",\n            \"seed\": 42,\n            \"contract\": \"petstore\",\n            \"faults\": [\n              {\n                \"name\": \"latency\",\n                \"params\": {\n                  \"delay\": \"5ms\"\n                }\n              }\n            ],\n            \"admin\": {\n              \"port\": 9645,\n              \"container_port\": 9644\n            },\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"env_file\": {\n            \"path\": \".env\"\n          }\n        }\n      ]\n    },\n    \"staging\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"modules\": \"../../modules\",\n        \"project\": \"petstore-app-staging\",\n        \"region\": \"europe-west1\"\n      },\n      \"dependencies\": {\n        \"petstore\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"conformance/lawtwin-http-0.1.0-petstore.json\"\n            },\n            \"ports\": [\n              8080\n            ],\n            \"seed\": 42,\n            \"contract\": \"petstore\"\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"gcp_parameter_manager\": {\n            \"project\": \"petstore-app-staging\",\n            \"location\": \"global\",\n            \"parameter\": \"petstore-app-connections\"\n          }\n        }\n      ]\n    }\n  }\n}",
+      "levels": {
+        "local.petstore": "conformant",
+        "staging.petstore": "unrated"
+      }
+    }
+  },
+  {
+    "name": "manifest/004-hosted",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  db:\n    settings: {D: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'localhost:9092', image: 'apache/kafka:4.1.0', ports: [9092]}}\n      db: {real: {endpoint: 'db.example.com:5432'}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"db\": {\n      \"settings\": {\n        \"D\": \"${endpoint}\"\n      }\n    },\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"db\": {\n          \"real\": {\n            \"endpoint\": \"db.example.com:5432\"\n          }\n        },\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"localhost:9092\",\n            \"image\": \"apache/kafka:4.1.0\",\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {}
+    }
+  },
+  {
+    "name": "manifest/005-gcp-tcp",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  orders:\n    settings: {O: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {modules: ../modules, project: p, region: europe-west1, zone: europe-west1-c, cpu: '2', allowed_cidr_blocks: [10.0.0.0/8]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: answers, ports: [9092], protocol: tcp, seed: 42, advertise_variable: LAWTWIN_ADVERTISE}\n      orders:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: conformant, ports: [8080], contract: petstore}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    },\n    \"orders\": {\n      \"settings\": {\n        \"O\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"dev\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"modules\": \"../modules\",\n        \"allowed_cidr_blocks\": [\n          \"10.0.0.0/8\"\n        ],\n        \"cpu\": \"2\",\n        \"project\": \"p\",\n        \"region\": \"europe-west1\",\n        \"zone\": \"europe-west1-c\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092\n            ],\n            \"seed\": 42,\n            \"protocol\": \"tcp\",\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        },\n        \"orders\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"conformant\",\n            \"ports\": [\n              8080\n            ],\n            \"contract\": \"petstore\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "dev.kafka": "answers",
+        "dev.orders": "conformant"
+      }
+    }
+  },
+  {
+    "name": "manifest/006-cloud-gcp",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: shop-dev, region: europe-west1, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"orders_api\": {\n      \"settings\": {\n        \"ORDERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"dev\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"modules\": \"/m\",\n        \"project\": \"shop-dev\",\n        \"region\": \"europe-west1\"\n      },\n      \"dependencies\": {\n        \"orders_api\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"spec\": \"orders\"\n            },\n            \"conformance\": \"L1\",\n            \"ports\": [\n              8080\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "dev.orders_api": "L1"
+      }
+    }
+  },
+  {
+    "name": "manifest/007-cloud-azure",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: shop-dev, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"orders_api\": {\n      \"settings\": {\n        \"ORDERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"dev\": {\n      \"runtime\": \"azure\",\n      \"cloud\": {\n        \"modules\": \"/m\",\n        \"location\": \"westeurope\",\n        \"resource_group_name\": \"shop-dev\"\n      },\n      \"dependencies\": {\n        \"orders_api\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"spec\": \"orders\"\n            },\n            \"conformance\": \"L1\",\n            \"ports\": [\n              8080\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "dev.orders_api": "L1"
+      }
+    }
+  },
+  {
+    "name": "manifest/008-cloud-gcp-released",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"orders_api\": {\n      \"settings\": {\n        \"ORDERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"dev\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"project\": \"p\",\n        \"region\": \"r\"\n      },\n      \"dependencies\": {\n        \"orders_api\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"spec\": \"orders\"\n            },\n            \"conformance\": \"L1\",\n            \"ports\": [\n              8080\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "dev.orders_api": "L1"
+      }
+    }
+  },
+  {
+    "name": "manifest/009-shape-everything",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 2\nproject: Shop\ndependencies: {}\nenvironments:\n  local:\n    runtime: kubernetes\n    dependencies: {}\n    extra: true\n"
+    },
+    "expected": {
+      "error": "manifest: 4 problems\n  - version: 1 was expected\n  - project: \"Shop\" does not match \"^[a-z][a-z0-9_-]{0,39}$\"\n  - environments.local.runtime: \"kubernetes\" is not one of \"podman\", \"aws\" or 2 other candidates\n  - environments.local: Additional properties are not allowed ('extra' was unexpected)",
+      "problems": [
+        {
+          "at": "version",
+          "message": "1 was expected"
+        },
+        {
+          "at": "project",
+          "message": "\"Shop\" does not match \"^[a-z][a-z0-9_-]{0,39}$\""
+        },
+        {
+          "at": "environments.local.runtime",
+          "message": "\"kubernetes\" is not one of \"podman\", \"aws\" or 2 other candidates"
+        },
+        {
+          "at": "environments.local",
+          "message": "Additional properties are not allowed ('extra' was unexpected)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/010-binding-empty",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka: {} has less than 1 property",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka",
+          "message": "{} has less than 1 property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/011-binding-both",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: a:1}\n        twin: {image: t, version: '1', conformance: c, ports: [1]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka: {\"real\":{\"endpoint\":\"a:1\"},\"twin\":{\"image\":\"t\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1]}} has more than 1 property",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka",
+          "message": "{\"real\":{\"endpoint\":\"a:1\"},\"twin\":{\"image\":\"t\",\"version\":\"1\",\"conformance\":\"c\",\"ports\":[1]}} has more than 1 property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/012-twin-missing",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka}\n"
+    },
+    "expected": {
+      "error": "manifest: 3 problems\n  - environments.local.dependencies.kafka.twin: \"version\" is a required property\n  - environments.local.dependencies.kafka.twin: \"conformance\" is a required property\n  - environments.local.dependencies.kafka.twin: \"ports\" is a required property",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin",
+          "message": "\"version\" is a required property"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin",
+          "message": "\"conformance\" is a required property"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin",
+          "message": "\"ports\" is a required property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/013-twin-tag",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: 'lawtwin/kafka:0.1.0', version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.image: name the image without a tag or digest; the twin's `version` is its tag",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.image",
+          "message": "name the image without a tag or digest; the twin's `version` is its tag"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/014-twin-digest",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: 'lawtwin/kafka@sha256:00', version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.image: name the image without a tag or digest; the twin's `version` is its tag",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.image",
+          "message": "name the image without a tag or digest; the twin's `version` is its tag"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/015-undeclared",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      redis:\n        real: {endpoint: 'localhost:6379'}\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - environments.local.dependencies: dependency \"kafka\" is declared but not bound; bind it to `real` or `twin`\n  - environments.local.dependencies.redis: dependency \"redis\" is not declared under the top-level `dependencies`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies",
+          "message": "dependency \"kafka\" is declared but not bound; bind it to `real` or `twin`"
+        },
+        {
+          "at": "environments.local.dependencies.redis",
+          "message": "dependency \"redis\" is not declared under the top-level `dependencies`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/016-unknown-placeholder",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA: ${endpiont}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092'}\n"
+    },
+    "expected": {
+      "error": "manifest: dependencies.kafka.settings.KAFKA: unknown placeholder ${endpiont}; use one of ${endpoint}, ${host}, ${port}, ${credentials}, ${kind}, ${name}",
+      "problems": [
+        {
+          "at": "dependencies.kafka.settings.KAFKA",
+          "message": "unknown placeholder ${endpiont}; use one of ${endpoint}, ${host}, ${port}, ${credentials}, ${kind}, ${name}"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/017-unclosed-placeholder",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA: 'x${endpoint'\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092'}\n"
+    },
+    "expected": {
+      "error": "manifest: dependencies.kafka.settings.KAFKA: unclosed placeholder in \"x${endpoint\"",
+      "problems": [
+        {
+          "at": "dependencies.kafka.settings.KAFKA",
+          "message": "unclosed placeholder in \"x${endpoint\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/018-setting-twice",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a:\n    settings: {URL: '${endpoint}'}\n  b:\n    settings: {URL: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {real: {endpoint: 'x:1'}}\n      b: {real: {endpoint: 'y:1'}}\n"
+    },
+    "expected": {
+      "error": "manifest: dependencies.b.settings.URL: setting URL is also declared by dependency \"a\"",
+      "problems": [
+        {
+          "at": "dependencies.b.settings.URL",
+          "message": "setting URL is also declared by dependency \"a\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/019-credentials-needed",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  db:\n    settings: {DB_PASSWORD_REF: '${credentials}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      db: {real: {endpoint: 'localhost:5432'}}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.db.real.credentials: the dependency's settings use ${credentials}, so this binding must name a credentials reference",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.db.real.credentials",
+          "message": "the dependency's settings use ${credentials}, so this binding must name a credentials reference"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/020-credentials-scheme",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  db:\n    settings: {DB_PASSWORD_REF: '${credentials}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      db: {real: {endpoint: 'localhost:5432', credentials: 'hunter2'}}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.db.real.credentials: \"hunter2\" does not match \"^(env|file|aws-secretsmanager|gcp-secretmanager|azure-keyvault|vault):.+$\"",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.db.real.credentials",
+          "message": "\"hunter2\" does not match \"^(env|file|aws-secretsmanager|gcp-secretmanager|azure-keyvault|vault):.+$\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/021-cloud-inputs",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: us-east-1, subnets: [a]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: 3 problems\n  - environments.local.cloud.vpc_id: runtime aws needs vpc_id\n  - environments.local.cloud.subnet_ids: runtime aws needs subnet_ids\n  - environments.local.cloud.subnets: runtime aws takes no input \"subnets\"; it takes modules, region, vpc_id, subnet_ids, cpu, memory, assign_public_ip, allowed_cidr_blocks, internal",
+      "problems": [
+        {
+          "at": "environments.local.cloud.vpc_id",
+          "message": "runtime aws needs vpc_id"
+        },
+        {
+          "at": "environments.local.cloud.subnet_ids",
+          "message": "runtime aws needs subnet_ids"
+        },
+        {
+          "at": "environments.local.cloud.subnets",
+          "message": "runtime aws takes no input \"subnets\"; it takes modules, region, vpc_id, subnet_ids, cpu, memory, assign_public_ip, allowed_cidr_blocks, internal"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/022-cloud-missing",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092'}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.cloud: runtime aws needs `cloud` with region, vpc_id, subnet_ids",
+      "problems": [
+        {
+          "at": "environments.local.cloud",
+          "message": "runtime aws needs `cloud` with region, vpc_id, subnet_ids"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/023-cloud-on-podman",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    cloud: {region: x}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092'}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.cloud: only a cloud runtime takes `cloud` inputs",
+      "problems": [
+        {
+          "at": "environments.local.cloud",
+          "message": "only a cloud runtime takes `cloud` inputs"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/024-real-image-cloud",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:9092', image: 'apache/kafka:4.1.0', ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.real.image: a real dependency runs from an image only on podman; in a cloud it is hosted and named by its endpoint",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real.image",
+          "message": "a real dependency runs from an image only on podman; in a cloud it is hosted and named by its endpoint"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/025-real-image-no-ports",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092', image: 'apache/kafka:4.1.0'}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.real.ports: an image run locally needs the ports to publish",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real.ports",
+          "message": "an image run locally needs the ports to publish"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/026-real-ports-no-image",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: 'localhost:9092', ports: [1], env: {A: b}}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.real: `ports` and `env` apply only with `image`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real",
+          "message": "`ports` and `env` apply only with `image`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/027-real-blank-endpoint",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: '  '}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.real.endpoint: the endpoint must not be empty",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real.endpoint",
+          "message": "the endpoint must not be empty"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/028-port-clash",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a:\n    settings: {A: '${endpoint}'}\n  b:\n    settings: {B: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: c, ports: [9092]}}\n      b: {twin: {image: t/b, version: '1', conformance: c, ports: [9092]}}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.b.ports: port 9092 is already published by dependency \"a\" in this environment",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.b.ports",
+          "message": "port 9092 is already published by dependency \"a\" in this environment"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/029-config-service-port-clash",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    config_service: {port: 9092}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.ports: port 9092 is already published by the configuration service in this environment",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.ports",
+          "message": "port 9092 is already published by the configuration service in this environment"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/030-config-service-cloud",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    config_service: {}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.config_service: the configuration service runs on podman; a cloud environment's settings reach its applications through `sync`",
+      "problems": [
+        {
+          "at": "environments.local.config_service",
+          "message": "the configuration service runs on podman; a cloud environment's settings reach its applications through `sync`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/031-cloud-run-ports",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [9092, 9093]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.ports: Cloud Run serves one port per service; a twin serving more is `protocol: tcp`, run on Compute Engine",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.ports",
+          "message": "Cloud Run serves one port per service; a twin serving more is `protocol: tcp`, run on Compute Engine"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/032-empty-document",
+    "method": "manifest.parse",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "manifest: null is not of type \"object\"",
+      "problems": [
+        {
+          "at": "",
+          "message": "null is not of type \"object\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/033-version-only",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\n"
+    },
+    "expected": {
+      "error": "manifest: 3 problems\n  - \"project\" is a required property\n  - \"dependencies\" is a required property\n  - \"environments\" is a required property",
+      "problems": [
+        {
+          "at": "",
+          "message": "\"project\" is a required property"
+        },
+        {
+          "at": "",
+          "message": "\"dependencies\" is a required property"
+        },
+        {
+          "at": "",
+          "message": "\"environments\" is a required property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/034-top-level-list",
+    "method": "manifest.parse",
+    "input": {
+      "text": "- a\n- b\n"
+    },
+    "expected": {
+      "error": "manifest: [\"a\",\"b\"] is not of type \"object\"",
+      "problems": [
+        {
+          "at": "",
+          "message": "[\"a\",\"b\"] is not of type \"object\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/035-not-yaml",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: [shop\n"
+    },
+    "expected": {
+      "error": "manifest: not valid YAML: did not find expected ',' or ']' at line 3 column 1, while parsing a flow sequence at line 2 column 10",
+      "problems": [
+        {
+          "at": "",
+          "message": "not valid YAML: did not find expected ',' or ']' at line 3 column 1, while parsing a flow sequence at line 2 column 10"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/036-version-string",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: '1'\nproject: shop\ndependencies: {}\nenvironments: {}\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - version: 1 was expected\n  - environments: {} has less than 1 property",
+      "problems": [
+        {
+          "at": "version",
+          "message": "1 was expected"
+        },
+        {
+          "at": "environments",
+          "message": "{} has less than 1 property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/037-project-number",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: 123\ndependencies: {}\nenvironments:\n  local: {runtime: podman, dependencies: {}}\n"
+    },
+    "expected": {
+      "error": "manifest: project: 123 is not of type \"string\"",
+      "problems": [
+        {
+          "at": "project",
+          "message": "123 is not of type \"string\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/038-dependency-names",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  Kafka:\n    settings: {}\n  db:\n    settings: {1BAD: x, OK: 5}\n    other: 1\nenvironments: {}\nextra: 1\n"
+    },
+    "expected": {
+      "error": "manifest: 7 problems\n  - dependencies: \"Kafka\" does not match \"^[a-z][a-z0-9_-]{0,39}$\"\n  - dependencies.Kafka.settings: {} has less than 1 property\n  - dependencies.db.settings: \"1BAD\" does not match \"^[A-Za-z_][A-Za-z0-9_]*$\"\n  - dependencies.db.settings.OK: 5 is not of type \"string\"\n  - dependencies.db: Additional properties are not allowed ('other' was unexpected)\n  - environments: {} has less than 1 property\n  - Additional properties are not allowed ('extra' was unexpected)",
+      "problems": [
+        {
+          "at": "dependencies",
+          "message": "\"Kafka\" does not match \"^[a-z][a-z0-9_-]{0,39}$\""
+        },
+        {
+          "at": "dependencies.Kafka.settings",
+          "message": "{} has less than 1 property"
+        },
+        {
+          "at": "dependencies.db.settings",
+          "message": "\"1BAD\" does not match \"^[A-Za-z_][A-Za-z0-9_]*$\""
+        },
+        {
+          "at": "dependencies.db.settings.OK",
+          "message": "5 is not of type \"string\""
+        },
+        {
+          "at": "dependencies.db",
+          "message": "Additional properties are not allowed ('other' was unexpected)"
+        },
+        {
+          "at": "environments",
+          "message": "{} has less than 1 property"
+        },
+        {
+          "at": "",
+          "message": "Additional properties are not allowed ('extra' was unexpected)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/039-cloud-modules-number",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {modules: 5, region: r, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        real: {endpoint: 'b:1'}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.cloud.modules: 5 is not of type \"string\"",
+      "problems": [
+        {
+          "at": "environments.local.cloud.modules",
+          "message": "5 is not of type \"string\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/040-real-shapes",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {endpoint: '', credentials: 'nope', image: '', ports: [0, 70000, a], env: {A: 1}, other: x}\n"
+    },
+    "expected": {
+      "error": "manifest: 8 problems\n  - environments.local.dependencies.kafka.real.endpoint: \"\" is shorter than 1 character\n  - environments.local.dependencies.kafka.real.credentials: \"nope\" does not match \"^(env|file|aws-secretsmanager|gcp-secretmanager|azure-keyvault|vault):.+$\"\n  - environments.local.dependencies.kafka.real.image: \"\" is shorter than 1 character\n  - environments.local.dependencies.kafka.real.ports.0: 0 is less than the minimum of 1\n  - environments.local.dependencies.kafka.real.ports.1: 70000 is greater than the maximum of 65535\n  - environments.local.dependencies.kafka.real.ports.2: \"a\" is not of type \"integer\"\n  - environments.local.dependencies.kafka.real.env.A: 1 is not of type \"string\"\n  - environments.local.dependencies.kafka.real: Additional properties are not allowed ('other' was unexpected)",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real.endpoint",
+          "message": "\"\" is shorter than 1 character"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.credentials",
+          "message": "\"nope\" does not match \"^(env|file|aws-secretsmanager|gcp-secretmanager|azure-keyvault|vault):.+$\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.image",
+          "message": "\"\" is shorter than 1 character"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.ports.0",
+          "message": "0 is less than the minimum of 1"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.ports.1",
+          "message": "70000 is greater than the maximum of 65535"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.ports.2",
+          "message": "\"a\" is not of type \"integer\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real.env.A",
+          "message": "1 is not of type \"string\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.real",
+          "message": "Additional properties are not allowed ('other' was unexpected)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/041-real-missing-endpoint",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        real: {}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.real: \"endpoint\" is a required property",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.real",
+          "message": "\"endpoint\" is a required property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/042-twin-conformance-shapes",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\n  c: {settings: {C: x}}\n  d: {settings: {D: x}}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: {}, ports: [1]}}\n      b: {twin: {image: t/b, version: '1', conformance: 5, ports: [2]}}\n      c: {twin: {image: t/c, version: '1', conformance: {level: ''}, ports: [3]}}\n      d: {twin: {image: t/d, version: '1', conformance: {foo: 1}, ports: [4]}}\n"
+    },
+    "expected": {
+      "error": "manifest: 4 problems\n  - environments.local.dependencies.a.twin.conformance: {} is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.b.twin.conformance: 5 is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.c.twin.conformance: {\"level\":\"\"} is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.d.twin.conformance: {\"foo\":1} is not valid under any of the schemas listed in the 'oneOf' keyword",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.a.twin.conformance",
+          "message": "{} is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.b.twin.conformance",
+          "message": "5 is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.c.twin.conformance",
+          "message": "{\"level\":\"\"} is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.d.twin.conformance",
+          "message": "{\"foo\":1} is not valid under any of the schemas listed in the 'oneOf' keyword"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/043-twin-field-shapes",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [], seed: -1, state: 5, faults: [{}, {name: x, params: {a: 1.5, b: [1]}}], admin: {port: 0, url: '', foo: 1}, protocol: udp, config: [], env: {A: 1}, contract: '', advertise_variable: ''}\n"
+    },
+    "expected": {
+      "error": "manifest: 14 problems\n  - environments.local.dependencies.kafka.twin.ports: [] has less than 1 item\n  - environments.local.dependencies.kafka.twin.seed: -1 is less than the minimum of 0\n  - environments.local.dependencies.kafka.twin.state: 5 is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.kafka.twin.faults.0: \"name\" is a required property\n  - environments.local.dependencies.kafka.twin.faults.1.params.a: 1.5 is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.kafka.twin.faults.1.params.b: [1] is not valid under any of the schemas listed in the 'oneOf' keyword\n  - environments.local.dependencies.kafka.twin.admin.port: 0 is less than the minimum of 1\n  - environments.local.dependencies.kafka.twin.admin.url: \"\" is shorter than 1 character\n  - environments.local.dependencies.kafka.twin.admin: Additional properties are not allowed ('foo' was unexpected)\n  - environments.local.dependencies.kafka.twin.protocol: \"udp\" is not one of \"http\" or \"tcp\"\n  - environments.local.dependencies.kafka.twin.config: [] is not of type \"object\"\n  - environments.local.dependencies.kafka.twin.env.A: 1 is not of type \"string\"\n  - environments.local.dependencies.kafka.twin.contract: \"\" is shorter than 1 character\n  - environments.local.dependencies.kafka.twin.advertise_variable: \"\" is shorter than 1 character",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.ports",
+          "message": "[] has less than 1 item"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.seed",
+          "message": "-1 is less than the minimum of 0"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.state",
+          "message": "5 is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.faults.0",
+          "message": "\"name\" is a required property"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.faults.1.params.a",
+          "message": "1.5 is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.faults.1.params.b",
+          "message": "[1] is not valid under any of the schemas listed in the 'oneOf' keyword"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.admin.port",
+          "message": "0 is less than the minimum of 1"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.admin.url",
+          "message": "\"\" is shorter than 1 character"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.admin",
+          "message": "Additional properties are not allowed ('foo' was unexpected)"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.protocol",
+          "message": "\"udp\" is not one of \"http\" or \"tcp\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.config",
+          "message": "[] is not of type \"object\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.env.A",
+          "message": "1 is not of type \"string\""
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.contract",
+          "message": "\"\" is shorter than 1 character"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.advertise_variable",
+          "message": "\"\" is shorter than 1 character"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/044-twin-seed-float",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], seed: 1.5}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.seed: 1.5 is not of type \"integer\"",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.seed",
+          "message": "1.5 is not of type \"integer\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/045-twin-state-blank",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], state: ''}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.state: \"\" is not valid under any of the schemas listed in the 'oneOf' keyword",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.state",
+          "message": "\"\" is not valid under any of the schemas listed in the 'oneOf' keyword"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/046-sync-shapes",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - {}\n      - env_file: {}\n      - env_file: {path: a}\n        aws_appconfig: {region: r, application: a, profile: p}\n      - gcp_parameter_manager: {project: p, parameter: 'bad name!'}\n      - azure_app_configuration: {endpoint: 'http://x'}\n      - aws_appconfig: {region: r}\n      - nope: {}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: 8 problems\n  - environments.local.sync.0: {} has less than 1 property\n  - environments.local.sync.1.env_file: \"path\" is a required property\n  - environments.local.sync.2: {\"env_file\":{\"path\":\"a\"},\"aws_appconfig\":{\"region\":\"r\",\"application\":\"a\",\"profile\":\"p\"}} has more than 1 property\n  - environments.local.sync.3.gcp_parameter_manager.parameter: \"bad name!\" does not match \"^[A-Za-z0-9_-]{1,63}$\"\n  - environments.local.sync.4.azure_app_configuration.endpoint: \"http://x\" does not match \"^https://\"\n  - environments.local.sync.5.aws_appconfig: \"application\" is a required property\n  - environments.local.sync.5.aws_appconfig: \"profile\" is a required property\n  - environments.local.sync.6: Additional properties are not allowed ('nope' was unexpected)",
+      "problems": [
+        {
+          "at": "environments.local.sync.0",
+          "message": "{} has less than 1 property"
+        },
+        {
+          "at": "environments.local.sync.1.env_file",
+          "message": "\"path\" is a required property"
+        },
+        {
+          "at": "environments.local.sync.2",
+          "message": "{\"env_file\":{\"path\":\"a\"},\"aws_appconfig\":{\"region\":\"r\",\"application\":\"a\",\"profile\":\"p\"}} has more than 1 property"
+        },
+        {
+          "at": "environments.local.sync.3.gcp_parameter_manager.parameter",
+          "message": "\"bad name!\" does not match \"^[A-Za-z0-9_-]{1,63}$\""
+        },
+        {
+          "at": "environments.local.sync.4.azure_app_configuration.endpoint",
+          "message": "\"http://x\" does not match \"^https://\""
+        },
+        {
+          "at": "environments.local.sync.5.aws_appconfig",
+          "message": "\"application\" is a required property"
+        },
+        {
+          "at": "environments.local.sync.5.aws_appconfig",
+          "message": "\"profile\" is a required property"
+        },
+        {
+          "at": "environments.local.sync.6",
+          "message": "Additional properties are not allowed ('nope' was unexpected)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/047-sync-rules",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: '  '}\n      - aws_appconfig: {region: ' ', application: a, profile: p}\n      - gcp_parameter_manager: {project: ' ', location: ' ', parameter: x}\n      - azure_app_configuration: {endpoint: 'https:// ', connection_string_env: ' '}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: 5 problems\n  - environments.local.sync[0].env_file.path: must not be empty\n  - environments.local.sync[1].aws_appconfig.region: must not be empty\n  - environments.local.sync[2].gcp_parameter_manager.project: must not be empty\n  - environments.local.sync[2].gcp_parameter_manager.location: must not be empty\n  - environments.local.sync[3].azure_app_configuration.connection_string_env: must not be empty",
+      "problems": [
+        {
+          "at": "environments.local.sync[0].env_file.path",
+          "message": "must not be empty"
+        },
+        {
+          "at": "environments.local.sync[1].aws_appconfig.region",
+          "message": "must not be empty"
+        },
+        {
+          "at": "environments.local.sync[2].gcp_parameter_manager.project",
+          "message": "must not be empty"
+        },
+        {
+          "at": "environments.local.sync[2].gcp_parameter_manager.location",
+          "message": "must not be empty"
+        },
+        {
+          "at": "environments.local.sync[3].azure_app_configuration.connection_string_env",
+          "message": "must not be empty"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/048-sync-all-valid",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: config/.env}\n      - aws_appconfig: {region: eu-west-1, application: shop, environment: Staging-EU, profile: connections, deployment_strategy: AppConfig.Linear50PercentEvery30Seconds}\n      - gcp_parameter_manager: {project: shop-prod, parameter: shop-staging}\n      - gcp_parameter_manager: {project: shop-prod, location: europe-west1, parameter: shop-eu}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', prefix: 'shop:'}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', label: green, connection_string_env: SHOP_APPCONFIG}\n    config_service: {image: 'ghcr.io/x/config:1', port: 8800}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"KAFKA_BOOTSTRAP_SERVERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"c\",\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      },\n      \"sync\": [\n        {\n          \"env_file\": {\n            \"path\": \"config/.env\"\n          }\n        },\n        {\n          \"aws_appconfig\": {\n            \"region\": \"eu-west-1\",\n            \"application\": \"shop\",\n            \"environment\": \"Staging-EU\",\n            \"profile\": \"connections\",\n            \"deployment_strategy\": \"AppConfig.Linear50PercentEvery30Seconds\"\n          }\n        },\n        {\n          \"gcp_parameter_manager\": {\n            \"project\": \"shop-prod\",\n            \"location\": \"global\",\n            \"parameter\": \"shop-staging\"\n          }\n        },\n        {\n          \"gcp_parameter_manager\": {\n            \"project\": \"shop-prod\",\n            \"location\": \"europe-west1\",\n            \"parameter\": \"shop-eu\"\n          }\n        },\n        {\n          \"azure_app_configuration\": {\n            \"endpoint\": \"https://shop.azconfig.io\",\n            \"prefix\": \"shop:\",\n            \"connection_string_env\": \"AZURE_APPCONFIG_CONNECTION_STRING\"\n          }\n        },\n        {\n          \"azure_app_configuration\": {\n            \"endpoint\": \"https://shop.azconfig.io\",\n            \"label\": \"green\",\n            \"connection_string_env\": \"SHOP_APPCONFIG\"\n          }\n        }\n      ],\n      \"config_service\": {\n        \"image\": \"ghcr.io/x/config:1\",\n        \"port\": 8800\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "c"
+      }
+    }
+  },
+  {
+    "name": "manifest/049-config-service-shapes",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    config_service: {image: '', port: 0, extra: 1}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: 3 problems\n  - environments.local.config_service.image: \"\" is shorter than 1 character\n  - environments.local.config_service.port: 0 is less than the minimum of 1\n  - environments.local.config_service: Additional properties are not allowed ('extra' was unexpected)",
+      "problems": [
+        {
+          "at": "environments.local.config_service.image",
+          "message": "\"\" is shorter than 1 character"
+        },
+        {
+          "at": "environments.local.config_service.port",
+          "message": "0 is less than the minimum of 1"
+        },
+        {
+          "at": "environments.local.config_service",
+          "message": "Additional properties are not allowed ('extra' was unexpected)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/050-environments-empty",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies: {}\nenvironments: {}\n"
+    },
+    "expected": {
+      "error": "manifest: environments: {} has less than 1 property",
+      "problems": [
+        {
+          "at": "environments",
+          "message": "{} has less than 1 property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/051-environment-name",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies: {}\nenvironments:\n  Local: {runtime: podman, dependencies: {}}\n"
+    },
+    "expected": {
+      "error": "manifest: environments: \"Local\" does not match \"^[a-z][a-z0-9_-]{0,39}$\"",
+      "problems": [
+        {
+          "at": "environments",
+          "message": "\"Local\" does not match \"^[a-z][a-z0-9_-]{0,39}$\""
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/052-twin-rules",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\n  c: {settings: {C: x}}\n  d: {settings: {D: x}}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      a: {twin: {image: t/a, version: ' ', conformance: ' ', ports: [1], contract: ' ', env: {TWIN_CONFIG: x}}}\n      b: {twin: {image: t/b, version: '1', conformance: {level: ' ', image_label: ' '}, ports: [2], admin: {url: 'ftp://x'}, state: ' '}}\n      c: {twin: {image: t/c, version: '1', conformance: c, ports: [3, 9644], admin: {}, faults: [{name: ' '}]}}\n      d: {twin: {image: t/d, version: '1', conformance: c, ports: [4], seed: 1, contract: k, config: {seed: 2, contract: j}, advertise_variable: 1X, env: {1X: y}}}\n"
+    },
+    "expected": {
+      "error": "manifest: 15 problems\n  - environments.local.dependencies.a.twin.version: the version must not be empty\n  - environments.local.dependencies.a.twin.conformance: declare the release's conformance level\n  - environments.local.dependencies.a.twin.env.TWIN_CONFIG: TWIN_CONFIG is written from `config`; set the configuration there\n  - environments.local.dependencies.a.twin.contract: the contract must not be empty\n  - environments.local.dependencies.b.twin.conformance.level: the level must not be empty\n  - environments.local.dependencies.b.twin.conformance.image_label: the label must not be empty\n  - environments.local.dependencies.b.twin.admin.url: the control plane's URL is http:// or https://\n  - environments.local.dependencies.b.twin.state: a state is a mapping, or the path of a JSON file\n  - environments.local.dependencies.c.twin.ports: port 9644 is the control plane's; it is published through `admin`\n  - environments.local.dependencies.c.twin.faults[0].name: the fault's name must not be empty\n  - environments.local.dependencies.c.ports: port 9644 is already published by dependency \"c\" in this environment\n  - environments.local.dependencies.d.twin.config.seed: config.seed is 2 but the twin's seed is 1; give it once\n  - environments.local.dependencies.d.twin.config.contract: config.contract is \"j\" but the twin's contract is \"k\"; give it once\n  - environments.local.dependencies.d.twin.advertise_variable: an environment variable name\n  - environments.local.dependencies.d.twin.env.1X: this variable is set from the endpoint through `advertise_variable`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.a.twin.version",
+          "message": "the version must not be empty"
+        },
+        {
+          "at": "environments.local.dependencies.a.twin.conformance",
+          "message": "declare the release's conformance level"
+        },
+        {
+          "at": "environments.local.dependencies.a.twin.env.TWIN_CONFIG",
+          "message": "TWIN_CONFIG is written from `config`; set the configuration there"
+        },
+        {
+          "at": "environments.local.dependencies.a.twin.contract",
+          "message": "the contract must not be empty"
+        },
+        {
+          "at": "environments.local.dependencies.b.twin.conformance.level",
+          "message": "the level must not be empty"
+        },
+        {
+          "at": "environments.local.dependencies.b.twin.conformance.image_label",
+          "message": "the label must not be empty"
+        },
+        {
+          "at": "environments.local.dependencies.b.twin.admin.url",
+          "message": "the control plane's URL is http:// or https://"
+        },
+        {
+          "at": "environments.local.dependencies.b.twin.state",
+          "message": "a state is a mapping, or the path of a JSON file"
+        },
+        {
+          "at": "environments.local.dependencies.c.twin.ports",
+          "message": "port 9644 is the control plane's; it is published through `admin`"
+        },
+        {
+          "at": "environments.local.dependencies.c.twin.faults[0].name",
+          "message": "the fault's name must not be empty"
+        },
+        {
+          "at": "environments.local.dependencies.c.ports",
+          "message": "port 9644 is already published by dependency \"c\" in this environment"
+        },
+        {
+          "at": "environments.local.dependencies.d.twin.config.seed",
+          "message": "config.seed is 2 but the twin's seed is 1; give it once"
+        },
+        {
+          "at": "environments.local.dependencies.d.twin.config.contract",
+          "message": "config.contract is \"j\" but the twin's contract is \"k\"; give it once"
+        },
+        {
+          "at": "environments.local.dependencies.d.twin.advertise_variable",
+          "message": "an environment variable name"
+        },
+        {
+          "at": "environments.local.dependencies.d.twin.env.1X",
+          "message": "this variable is set from the endpoint through `advertise_variable`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/053-twin-cloud-rules",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  a: {settings: {A: x}}\n  b: {settings: {B: x}}\nenvironments:\n  stage:\n    runtime: aws\n    cloud: {region: r, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      a: {twin: {image: t/a, version: '1', conformance: c, ports: [1], admin: {}, state: {x: 1}, faults: [{name: f}], advertise_variable: ADV}}\n      b: {twin: {image: t/b, version: '1', conformance: c, ports: [2], admin: {url: 'https://admin.example/'}, state: s.json, protocol: tcp}}\n"
+    },
+    "expected": {
+      "error": "manifest: 4 problems\n  - environments.stage.dependencies.a.twin.admin.url: a cloud twin's control plane is not published; give the URL it is reached at\n  - environments.stage.dependencies.a.twin.state: applied through the twin's control plane, so the twin needs `admin`\n  - environments.stage.dependencies.a.twin.faults: applied through the twin's control plane, so the twin needs `admin`\n  - environments.stage.dependencies.a.twin.advertise_variable: the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on aws pin it in `config` or `env`",
+      "problems": [
+        {
+          "at": "environments.stage.dependencies.a.twin.admin.url",
+          "message": "a cloud twin's control plane is not published; give the URL it is reached at"
+        },
+        {
+          "at": "environments.stage.dependencies.a.twin.state",
+          "message": "applied through the twin's control plane, so the twin needs `admin`"
+        },
+        {
+          "at": "environments.stage.dependencies.a.twin.faults",
+          "message": "applied through the twin's control plane, so the twin needs `admin`"
+        },
+        {
+          "at": "environments.stage.dependencies.a.twin.advertise_variable",
+          "message": "the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on aws pin it in `config` or `env`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/054-twin-config-json",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], seed: 18446744073709551615, contract: k, config: {clock: frozen, ratio: 0.5, big: 1e3, n: -3, flag: true, none: null, list: [1, 'a', 2.25], nested: {z: 1, a: 2}, unicode: \"café \\u2603\", quote: 'say \"hi\"'}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"KAFKA_BOOTSTRAP_SERVERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"t/k\",\n            \"version\": \"1\",\n            \"config\": {\n              \"clock\": \"frozen\",\n              \"ratio\": 0.5,\n              \"big\": 1000.0,\n              \"n\": -3,\n              \"flag\": true,\n              \"none\": null,\n              \"list\": [\n                1,\n                \"a\",\n                2.25\n              ],\n              \"nested\": {\n                \"z\": 1,\n                \"a\": 2\n              },\n              \"unicode\": \"café ☃\",\n              \"quote\": \"say \\\"hi\\\"\"\n            },\n            \"conformance\": \"c\",\n            \"ports\": [\n              1\n            ],\n            \"seed\": 18446744073709551615,\n            \"contract\": \"k\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "c"
+      }
+    }
+  },
+  {
+    "name": "manifest/055-yaml-scalars",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    description: yes\n    settings: {K: '${endpoint}', ON: on, NUM: '1'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: \"host:9092\", env: {}}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"description\": \"yes\",\n      \"settings\": {\n        \"K\": \"${endpoint}\",\n        \"NUM\": \"1\",\n        \"ON\": \"on\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"host:9092\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {}
+    }
+  },
+  {
+    "name": "manifest/056-yaml-anchor",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: &s {K: '${endpoint}'}\nenvironments:\n  a: &e\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'x:1'}}\n  b: *e\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"a\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"x:1\"\n          }\n        }\n      }\n    },\n    \"b\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"real\": {\n            \"endpoint\": \"x:1\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {}
+    }
+  },
+  {
+    "name": "manifest/057-all-placeholders",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  api:\n    settings: {E: '${endpoint}', H: '${host}', P: '${port}', C: '${credentials}', K: '${kind}', N: '${name}', MIX: 'pre-${host}-${port}-post', PLAIN: literal}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'https://user@api.example.com/v1?x=1', credentials: 'vault:kv/api'}}\n  noport:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'broker', credentials: 'env:X'}}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"api\": {\n      \"settings\": {\n        \"C\": \"${credentials}\",\n        \"E\": \"${endpoint}\",\n        \"H\": \"${host}\",\n        \"K\": \"${kind}\",\n        \"MIX\": \"pre-${host}-${port}-post\",\n        \"N\": \"${name}\",\n        \"P\": \"${port}\",\n        \"PLAIN\": \"literal\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"api\": {\n          \"real\": {\n            \"endpoint\": \"https://user@api.example.com/v1?x=1\",\n            \"credentials\": \"vault:kv/api\"\n          }\n        }\n      }\n    },\n    \"noport\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"api\": {\n          \"real\": {\n            \"endpoint\": \"broker\",\n            \"credentials\": \"env:X\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {}
+    }
+  },
+  {
+    "name": "manifest/058-advertise-podman",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          seed: 7\n          contract: petstore\n          config: {clock: frozen}\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"clock\": \"frozen\"\n            },\n            \"conformance\": \"conformant\",\n            \"ports\": [\n              8080\n            ],\n            \"seed\": 7,\n            \"contract\": \"petstore\",\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "conformant"
+      }
+    }
+  },
+  {
+    "name": "manifest/059-advertise-pinned",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          endpoint: 'http://twin.local'\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"conformant\",\n            \"ports\": [\n              8080\n            ],\n            \"endpoint\": \"http://twin.local\",\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "conformant"
+      }
+    }
+  },
+  {
+    "name": "manifest/060-advertise-aws",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: eu-west-1, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.advertise_variable: the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on aws pin it in `config` or `env`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.advertise_variable",
+          "message": "the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on aws pin it in `config` or `env`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/061-advertise-gcp-tcp",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: europe-west1}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9093]\n          protocol: tcp\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"gcp\",\n      \"cloud\": {\n        \"project\": \"p\",\n        \"region\": \"europe-west1\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092,\n              9093\n            ],\n            \"protocol\": \"tcp\",\n            \"advertise_variable\": \"LAWTWIN_ADVERTISE\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/062-advertise-gcp-http",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: europe-west1}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9093]\n          protocol: http\n          advertise_variable: LAWTWIN_ADVERTISE\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - environments.local.dependencies.kafka.twin.ports: Cloud Run serves one port per service; a twin serving more is `protocol: tcp`, run on Compute Engine\n  - environments.local.dependencies.kafka.twin.advertise_variable: the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on gcp pin it in `config` or `env`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.ports",
+          "message": "Cloud Run serves one port per service; a twin serving more is `protocol: tcp`, run on Compute Engine"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.advertise_variable",
+          "message": "the address a twin advertises is set on podman and on GCP Compute Engine (`protocol: tcp`); on gcp pin it in `config` or `env`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/063-state-needs-admin",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          state: {topics: []}\n          faults: [{name: consumer-lag}]\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - environments.local.dependencies.kafka.twin.state: applied through the twin's control plane, so the twin needs `admin`\n  - environments.local.dependencies.kafka.twin.faults: applied through the twin's control plane, so the twin needs `admin`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.state",
+          "message": "applied through the twin's control plane, so the twin needs `admin`"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.faults",
+          "message": "applied through the twin's control plane, so the twin needs `admin`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/064-state-with-admin",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9644}\n          state: {topics: []}\n          faults: [{name: consumer-lag, params: {lag: 5, topic: orders}}]\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092\n            ],\n            \"state\": {\n              \"topics\": []\n            },\n            \"faults\": [\n              {\n                \"name\": \"consumer-lag\",\n                \"params\": {\n                  \"lag\": 5,\n                  \"topic\": \"orders\"\n                }\n              }\n            ],\n            \"admin\": {\n              \"port\": 9644,\n              \"container_port\": 9644\n            }\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/065-admin-port-in-ports",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9644]\n          admin: {}\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - environments.local.dependencies.kafka.twin.ports: port 9644 is the control plane's; it is published through `admin`\n  - environments.local.dependencies.kafka.ports: port 9644 is already published by dependency \"kafka\" in this environment",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.ports",
+          "message": "port 9644 is the control plane's; it is published through `admin`"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.ports",
+          "message": "port 9644 is already published by dependency \"kafka\" in this environment"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/066-admin-port-clash",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9092}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.ports: port 9092 is already published by dependency \"kafka\" in this environment",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.ports",
+          "message": "port 9092 is already published by dependency \"kafka\" in this environment"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/067-admin-cloud-no-url",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: aws\n    cloud: {region: eu-west-1, vpc_id: v, subnet_ids: [s]}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {}\n          faults: [{name: x}]\n"
+    },
+    "expected": {
+      "error": "manifest: 2 problems\n  - environments.local.dependencies.kafka.twin.admin.url: a cloud twin's control plane is not published; give the URL it is reached at\n  - environments.local.dependencies.kafka.twin.faults: applied through the twin's control plane, so the twin needs `admin`",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.admin.url",
+          "message": "a cloud twin's control plane is not published; give the URL it is reached at"
+        },
+        {
+          "at": "environments.local.dependencies.kafka.twin.faults",
+          "message": "applied through the twin's control plane, so the twin needs `admin`"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/068-seed-twice",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 1\n          config: {seed: 2}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.dependencies.kafka.twin.config.seed: config.seed is 2 but the twin's seed is 1; give it once",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.config.seed",
+          "message": "config.seed is 2 but the twin's seed is 1; give it once"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/069-seed-same",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 2\n          config: {seed: 2, contract: x}\n          contract: x\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"config\": {\n              \"seed\": 2,\n              \"contract\": \"x\"\n            },\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092\n            ],\n            \"seed\": 2,\n            \"contract\": \"x\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/070-label-conformance",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {image_label: io.lawtwin.conformance}\n          ports: [19092]\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"image_label\": \"io.lawtwin.conformance\"\n            },\n            \"ports\": [\n              19092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "unrated"
+      }
+    }
+  },
+  {
+    "name": "manifest/071-admin-url-podman",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {url: 'http://127.0.0.1:1/', port: 7000, container_port: 7001}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092\n            ],\n            \"admin\": {\n              \"port\": 7000,\n              \"container_port\": 7001,\n              \"url\": \"http://127.0.0.1:1/\"\n            }\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/072-admin-podman-ports",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9700, container_port: 9644}\n          env: {LOG: debug, A: b}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"answers\",\n            \"ports\": [\n              9092\n            ],\n            \"env\": {\n              \"A\": \"b\",\n              \"LOG\": \"debug\"\n            },\n            \"admin\": {\n              \"port\": 9700,\n              \"container_port\": 9644\n            }\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/073-azure-cloud",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: rg, subscription_id: sub, transport: tcp, external: true, infrastructure_subnet_id: s, cpu: 0.5, memory: 1Gi}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"KAFKA_BOOTSTRAP_SERVERS\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"azure\",\n      \"cloud\": {\n        \"cpu\": 0.5,\n        \"external\": true,\n        \"infrastructure_subnet_id\": \"s\",\n        \"location\": \"westeurope\",\n        \"memory\": \"1Gi\",\n        \"resource_group_name\": \"rg\",\n        \"subscription_id\": \"sub\",\n        \"transport\": \"tcp\"\n      },\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": \"c\",\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "c"
+      }
+    }
+  },
+  {
+    "name": "manifest/074-gcp-unknown-input",
+    "method": "manifest.parse",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: r, vpc_id: x}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n"
+    },
+    "expected": {
+      "error": "manifest: environments.local.cloud.vpc_id: runtime gcp takes no input \"vpc_id\"; it takes modules, project, region, zone, machine_type, network, subnetwork, allowed_cidr_blocks, public, cpu, memory",
+      "problems": [
+        {
+          "at": "environments.local.cloud.vpc_id",
+          "message": "runtime gcp takes no input \"vpc_id\"; it takes modules, project, region, zone, machine_type, network, subnetwork, allowed_cidr_blocks, public, cpu, memory"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/075-environment",
+    "method": "manifest.environment",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "local"
+    },
+    "expected": {
+      "ok": true
+    }
+  },
+  {
+    "name": "manifest/076-environment",
+    "method": "manifest.environment",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "staging"
+    },
+    "expected": {
+      "ok": true
+    }
+  },
+  {
+    "name": "manifest/077-environment",
+    "method": "manifest.environment",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "production"
+    },
+    "expected": {
+      "error": "manifest: no environment named \"production\"; the manifest has \"local\", \"staging\""
+    }
+  },
+  {
+    "name": "manifest/078-report",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"report.json\"\n            },\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/079-report-number",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {level: '3', report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"level\": \"3\",\n              \"report\": \"report.json\"\n            },\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/080-report-both",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {level: 3-Answers, report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"level\": \"3-Answers\",\n              \"report\": \"report.json\"\n            },\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/081-report-level-differs",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {level: exact, report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: the twin declares conformance \"exact\", but its report gives level 3 (answers)",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "the twin declares conformance \"exact\", but its report gives level 3 (answers)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/082-report-release",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.2.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: the report is for release 0.1.0, but the twin is version 0.2.0",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "the report is for release 0.1.0, but the twin is version 0.2.0"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/083-report-twin",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: the report is for the kafka twin, but the image is lawtwin/http",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "the report is for the kafka twin, but the image is lawtwin/http"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/084-report-contract",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: github\n          conformance: {report: report.json}\n          ports: [8080]\n",
+        "/work/report.json": "{\"contract\": \"lawtwin.petstore\", \"real\": {}, \"divergences\": [], \"level\": \"conformant\"}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: the report checked contract lawtwin.petstore, but the twin serves github",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "the report checked contract lawtwin.petstore, but the twin serves github"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/085-report-contract-ok",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance: {report: report.json}\n          ports: [8080]\n",
+        "/work/report.json": "{\"contract\": \"lawtwin.petstore\", \"real\": {}, \"divergences\": [], \"level\": \"conformant\"}"
+      }
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/http\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"report.json\"\n            },\n            \"ports\": [\n              8080\n            ],\n            \"contract\": \"petstore\"\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "conformant"
+      }
+    }
+  },
+  {
+    "name": "manifest/086-report-missing",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: nowhere.json}\n          ports: [9092]\n"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: nowhere.json: cannot read it: No such file or directory (os error 2)",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "nowhere.json: cannot read it: No such file or directory (os error 2)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/087-report-not-json",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{not json"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: report.json: not JSON: key must be a string at line 1 column 2",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "report.json: not JSON: key must be a string at line 1 column 2"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/088-report-no-level",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"twin\": \"kafka\"}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: report.json: the report has no level",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "report.json: the report has no level"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/089-report-empty-level",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"level\": \" \"}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: report.json: the report's level is empty",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "report.json: the report's level is empty"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/090-report-level-no-name",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: report.json}\n          ports: [9092]\n",
+        "/work/report.json": "{\"level\": {\"number\": 2}}"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: environments.local.dependencies.kafka.twin.conformance.report: report.json: level has no name",
+      "problems": [
+        {
+          "at": "environments.local.dependencies.kafka.twin.conformance.report",
+          "message": "report.json: level has no name"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/091-report-subdir",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {report: conformance/k.json}\n          ports: [9092]\n",
+        "/work/conformance/k.json": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+      }
+    },
+    "expected": {
+      "ok": "{\n  \"version\": 1,\n  \"project\": \"shop\",\n  \"dependencies\": {\n    \"kafka\": {\n      \"settings\": {\n        \"K\": \"${endpoint}\"\n      }\n    }\n  },\n  \"environments\": {\n    \"local\": {\n      \"runtime\": \"podman\",\n      \"dependencies\": {\n        \"kafka\": {\n          \"twin\": {\n            \"image\": \"lawtwin/kafka\",\n            \"version\": \"0.1.0\",\n            \"conformance\": {\n              \"report\": \"conformance/k.json\"\n            },\n            \"ports\": [\n              9092\n            ]\n          }\n        }\n      }\n    }\n  }\n}",
+      "levels": {
+        "local.kafka": "answers"
+      }
+    }
+  },
+  {
+    "name": "manifest/092-only-header",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/ironframe.yaml",
+      "files": {
+        "/work/ironframe.yaml": "version: 1\n"
+      }
+    },
+    "expected": {
+      "error": "/work/ironframe.yaml: 3 problems\n  - \"project\" is a required property\n  - \"dependencies\" is a required property\n  - \"environments\" is a required property",
+      "problems": [
+        {
+          "at": "",
+          "message": "\"project\" is a required property"
+        },
+        {
+          "at": "",
+          "message": "\"dependencies\" is a required property"
+        },
+        {
+          "at": "",
+          "message": "\"environments\" is a required property"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/093-missing-file",
+    "method": "manifest.load",
+    "input": {
+      "path": "/work/nope.yaml",
+      "files": {}
+    },
+    "expected": {
+      "error": "/work/nope.yaml: cannot read the manifest: No such file or directory (os error 2)",
+      "problems": [
+        {
+          "at": "",
+          "message": "cannot read the manifest: No such file or directory (os error 2)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "manifest/094-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "a${endpoint}b${host}${port}"
+    },
+    "expected": {
+      "ok": [
+        "endpoint",
+        "host",
+        "port"
+      ]
+    }
+  },
+  {
+    "name": "manifest/095-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "plain"
+    },
+    "expected": {
+      "ok": []
+    }
+  },
+  {
+    "name": "manifest/096-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "${"
+    },
+    "expected": {
+      "error": "unclosed placeholder in \"${\""
+    }
+  },
+  {
+    "name": "manifest/097-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "x${a}${"
+    },
+    "expected": {
+      "error": "unclosed placeholder in \"x${a}${\""
+    }
+  },
+  {
+    "name": "manifest/098-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "${}"
+    },
+    "expected": {
+      "ok": [
+        ""
+      ]
+    }
+  },
+  {
+    "name": "manifest/099-placeholders",
+    "method": "manifest.placeholders",
+    "input": {
+      "template": "$endpoint}"
+    },
+    "expected": {
+      "ok": []
+    }
+  }
+]

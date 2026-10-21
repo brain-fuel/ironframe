@@ -1,0 +1,496 @@
+[
+  {
+    "name": "twin/001-latency",
+    "method": "twin.parseFault",
+    "input": {
+      "name": "latency",
+      "params": [
+        "delay=5ms",
+        "count=3"
+      ]
+    },
+    "expected": {
+      "ok": {
+        "name": "latency",
+        "params": {
+          "count": 3,
+          "delay": "5ms"
+        }
+      }
+    }
+  },
+  {
+    "name": "twin/002-none",
+    "method": "twin.parseFault",
+    "input": {
+      "name": "none",
+      "params": []
+    },
+    "expected": {
+      "ok": {
+        "name": "none"
+      }
+    }
+  },
+  {
+    "name": "twin/003-bad",
+    "method": "twin.parseFault",
+    "input": {
+      "name": "bad",
+      "params": [
+        "delay"
+      ]
+    },
+    "expected": {
+      "error": "delay is not a parameter; write name=value"
+    }
+  },
+  {
+    "name": "twin/004-negative",
+    "method": "twin.parseFault",
+    "input": {
+      "name": "negative",
+      "params": [
+        "n=-4",
+        "big=99999999999999999999",
+        "eq=a=b",
+        "empty="
+      ]
+    },
+    "expected": {
+      "ok": {
+        "name": "negative",
+        "params": {
+          "big": "99999999999999999999",
+          "empty": "",
+          "eq": "a=b",
+          "n": -4
+        }
+      }
+    }
+  },
+  {
+    "name": "twin/005-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "{\"a\":1,\"b\":[1,2,{}],\"c\":{}}"
+    },
+    "expected": "{\n  \"a\": 1,\n  \"b\": [\n    1,\n    2,\n    {}\n  ],\n  \"c\": {}\n}"
+  },
+  {
+    "name": "twin/006-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "not json"
+    },
+    "expected": "not json"
+  },
+  {
+    "name": "twin/007-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "[]"
+    },
+    "expected": "[]"
+  },
+  {
+    "name": "twin/008-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "{\"nowMs\":5000}"
+    },
+    "expected": "{\n  \"nowMs\": 5000\n}"
+  },
+  {
+    "name": "twin/009-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "\"s\""
+    },
+    "expected": "\"s\""
+  },
+  {
+    "name": "twin/010-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "1.0"
+    },
+    "expected": "1.0"
+  },
+  {
+    "name": "twin/011-pretty",
+    "method": "twin.pretty",
+    "input": {
+      "body": "{\"z\":1,\"a\":{\"y\":[]}}"
+    },
+    "expected": "{\n  \"z\": 1,\n  \"a\": {\n    \"y\": []\n  }\n}"
+  },
+  {
+    "name": "twin/012-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 200,
+      "body": "ok"
+    },
+    "expected": {
+      "ok": "ok"
+    }
+  },
+  {
+    "name": "twin/013-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 204,
+      "body": ""
+    },
+    "expected": {
+      "ok": ""
+    }
+  },
+  {
+    "name": "twin/014-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 400,
+      "body": "{\"error\": \"no fault x\"}"
+    },
+    "expected": {
+      "error": "no fault x",
+      "code": 1
+    }
+  },
+  {
+    "name": "twin/015-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 500,
+      "body": "boom"
+    },
+    "expected": {
+      "error": "the twin answered 500: boom",
+      "code": 1
+    }
+  },
+  {
+    "name": "twin/016-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 404,
+      "body": "{\"other\": 1}"
+    },
+    "expected": {
+      "error": "the twin answered 404: {\"other\": 1}",
+      "code": 1
+    }
+  },
+  {
+    "name": "twin/017-reply",
+    "method": "twin.replyOk",
+    "input": {
+      "status": 302,
+      "body": "{\"error\": 5}"
+    },
+    "expected": {
+      "error": "the twin answered 302: {\"error\": 5}",
+      "code": 1
+    }
+  },
+  {
+    "name": "twin/018-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "{\"twin\": \"kafka\", \"release\": \"0.1.0\", \"contract\": {\"package\": \"lawtwin.kafka\", \"version\": \"0.1.0\"},\n  \"level\": {\"number\": 3, \"name\": \"answers\", \"means\": \"...\"}}"
+    },
+    "expected": {
+      "ok": {
+        "level": "answers",
+        "number": 3,
+        "release": "0.1.0",
+        "twin": "kafka",
+        "contract": "lawtwin.kafka",
+        "describe": "level 3 (answers)",
+        "matches": [
+          [
+            "answers",
+            true
+          ],
+          [
+            "Answers",
+            true
+          ],
+          [
+            "3",
+            true
+          ],
+          [
+            "3-answers",
+            true
+          ],
+          [
+            "3-ANSWERS",
+            true
+          ],
+          [
+            " answers ",
+            true
+          ],
+          [
+            "exact",
+            false
+          ],
+          [
+            "conformant",
+            false
+          ],
+          [
+            "4",
+            false
+          ]
+        ]
+      }
+    }
+  },
+  {
+    "name": "twin/019-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "{\"contract\": \"lawtwin.petstore\", \"real\": {}, \"divergences\": [], \"level\": \"conformant\"}"
+    },
+    "expected": {
+      "ok": {
+        "level": "conformant",
+        "number": null,
+        "release": null,
+        "twin": null,
+        "contract": "lawtwin.petstore",
+        "describe": "level conformant",
+        "matches": [
+          [
+            "answers",
+            false
+          ],
+          [
+            "Answers",
+            false
+          ],
+          [
+            "3",
+            false
+          ],
+          [
+            "3-answers",
+            false
+          ],
+          [
+            "3-ANSWERS",
+            false
+          ],
+          [
+            " answers ",
+            false
+          ],
+          [
+            "exact",
+            false
+          ],
+          [
+            "conformant",
+            true
+          ],
+          [
+            "4",
+            false
+          ]
+        ]
+      }
+    }
+  },
+  {
+    "name": "twin/020-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "{\"twin\": \"kafka\"}"
+    },
+    "expected": {
+      "error": "the report has no level"
+    }
+  },
+  {
+    "name": "twin/021-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "nope"
+    },
+    "expected": {
+      "error": "not JSON: expected ident at line 1 column 2"
+    }
+  },
+  {
+    "name": "twin/022-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "{\"level\": {\"name\": 5}}"
+    },
+    "expected": {
+      "error": "level has no name"
+    }
+  },
+  {
+    "name": "twin/023-report",
+    "method": "conformance.parse",
+    "input": {
+      "text": "{\"level\": {\"name\": \"x\", \"number\": -1}}"
+    },
+    "expected": {
+      "ok": {
+        "level": "x",
+        "number": null,
+        "release": null,
+        "twin": null,
+        "contract": null,
+        "describe": "level x",
+        "matches": [
+          [
+            "answers",
+            false
+          ],
+          [
+            "Answers",
+            false
+          ],
+          [
+            "3",
+            false
+          ],
+          [
+            "3-answers",
+            false
+          ],
+          [
+            "3-ANSWERS",
+            false
+          ],
+          [
+            " answers ",
+            false
+          ],
+          [
+            "exact",
+            false
+          ],
+          [
+            "conformant",
+            false
+          ],
+          [
+            "4",
+            false
+          ]
+        ]
+      }
+    }
+  },
+  {
+    "name": "twin/024-set-up",
+    "method": "twin.setUp",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 42\n          admin: {url: 'http://twin.test'}\n          state: {topics: [orders]}\n          faults:\n            - {name: latency, params: {delay: 5ms}}\n            - {name: duplicate-delivery, params: {count: 2}}\n",
+      "environment": "local",
+      "dependency": "kafka",
+      "manifestDir": "/work"
+    },
+    "expected": {
+      "record": "{\"admin\":\"http://twin.test\",\"seed\":42,\"faults\":[\"latency\",\"duplicate-delivery\"],\"forced\":true}",
+      "http": [
+        {
+          "method": "GET",
+          "path": "/v1/twin",
+          "body": "",
+          "status": 200,
+          "response": "{\"twin\":\"fake\",\"version\":\"0.1.0\",\"contract\":{},\"seed\":0,\"clock\":{\"mode\":\"frozen\",\"nowMs\":0},\"bootstrap\":\"localhost:1\"}"
+        },
+        {
+          "method": "POST",
+          "path": "/v1/seed",
+          "body": "{\"seed\":42}",
+          "status": 200,
+          "response": "{\"seed\":42,\"reset\":true}"
+        },
+        {
+          "method": "POST",
+          "path": "/v1/state",
+          "body": "{\"topics\":[\"orders\"]}",
+          "status": 200,
+          "response": "{\"forced\":true,\"operations\":1}"
+        },
+        {
+          "method": "POST",
+          "path": "/v1/faults/latency",
+          "body": "{\"delay\":\"5ms\"}",
+          "status": 201,
+          "response": "{\"id\":1,\"name\":\"latency\"}"
+        },
+        {
+          "method": "POST",
+          "path": "/v1/faults/duplicate-delivery",
+          "body": "{\"count\":2}",
+          "status": 201,
+          "response": "{\"id\":1,\"name\":\"duplicate-delivery\"}"
+        }
+      ]
+    }
+  },
+  {
+    "name": "twin/025-commands",
+    "method": "twin.commands",
+    "input": {
+      "url": "http://twin.test"
+    },
+    "expected": {
+      "results": [
+        {
+          "name": "force-refused",
+          "result": {
+            "Err": {
+              "error": "refused: the law `partitions only grow` forbids this state: 3 cannot become 2",
+              "code": 2
+            }
+          }
+        },
+        {
+          "name": "raise-undeclared",
+          "result": {
+            "Err": {
+              "error": "no fault undeclared",
+              "code": 1
+            }
+          }
+        }
+      ],
+      "http": [
+        {
+          "method": "POST",
+          "path": "/v1/state",
+          "body": "{\"impossible\": true}",
+          "status": 422,
+          "response": "{\"forced\":false,\"law\":\"partitions only grow\",\"reason\":\"3 cannot become 2\"}"
+        },
+        {
+          "method": "POST",
+          "path": "/v1/faults/undeclared",
+          "body": "{}",
+          "status": 400,
+          "response": "{\"error\":\"no fault undeclared\"}"
+        }
+      ]
+    }
+  },
+  {
+    "name": "twin/026-unreachable",
+    "method": "twin.unreachableMessage",
+    "input": {
+      "url": "http://127.0.0.1:1"
+    },
+    "expected": "the control plane at http://127.0.0.1:1 does not answer: Connection refused (os error 61)"
+  }
+]

@@ -1,0 +1,1526 @@
+[
+  {
+    "name": "settings/001-shop-local",
+    "method": "settings.resolve",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
+          "KAFKA_KIND": "twin",
+          "PAYMENTS_CREDENTIALS": "env:PAYMENTS_TOKEN",
+          "PAYMENTS_HOST": "localhost",
+          "PAYMENTS_PORT": "8080",
+          "PAYMENTS_URL": "http://localhost:8080/v1"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092,
+              9644
+            ],
+            "container_env": {
+              "LOG_LEVEL": "debug",
+              "TWIN_CONFIG": "{\"seed\":42}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "unrated"
+            },
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092",
+              "KAFKA_KIND": "twin"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          },
+          {
+            "name": "payments",
+            "kind": "twin",
+            "endpoint": "http://localhost:8080/v1",
+            "image": "ghcr.io/example/payments-twin:2.0.0",
+            "ports": [
+              8080
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "ghcr.io/example/payments-twin",
+              "version": "2.0.0",
+              "conformance": "L1"
+            },
+            "credentials": "env:PAYMENTS_TOKEN",
+            "settings": {
+              "PAYMENTS_CREDENTIALS": "env:PAYMENTS_TOKEN",
+              "PAYMENTS_HOST": "localhost",
+              "PAYMENTS_PORT": "8080",
+              "PAYMENTS_URL": "http://localhost:8080/v1"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/002-shop-staging-undeployed",
+    "method": "settings.resolve",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "staging",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"kafka\" in environment \"staging\" is known once the twin is deployed; run `ironframe up staging` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/003-shop-staging-deployed",
+    "method": "settings.resolve",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "staging",
+      "deployed": {
+        "kafka": "kafka-nlb.elb.amazonaws.com:9092"
+      }
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "staging",
+        "runtime": "aws",
+        "stack_name": "ironframe-shop-staging",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "kafka-nlb.elb.amazonaws.com:9092",
+          "KAFKA_KIND": "twin",
+          "PAYMENTS_CREDENTIALS": "aws-secretsmanager:shop/payments",
+          "PAYMENTS_HOST": "payments.example.com",
+          "PAYMENTS_PORT": "443",
+          "PAYMENTS_URL": "https://payments.example.com"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "kafka-nlb.elb.amazonaws.com:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "unrated"
+            },
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "kafka-nlb.elb.amazonaws.com:9092",
+              "KAFKA_KIND": "twin"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          },
+          {
+            "name": "payments",
+            "kind": "real",
+            "endpoint": "https://payments.example.com",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": "aws-secretsmanager:shop/payments",
+            "settings": {
+              "PAYMENTS_CREDENTIALS": "aws-secretsmanager:shop/payments",
+              "PAYMENTS_HOST": "payments.example.com",
+              "PAYMENTS_PORT": "443",
+              "PAYMENTS_URL": "https://payments.example.com"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/004-shop-unknown",
+    "method": "settings.resolve",
+    "input": {
+      "text": "\nversion: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n      KAFKA_KIND: ${kind}\n  payments:\n    settings:\n      PAYMENTS_URL: ${endpoint}\n      PAYMENTS_HOST: ${host}\n      PAYMENTS_PORT: ${port}\n      PAYMENTS_CREDENTIALS: ${credentials}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092, 9644]\n          config: {seed: 42}\n          env: {LOG_LEVEL: debug}\n      payments:\n        twin:\n          image: ghcr.io/example/payments-twin\n          version: 2.0.0\n          conformance: L1\n          ports: [8080]\n          endpoint: http://localhost:8080/v1\n          credentials: env:PAYMENTS_TOKEN\n    sync:\n      - env_file: {path: .env.local}\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../modules\n      region: eu-west-1\n      vpc_id: vpc-1\n      subnet_ids: [subnet-1, subnet-2]\n      cpu: 512\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: unrated\n          ports: [9092]\n      payments:\n        real:\n          endpoint: https://payments.example.com\n          credentials: aws-secretsmanager:shop/payments\n    sync:\n      - aws_appconfig: {region: eu-west-1, application: shop, profile: connections}\n",
+      "environment": "production",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "manifest: no environment named \"production\"; the manifest has \"local\", \"staging\""
+    }
+  },
+  {
+    "name": "settings/005-hosted",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  db:\n    settings: {D: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'localhost:9092', image: 'apache/kafka:4.1.0', ports: [9092]}}\n      db: {real: {endpoint: 'db.example.com:5432'}}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "D": "db.example.com:5432",
+          "K": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "db",
+            "kind": "real",
+            "endpoint": "db.example.com:5432",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "D": "db.example.com:5432"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          },
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/apache/kafka:4.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "K": "localhost:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/006-gcp-tcp-deployed",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\n  orders:\n    settings: {O: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {modules: ../modules, project: p, region: europe-west1, zone: europe-west1-c, cpu: '2', allowed_cidr_blocks: [10.0.0.0/8]}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: answers, ports: [9092], protocol: tcp, seed: 42, advertise_variable: LAWTWIN_ADVERTISE}\n      orders:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: conformant, ports: [8080], contract: petstore}\n",
+      "environment": "dev",
+      "deployed": {
+        "kafka": "10.0.0.5:9092",
+        "orders": "https://orders-xyz.run.app"
+      }
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "dev",
+        "runtime": "gcp",
+        "stack_name": "ironframe-shop-dev",
+        "settings": {
+          "K": "10.0.0.5:9092",
+          "O": "https://orders-xyz.run.app"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "10.0.0.5:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{\"seed\":42}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers",
+              "seed": 42
+            },
+            "credentials": null,
+            "settings": {
+              "K": "10.0.0.5:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          },
+          {
+            "name": "orders",
+            "kind": "twin",
+            "endpoint": "https://orders-xyz.run.app",
+            "image": "docker.io/lawtwin/http:0.1.0",
+            "ports": [
+              8080
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{\"contract\":\"petstore\"}"
+            },
+            "stand_in": {
+              "product": "lawtwin/http",
+              "version": "0.1.0",
+              "conformance": "conformant"
+            },
+            "credentials": null,
+            "settings": {
+              "O": "https://orders-xyz.run.app"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/007-kafka-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "kafka-app",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-kafka-app-local",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{\"clock\":\"frozen\",\"seed\":42}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers",
+              "seed": 42
+            },
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+            },
+            "admin_url": "http://127.0.0.1:9644",
+            "admin_port": [
+              9644,
+              9644
+            ],
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/008-kafka-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n",
+      "environment": "local-broker",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "kafka-app",
+        "environment": "local-broker",
+        "runtime": "podman",
+        "stack_name": "ironframe-kafka-app-local-broker",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/apache/kafka:4.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/009-kafka-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n",
+      "environment": "production",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "kafka-app",
+        "environment": "production",
+        "runtime": "aws",
+        "stack_name": "ironframe-kafka-app-production",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "b-1.kafka-app.example.internal:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "b-1.kafka-app.example.internal:9092",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": "aws-secretsmanager:kafka-app/production/kafka",
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "b-1.kafka-app.example.internal:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/010-kafka-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n",
+      "environment": "staging",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"kafka\" in environment \"staging\" is known once the twin is deployed; run `ironframe up staging` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/011-kafka-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The kafka-app's wiring: one dependency, Kafka, read through KAFKA_BOOTSTRAP_SERVERS, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: kafka-app\n\ndependencies:\n  kafka:\n    description: The Kafka cluster the app talks to.\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\n\nenvironments:\n  # LawTwin's Kafka twin on this machine, its conformance level read from the report LawTwin\n  # publishes for the release (level 3, answers), its seed fixed so a run replays byte for byte,\n  # and its control plane published on 9644 for `ironframe twin kafka ...`. Build the image in the\n  # lawtwin repository with `make image` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            level: answers\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          seed: 42\n          config:\n            clock: frozen\n          admin:\n            port: 9644\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The real Kafka on this machine, run from Apache's image until the twin exists, with the\n  # configuration service beside it on port 8700 (build its image with `make config-service-image`).\n  local-broker:\n    runtime: podman\n    dependencies:\n      kafka:\n        real:\n          endpoint: localhost:9092\n          image: apache/kafka:4.1.0\n          ports: [9092]\n    sync:\n      - env_file:\n          path: .env\n    config_service:\n      port: 8700\n\n  # The twin on AWS ECS Fargate, its endpoint read back from OpenTofu, and the settings synced to\n  # AWS AppConfig for the app deployed beside it.\n  staging:\n    runtime: aws\n    cloud:\n      modules: ../../modules\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0, subnet-0fedcba9876543210]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n\n  # The twin on GCP. Cloud Run serves only HTTP, so a Kafka twin, `protocol: tcp`, runs on a\n  # Compute Engine instance with a reserved address it advertises to clients.\n  staging-gcp:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: kafka-app-staging\n      region: europe-west1\n      allowed_cidr_blocks: [10.0.0.0/8]\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance:\n            report: conformance/lawtwin-kafka-0.1.0.json\n          ports: [9092]\n          protocol: tcp\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n    sync:\n      - gcp_parameter_manager:\n          project: kafka-app-staging\n          parameter: kafka-app-connections\n\n  # The real, hosted cluster: nothing is deployed, the settings point at it.\n  production:\n    runtime: aws\n    cloud:\n      region: us-east-1\n      vpc_id: vpc-0123456789abcdef0\n      subnet_ids: [subnet-0123456789abcdef0]\n    dependencies:\n      kafka:\n        real:\n          endpoint: b-1.kafka-app.example.internal:9092\n          credentials: aws-secretsmanager:kafka-app/production/kafka\n    sync:\n      - aws_appconfig:\n          region: us-east-1\n          application: kafka-app\n          profile: connections\n",
+      "environment": "staging-gcp",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"kafka\" in environment \"staging-gcp\" is known once the twin is deployed; run `ironframe up staging-gcp` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/012-petstore-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: petstore-app\n\ndependencies:\n  petstore:\n    description: The Petstore API the app adds pets to.\n    settings:\n      PETSTORE_URL: ${endpoint}\n\nenvironments:\n  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the\n  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as\n  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.\n  # Build the image in the lawtwin repository with `make image-http` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            level: conformant\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          endpoint: http://localhost:8080\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n          faults:\n            - name: latency\n              params:\n                delay: 5ms\n          admin:\n            port: 9645\n            container_port: 9644\n    sync:\n      - env_file:\n          path: .env\n\n  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.\n  staging:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: petstore-app-staging\n      region: europe-west1\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          seed: 42\n    sync:\n      - gcp_parameter_manager:\n          project: petstore-app-staging\n          parameter: petstore-app-connections\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "petstore-app",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-petstore-app-local",
+        "settings": {
+          "PETSTORE_URL": "http://localhost:8080"
+        },
+        "dependencies": [
+          {
+            "name": "petstore",
+            "kind": "twin",
+            "endpoint": "http://localhost:8080",
+            "image": "docker.io/lawtwin/http:0.1.0",
+            "ports": [
+              8080
+            ],
+            "container_env": {
+              "LAWTWIN_ADVERTISE": "localhost:8080",
+              "TWIN_CONFIG": "{\"seed\":42,\"contract\":\"petstore\"}"
+            },
+            "stand_in": {
+              "product": "lawtwin/http",
+              "version": "0.1.0",
+              "conformance": "conformant",
+              "seed": 42
+            },
+            "credentials": null,
+            "settings": {
+              "PETSTORE_URL": "http://localhost:8080"
+            },
+            "admin_url": "http://127.0.0.1:9645",
+            "admin_port": [
+              9645,
+              9644
+            ],
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/013-petstore-app",
+    "method": "settings.resolve",
+    "input": {
+      "text": "# The petstore-app's wiring: one dependency, a Petstore API, read through PETSTORE_URL, and what it\n# is in each environment. The app never sees this file; it reads its setting as it always has.\nversion: 1\nproject: petstore-app\n\ndependencies:\n  petstore:\n    description: The Petstore API the app adds pets to.\n    settings:\n      PETSTORE_URL: ${endpoint}\n\nenvironments:\n  # LawTwin's HTTP twin serving the Petstore contract on this machine, at the level of the\n  # conformance run in conformance/ (conformant), with its seed fixed, a little latency raised as\n  # soon as it answers, and its control plane on 9645 so it can run beside the Kafka example's.\n  # Build the image in the lawtwin repository with `make image-http` until it is published.\n  local:\n    runtime: podman\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            level: conformant\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          endpoint: http://localhost:8080\n          seed: 42\n          advertise_variable: LAWTWIN_ADVERTISE\n          faults:\n            - name: latency\n              params:\n                delay: 5ms\n          admin:\n            port: 9645\n            container_port: 9644\n    sync:\n      - env_file:\n          path: .env\n\n  # The same twin on Cloud Run, which serves HTTP twins; its endpoint is read back from OpenTofu.\n  staging:\n    runtime: gcp\n    cloud:\n      modules: ../../modules\n      project: petstore-app-staging\n      region: europe-west1\n    dependencies:\n      petstore:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          contract: petstore\n          conformance:\n            report: conformance/lawtwin-http-0.1.0-petstore.json\n          ports: [8080]\n          seed: 42\n    sync:\n      - gcp_parameter_manager:\n          project: petstore-app-staging\n          parameter: petstore-app-connections\n",
+      "environment": "staging",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"petstore\" in environment \"staging\" is known once the twin is deployed; run `ironframe up staging` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/014-cloud-gcp",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: shop-dev, region: europe-west1, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n",
+      "environment": "dev",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"orders_api\" in environment \"dev\" is known once the twin is deployed; run `ironframe up dev` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/015-cloud-azure",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: shop-dev, modules: /m}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n",
+      "environment": "dev",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"orders_api\" in environment \"dev\" is known once the twin is deployed; run `ironframe up dev` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/016-cloud-gcp-released",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  orders_api:\n    settings: {ORDERS: '${endpoint}'}\nenvironments:\n  dev:\n    runtime: gcp\n    cloud: {project: p, region: r}\n    dependencies:\n      orders_api:\n        twin: {image: lawtwin/http, version: 0.1.0, conformance: L1, ports: [8080], config: {spec: orders}}\n",
+      "environment": "dev",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"orders_api\" in environment \"dev\" is known once the twin is deployed; run `ironframe up dev` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/017-sync-all-valid",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    sync:\n      - env_file: {path: config/.env}\n      - aws_appconfig: {region: eu-west-1, application: shop, environment: Staging-EU, profile: connections, deployment_strategy: AppConfig.Linear50PercentEvery30Seconds}\n      - gcp_parameter_manager: {project: shop-prod, parameter: shop-staging}\n      - gcp_parameter_manager: {project: shop-prod, location: europe-west1, parameter: shop-eu}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', prefix: 'shop:'}\n      - azure_app_configuration: {endpoint: 'https://shop.azconfig.io', label: green, connection_string_env: SHOP_APPCONFIG}\n    config_service: {image: 'ghcr.io/x/config:1', port: 8800}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "c"
+            },
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "localhost:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/018-twin-config-json",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin: {image: t/k, version: '1', conformance: c, ports: [1], seed: 18446744073709551615, contract: k, config: {clock: frozen, ratio: 0.5, big: 1e3, n: -3, flag: true, none: null, list: [1, 'a', 2.25], nested: {z: 1, a: 2}, unicode: \"café \\u2603\", quote: 'say \"hi\"'}}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "KAFKA_BOOTSTRAP_SERVERS": "localhost:1"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:1",
+            "image": "docker.io/t/k:1",
+            "ports": [
+              1
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{\"clock\":\"frozen\",\"ratio\":0.5,\"big\":1000.0,\"n\":-3,\"flag\":true,\"none\":null,\"list\":[1,\"a\",2.25],\"nested\":{\"z\":1,\"a\":2},\"unicode\":\"café ☃\",\"quote\":\"say \\\"hi\\\"\",\"seed\":18446744073709551615,\"contract\":\"k\"}"
+            },
+            "stand_in": {
+              "product": "t/k",
+              "version": "1",
+              "conformance": "c",
+              "seed": 18446744073709551615
+            },
+            "credentials": null,
+            "settings": {
+              "KAFKA_BOOTSTRAP_SERVERS": "localhost:1"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/019-yaml-scalars",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    description: yes\n    settings: {K: '${endpoint}', ON: on, NUM: '1'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: \"host:9092\", env: {}}}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "host:9092",
+          "NUM": "1",
+          "ON": "on"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "host:9092",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "K": "host:9092",
+              "NUM": "1",
+              "ON": "on"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/020-yaml-anchor",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: &s {K: '${endpoint}'}\nenvironments:\n  a: &e\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'x:1'}}\n  b: *e\n",
+      "environment": "a",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "a",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-a",
+        "settings": {
+          "K": "x:1"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "x:1",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "K": "x:1"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/021-yaml-anchor",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: &s {K: '${endpoint}'}\nenvironments:\n  a: &e\n    runtime: podman\n    dependencies:\n      kafka: {real: {endpoint: 'x:1'}}\n  b: *e\n",
+      "environment": "b",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "b",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-b",
+        "settings": {
+          "K": "x:1"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "real",
+            "endpoint": "x:1",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": null,
+            "settings": {
+              "K": "x:1"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/022-all-placeholders",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  api:\n    settings: {E: '${endpoint}', H: '${host}', P: '${port}', C: '${credentials}', K: '${kind}', N: '${name}', MIX: 'pre-${host}-${port}-post', PLAIN: literal}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'https://user@api.example.com/v1?x=1', credentials: 'vault:kv/api'}}\n  noport:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'broker', credentials: 'env:X'}}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "C": "vault:kv/api",
+          "E": "https://user@api.example.com/v1?x=1",
+          "H": "api.example.com",
+          "K": "real",
+          "MIX": "pre-api.example.com-443-post",
+          "N": "api",
+          "P": "443",
+          "PLAIN": "literal"
+        },
+        "dependencies": [
+          {
+            "name": "api",
+            "kind": "real",
+            "endpoint": "https://user@api.example.com/v1?x=1",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": "vault:kv/api",
+            "settings": {
+              "C": "vault:kv/api",
+              "E": "https://user@api.example.com/v1?x=1",
+              "H": "api.example.com",
+              "K": "real",
+              "MIX": "pre-api.example.com-443-post",
+              "N": "api",
+              "P": "443",
+              "PLAIN": "literal"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/023-all-placeholders",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  api:\n    settings: {E: '${endpoint}', H: '${host}', P: '${port}', C: '${credentials}', K: '${kind}', N: '${name}', MIX: 'pre-${host}-${port}-post', PLAIN: literal}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'https://user@api.example.com/v1?x=1', credentials: 'vault:kv/api'}}\n  noport:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'broker', credentials: 'env:X'}}\n",
+      "environment": "noport",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "setting MIX of \"api\" uses ${port}, but endpoint \"broker\" has none"
+    }
+  },
+  {
+    "name": "settings/024-advertise-podman",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          seed: 7\n          contract: petstore\n          config: {clock: frozen}\n          advertise_variable: LAWTWIN_ADVERTISE\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:8080"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:8080",
+            "image": "docker.io/lawtwin/http:0.1.0",
+            "ports": [
+              8080
+            ],
+            "container_env": {
+              "LAWTWIN_ADVERTISE": "localhost:8080",
+              "TWIN_CONFIG": "{\"clock\":\"frozen\",\"seed\":7,\"contract\":\"petstore\"}"
+            },
+            "stand_in": {
+              "product": "lawtwin/http",
+              "version": "0.1.0",
+              "conformance": "conformant",
+              "seed": 7
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:8080"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/025-advertise-pinned",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/http\n          version: 0.1.0\n          conformance: conformant\n          ports: [8080]\n          endpoint: 'http://twin.local'\n          advertise_variable: LAWTWIN_ADVERTISE\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "http://twin.local"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "http://twin.local",
+            "image": "docker.io/lawtwin/http:0.1.0",
+            "ports": [
+              8080
+            ],
+            "container_env": {
+              "LAWTWIN_ADVERTISE": "twin.local:80",
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/http",
+              "version": "0.1.0",
+              "conformance": "conformant"
+            },
+            "credentials": null,
+            "settings": {
+              "K": "http://twin.local"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/026-advertise-gcp-tcp",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: gcp\n    cloud: {project: p, region: europe-west1}\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092, 9093]\n          protocol: tcp\n          advertise_variable: LAWTWIN_ADVERTISE\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"kafka\" in environment \"local\" is known once the twin is deployed; run `ironframe up local` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/027-state-with-admin",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9644}\n          state: {topics: []}\n          faults: [{name: consumer-lag, params: {lag: 5, topic: orders}}]\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers"
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:9092"
+            },
+            "admin_url": "http://127.0.0.1:9644",
+            "admin_port": [
+              9644,
+              9644
+            ],
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/028-seed-same",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          seed: 2\n          config: {seed: 2, contract: x}\n          contract: x\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{\"seed\":2,\"contract\":\"x\"}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers",
+              "seed": 2
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:9092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/029-label-conformance",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: {image_label: io.lawtwin.conformance}\n          ports: [19092]\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:19092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:19092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              19092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "unrated"
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:19092"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/030-admin-url-podman",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {url: 'http://127.0.0.1:1/', port: 7000, container_port: 7001}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers"
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:9092"
+            },
+            "admin_url": "http://127.0.0.1:1",
+            "admin_port": null,
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/031-admin-podman-ports",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings: {K: '${endpoint}'}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      kafka:\n        twin:\n          image: lawtwin/kafka\n          version: 0.1.0\n          conformance: answers\n          ports: [9092]\n          admin: {port: 9700, container_port: 9644}\n          env: {LOG: debug, A: b}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "K": "localhost:9092"
+        },
+        "dependencies": [
+          {
+            "name": "kafka",
+            "kind": "twin",
+            "endpoint": "localhost:9092",
+            "image": "docker.io/lawtwin/kafka:0.1.0",
+            "ports": [
+              9092
+            ],
+            "container_env": {
+              "A": "b",
+              "LOG": "debug",
+              "TWIN_CONFIG": "{}"
+            },
+            "stand_in": {
+              "product": "lawtwin/kafka",
+              "version": "0.1.0",
+              "conformance": "answers"
+            },
+            "credentials": null,
+            "settings": {
+              "K": "localhost:9092"
+            },
+            "admin_url": "http://127.0.0.1:9700",
+            "admin_port": [
+              9700,
+              9644
+            ],
+            "twin": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/032-azure-cloud",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  kafka:\n    settings:\n      KAFKA_BOOTSTRAP_SERVERS: ${endpoint}\nenvironments:\n  local:\n    runtime: azure\n    cloud: {location: westeurope, resource_group_name: rg, subscription_id: sub, transport: tcp, external: true, infrastructure_subnet_id: s, cpu: 0.5, memory: 1Gi}\n    dependencies:\n      kafka:\n        twin: {image: lawtwin/kafka, version: 0.1.0, conformance: c, ports: [9092]}\n",
+      "environment": "local",
+      "deployed": {}
+    },
+    "expected": {
+      "error": "the endpoint of \"kafka\" in environment \"local\" is known once the twin is deployed; run `ironframe up local` first, or pin it with twin.endpoint"
+    }
+  },
+  {
+    "name": "settings/033-all-placeholders-deployed",
+    "method": "settings.resolve",
+    "input": {
+      "text": "version: 1\nproject: shop\ndependencies:\n  api:\n    settings: {E: '${endpoint}', H: '${host}', P: '${port}', C: '${credentials}', K: '${kind}', N: '${name}', MIX: 'pre-${host}-${port}-post', PLAIN: literal}\nenvironments:\n  local:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'https://user@api.example.com/v1?x=1', credentials: 'vault:kv/api'}}\n  noport:\n    runtime: podman\n    dependencies:\n      api: {real: {endpoint: 'broker', credentials: 'env:X'}}\n",
+      "environment": "local",
+      "deployed": {
+        "kafka": "kafka-nlb.elb.amazonaws.com:9092"
+      }
+    },
+    "expected": {
+      "ok": {
+        "project": "shop",
+        "environment": "local",
+        "runtime": "podman",
+        "stack_name": "ironframe-shop-local",
+        "settings": {
+          "C": "vault:kv/api",
+          "E": "https://user@api.example.com/v1?x=1",
+          "H": "api.example.com",
+          "K": "real",
+          "MIX": "pre-api.example.com-443-post",
+          "N": "api",
+          "P": "443",
+          "PLAIN": "literal"
+        },
+        "dependencies": [
+          {
+            "name": "api",
+            "kind": "real",
+            "endpoint": "https://user@api.example.com/v1?x=1",
+            "image": null,
+            "ports": [],
+            "container_env": {},
+            "stand_in": null,
+            "credentials": "vault:kv/api",
+            "settings": {
+              "C": "vault:kv/api",
+              "E": "https://user@api.example.com/v1?x=1",
+              "H": "api.example.com",
+              "K": "real",
+              "MIX": "pre-api.example.com-443-post",
+              "N": "api",
+              "P": "443",
+              "PLAIN": "literal"
+            },
+            "admin_url": null,
+            "admin_port": null,
+            "twin": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "settings/034-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "localhost:9092"
+    },
+    "expected": {
+      "host": "localhost",
+      "port": 9092
+    }
+  },
+  {
+    "name": "settings/035-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "https://user@api.example.com/v1?x=1"
+    },
+    "expected": {
+      "host": "api.example.com",
+      "port": 443
+    }
+  },
+  {
+    "name": "settings/036-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "http://api.example.com"
+    },
+    "expected": {
+      "host": "api.example.com",
+      "port": 80
+    }
+  },
+  {
+    "name": "settings/037-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "broker"
+    },
+    "expected": {
+      "host": "broker",
+      "port": null
+    }
+  },
+  {
+    "name": "settings/038-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "https://api.example.com:8443/x"
+    },
+    "expected": {
+      "host": "api.example.com",
+      "port": 8443
+    }
+  },
+  {
+    "name": "settings/039-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "http://[::1]:80"
+    },
+    "expected": {
+      "host": "[::1]",
+      "port": 80
+    }
+  },
+  {
+    "name": "settings/040-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "tcp://host:notaport"
+    },
+    "expected": {
+      "host": "host:notaport",
+      "port": null
+    }
+  },
+  {
+    "name": "settings/041-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "host:99999"
+    },
+    "expected": {
+      "host": "host:99999",
+      "port": null
+    }
+  },
+  {
+    "name": "settings/042-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "a@b:1#frag"
+    },
+    "expected": {
+      "host": "b",
+      "port": 1
+    }
+  },
+  {
+    "name": "settings/043-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": "ftp://files.example.com/x"
+    },
+    "expected": {
+      "host": "files.example.com",
+      "port": null
+    }
+  },
+  {
+    "name": "settings/044-split",
+    "method": "endpoint.split",
+    "input": {
+      "endpoint": ""
+    },
+    "expected": {
+      "host": "",
+      "port": null
+    }
+  },
+  {
+    "name": "settings/045-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "apache/kafka:4.1.0"
+    },
+    "expected": "docker.io/apache/kafka:4.1.0"
+  },
+  {
+    "name": "settings/046-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "redis:7"
+    },
+    "expected": "docker.io/library/redis:7"
+  },
+  {
+    "name": "settings/047-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "redis"
+    },
+    "expected": "docker.io/library/redis"
+  },
+  {
+    "name": "settings/048-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "ghcr.io/brain-fuel/x:1"
+    },
+    "expected": "ghcr.io/brain-fuel/x:1"
+  },
+  {
+    "name": "settings/049-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "localhost/ironframe-config-service:0.1.0"
+    },
+    "expected": "localhost/ironframe-config-service:0.1.0"
+  },
+  {
+    "name": "settings/050-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "registry:5000/team/x:1"
+    },
+    "expected": "registry:5000/team/x:1"
+  },
+  {
+    "name": "settings/051-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "lawtwin/kafka"
+    },
+    "expected": "docker.io/lawtwin/kafka"
+  },
+  {
+    "name": "settings/052-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "a/b/c:1"
+    },
+    "expected": "docker.io/a/b/c:1"
+  },
+  {
+    "name": "settings/053-qualify",
+    "method": "image.qualify",
+    "input": {
+      "image": "docker.io/library/x"
+    },
+    "expected": "docker.io/library/x"
+  },
+  {
+    "name": "settings/054-dotenv-render",
+    "method": "dotenv.render",
+    "input": {
+      "header": "header line one\nline two",
+      "settings": {
+        "DOLLAR": "$HOME\\path",
+        "EMPTY": "",
+        "NEWLINE": "two\nlines",
+        "PLAIN": "localhost:9092,localhost:9093",
+        "SPACED": "a value with # and \"quotes\"",
+        "UNICODE": "café",
+        "URL": "https://user@host:1/a_b.c+d-e"
+      }
+    },
+    "expected": "# header line one\n# line two\nDOLLAR=\"\\$HOME\\\\path\"\nEMPTY=\nNEWLINE=\"two\\nlines\"\nPLAIN=localhost:9092,localhost:9093\nSPACED=\"a value with # and \\\"quotes\\\"\"\nUNICODE=\"café\"\nURL=https://user@host:1/a_b.c+d-e\n"
+  },
+  {
+    "name": "settings/055-dotenv-render",
+    "method": "dotenv.render",
+    "input": {
+      "header": "",
+      "settings": {
+        "DOLLAR": "$HOME\\path",
+        "EMPTY": "",
+        "NEWLINE": "two\nlines",
+        "PLAIN": "localhost:9092,localhost:9093",
+        "SPACED": "a value with # and \"quotes\"",
+        "UNICODE": "café",
+        "URL": "https://user@host:1/a_b.c+d-e"
+      }
+    },
+    "expected": "DOLLAR=\"\\$HOME\\\\path\"\nEMPTY=\nNEWLINE=\"two\\nlines\"\nPLAIN=localhost:9092,localhost:9093\nSPACED=\"a value with # and \\\"quotes\\\"\"\nUNICODE=\"café\"\nURL=https://user@host:1/a_b.c+d-e\n"
+  },
+  {
+    "name": "settings/056-dotenv-render",
+    "method": "dotenv.render",
+    "input": {
+      "header": "one",
+      "settings": {
+        "DOLLAR": "$HOME\\path",
+        "EMPTY": "",
+        "NEWLINE": "two\nlines",
+        "PLAIN": "localhost:9092,localhost:9093",
+        "SPACED": "a value with # and \"quotes\"",
+        "UNICODE": "café",
+        "URL": "https://user@host:1/a_b.c+d-e"
+      }
+    },
+    "expected": "# one\nDOLLAR=\"\\$HOME\\\\path\"\nEMPTY=\nNEWLINE=\"two\\nlines\"\nPLAIN=localhost:9092,localhost:9093\nSPACED=\"a value with # and \\\"quotes\\\"\"\nUNICODE=\"café\"\nURL=https://user@host:1/a_b.c+d-e\n"
+  },
+  {
+    "name": "settings/057-dotenv-parse",
+    "method": "dotenv.parse",
+    "input": {
+      "text": "# h\nDOLLAR=\"\\$HOME\\\\path\"\nEMPTY=\nNEWLINE=\"two\\nlines\"\nPLAIN=localhost:9092,localhost:9093\nSPACED=\"a value with # and \\\"quotes\\\"\"\nUNICODE=\"café\"\nURL=https://user@host:1/a_b.c+d-e\n"
+    },
+    "expected": {
+      "DOLLAR": "$HOME\\path",
+      "EMPTY": "",
+      "NEWLINE": "two\nlines",
+      "PLAIN": "localhost:9092,localhost:9093",
+      "SPACED": "a value with # and \"quotes\"",
+      "UNICODE": "café",
+      "URL": "https://user@host:1/a_b.c+d-e"
+    }
+  },
+  {
+    "name": "settings/058-dotenv-parse",
+    "method": "dotenv.parse",
+    "input": {
+      "text": "# c\n\nA=1\n  B = two  \nC=\"q\\\"x\\n\\\\\"\nnoequals\nD=\"\nE=\"a\\\"\n=empty\nF=\"un\\"
+    },
+    "expected": {
+      "": "empty",
+      "A": "1",
+      "B": " two",
+      "C": "q\"x\n\\",
+      "D": "\"",
+      "E": "a\\",
+      "F": "\"un\\"
+    }
+  }
+]

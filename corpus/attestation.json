@@ -1,0 +1,498 @@
+[
+  {
+    "name": "attestation/001-sample",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/002-completed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\",\n        \"seed\": 42,\n        \"history_digest\": \"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\n        \"history_entries\": 7,\n        \"stands_in_for\": {\n          \"package\": \"lawtwin.kafka\",\n          \"version\": \"0.1.0\",\n          \"abilities\": [\n            \"lawtwin.kafka::ability::Broker\"\n          ]\n        }\n      },\n      \"node\": \"adoptions-log\",\n      \"edge\": \"service-publishes-adoptions\",\n      \"contract\": {\n        \"package\": \"lawtwin.kafka\",\n        \"version\": \">=0.1.0, <0.2.0\",\n        \"abilities\": [\n          \"lawtwin.kafka::ability::Broker\"\n        ]\n      },\n      \"implementation\": {\n        \"kind\": \"fixture\",\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\"\n      },\n      \"completed\": {\n        \"reached\": true,\n        \"history_digest\": \"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\n        \"history_entries\": 12\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ],\n  \"architecture\": {\n    \"document\": \"shop.calm.json\",\n    \"digest\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"unique_id\": \"calm-shop\",\n    \"decorators\": \"shop.decorators.json\",\n    \"decorators_digest\": \"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n    \"topology_digest\": \"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\n    \"elements\": [\n      \"adoptions-service\",\n      \"service-publishes-adoptions\",\n      \"adoptions-log\"\n    ]\n  },\n  \"application\": {\n    \"node\": \"adoptions-service\",\n    \"contract\": {\n      \"package\": \"shop.adoptions\",\n      \"version\": \"0.1.0\"\n    },\n    \"implementation\": {\n      \"kind\": \"application\",\n      \"product\": \"shop.adoptions\",\n      \"version\": \"0.1.0\",\n      \"commit\": \"69f9de1\"\n    }\n  },\n  \"execution\": {\n    \"status\": \"completed\",\n    \"command\": [\n      \"lawspec\",\n      \"test\"\n    ],\n    \"exit_code\": 0,\n    \"finished_at\": \"2026-10-09T12:00:05.25Z\",\n    \"environment_run\": \"up-run\"\n  }\n}\n"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\",\n        \"seed\": 42,\n        \"history_digest\": \"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\n        \"history_entries\": 7,\n        \"stands_in_for\": {\n          \"package\": \"lawtwin.kafka\",\n          \"version\": \"0.1.0\",\n          \"abilities\": [\n            \"lawtwin.kafka::ability::Broker\"\n          ]\n        }\n      },\n      \"node\": \"adoptions-log\",\n      \"edge\": \"service-publishes-adoptions\",\n      \"contract\": {\n        \"package\": \"lawtwin.kafka\",\n        \"version\": \">=0.1.0, <0.2.0\",\n        \"abilities\": [\n          \"lawtwin.kafka::ability::Broker\"\n        ]\n      },\n      \"implementation\": {\n        \"kind\": \"fixture\",\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\"\n      },\n      \"completed\": {\n        \"reached\": true,\n        \"history_digest\": \"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\n        \"history_entries\": 12\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ],\n  \"architecture\": {\n    \"document\": \"shop.calm.json\",\n    \"digest\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"unique_id\": \"calm-shop\",\n    \"decorators\": \"shop.decorators.json\",\n    \"decorators_digest\": \"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n    \"topology_digest\": \"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\n    \"elements\": [\n      \"adoptions-service\",\n      \"service-publishes-adoptions\",\n      \"adoptions-log\"\n    ]\n  },\n  \"application\": {\n    \"node\": \"adoptions-service\",\n    \"contract\": {\n      \"package\": \"shop.adoptions\",\n      \"version\": \"0.1.0\"\n    },\n    \"implementation\": {\n      \"kind\": \"application\",\n      \"product\": \"shop.adoptions\",\n      \"version\": \"0.1.0\",\n      \"commit\": \"69f9de1\"\n    }\n  },\n  \"execution\": {\n    \"status\": \"completed\",\n    \"command\": [\n      \"lawspec\",\n      \"test\"\n    ],\n    \"exit_code\": 0,\n    \"finished_at\": \"2026-10-09T12:00:05.25Z\",\n    \"environment_run\": \"up-run\"\n  }\n}\n"
+    }
+  },
+  {
+    "name": "attestation/003-unknown-fields",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"},\"extra\":1},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"unknown\":{\"later\":true}}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/004-stand-in-missing",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\"},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "dependency \"kafka\": stand_in must be present exactly when kind is \"stand-in\""
+    }
+  },
+  {
+    "name": "attestation/005-stand-in-on-real",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\",\"stand_in\":{\"product\":\"p\",\"version\":\"1\",\"conformance\":\"c\"}}]}"
+    },
+    "expected": {
+      "error": "dependency \"payments\": stand_in must be present exactly when kind is \"stand-in\""
+    }
+  },
+  {
+    "name": "attestation/006-version-2",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":2,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "attestation version 2 is not supported; this reader knows version 1"
+    }
+  },
+  {
+    "name": "attestation/007-version-huge",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":99999999999,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "attestation version 4294967295 is not supported; this reader knows version 1"
+    }
+  },
+  {
+    "name": "attestation/008-version-string",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":\"1\",\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: invalid type: string \"1\", expected u32"
+    }
+  },
+  {
+    "name": "attestation/009-format-other",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"something-else\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "format is \"something-else\", expected \"environment-attestation\""
+    }
+  },
+  {
+    "name": "attestation/010-format-number",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":5,\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: invalid type: integer `5`, expected a string"
+    }
+  },
+  {
+    "name": "attestation/011-duplicate",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"},{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}}]}"
+    },
+    "expected": {
+      "error": "dependency \"kafka\" is recorded twice"
+    }
+  },
+  {
+    "name": "attestation/012-bad-digest",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"history_digest\":\"sha256:XYZ\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "dependency \"kafka\": stand_in.history_digest must be sha256: followed by 64 lowercase hex digits"
+    }
+  },
+  {
+    "name": "attestation/013-upper-digest",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"history_digest\":\"sha256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "dependency \"kafka\": stand_in.history_digest must be sha256: followed by 64 lowercase hex digits"
+    }
+  },
+  {
+    "name": "attestation/014-empty-environment",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "environment must not be empty"
+    }
+  },
+  {
+    "name": "attestation/015-empty-run-id",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "run.id must not be empty"
+    }
+  },
+  {
+    "name": "attestation/016-recorded-before",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T11:00:00Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "run.recorded_at is before run.started_at"
+    }
+  },
+  {
+    "name": "attestation/017-offset-times",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T13:00:00+01:00\",\"recorded_at\":\"2026-10-09T12:00:00.123456789-00:30\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T13:00:00+01:00\",\n    \"recorded_at\": \"2026-10-09T12:00:00.123456789-00:30\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/018-fraction-times",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00.100Z\",\"recorded_at\":\"2026-10-09T12:00:00.5Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00.1Z\",\n    \"recorded_at\": \"2026-10-09T12:00:00.5Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/019-lowercase-time",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09t12:00:00z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/020-bad-time",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"yesterday\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: the 'year' component could not be parsed"
+    }
+  },
+  {
+    "name": "attestation/021-empty-name",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "dependencies[].name must not be empty"
+    }
+  },
+  {
+    "name": "attestation/022-empty-endpoint",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "dependency \"payments\" endpoint must not be empty"
+    }
+  },
+  {
+    "name": "attestation/023-kind-other",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"mock\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: unknown variant `mock`, expected `real` or `stand-in`"
+    }
+  },
+  {
+    "name": "attestation/024-missing-run",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"}}"
+    },
+    "expected": {
+      "error": "not an environment attestation: missing field `run`"
+    }
+  },
+  {
+    "name": "attestation/025-missing-dependencies",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"}}"
+    },
+    "expected": {
+      "error": "not an environment attestation: missing field `dependencies`"
+    }
+  },
+  {
+    "name": "attestation/026-reached-string",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":\"yes\",\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: invalid type: string \"yes\", expected a boolean"
+    }
+  },
+  {
+    "name": "attestation/027-seed-negative",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":-1}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "not an environment attestation: invalid value: integer `-1`, expected u64"
+    }
+  },
+  {
+    "name": "attestation/028-completed-not-completed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"},\"completed\":{\"reached\":true}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "error": "execution: dependency \"kafka\" records what was observed after the run, but the run has not completed"
+    }
+  },
+  {
+    "name": "attestation/029-no-dependencies",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[]}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": []\n}\n"
+    }
+  },
+  {
+    "name": "attestation/030-producer-null",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":null,\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}]}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "name": "attestation/031-no-exit",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"completed\",\"command\":[\"lawspec\",\"test\"],\"environment_run\":\"up-run\",\"finished_at\":\"2026-10-09T12:00:05.25Z\"}}"
+    },
+    "expected": {
+      "error": "execution: exit_code and finished_at are present exactly when the run completed"
+    }
+  },
+  {
+    "name": "attestation/032-running-with-outcome",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"running\",\"command\":[\"lawspec\",\"test\"],\"exit_code\":0,\"finished_at\":\"2026-10-09T12:00:05.25Z\",\"environment_run\":\"up-run\"}}"
+    },
+    "expected": {
+      "error": "execution: dependency \"kafka\" records what was observed after the run, but the run has not completed"
+    }
+  },
+  {
+    "name": "attestation/033-running",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"running\",\"command\":[\"x\"]}}"
+    },
+    "expected": {
+      "error": "execution: dependency \"kafka\" records what was observed after the run, but the run has not completed"
+    }
+  },
+  {
+    "name": "attestation/034-early",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"completed\",\"command\":[\"lawspec\",\"test\"],\"exit_code\":0,\"finished_at\":\"2026-10-09T11:00:00Z\",\"environment_run\":\"up-run\"}}"
+    },
+    "expected": {
+      "error": "execution: finished_at is before run.started_at"
+    }
+  },
+  {
+    "name": "attestation/035-bad-completed-digest",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:XYZ\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"completed\",\"command\":[\"lawspec\",\"test\"],\"exit_code\":0,\"finished_at\":\"2026-10-09T12:00:05.25Z\",\"environment_run\":\"up-run\"}}"
+    },
+    "expected": {
+      "error": "dependency \"kafka\": stand_in.history_digest must be sha256: followed by 64 lowercase hex digits"
+    }
+  },
+  {
+    "name": "attestation/036-wired",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"wired\"}}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\",\n        \"seed\": 42,\n        \"history_digest\": \"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\n        \"history_entries\": 7,\n        \"stands_in_for\": {\n          \"package\": \"lawtwin.kafka\",\n          \"version\": \"0.1.0\",\n          \"abilities\": [\n            \"lawtwin.kafka::ability::Broker\"\n          ]\n        }\n      },\n      \"node\": \"adoptions-log\",\n      \"edge\": \"service-publishes-adoptions\",\n      \"contract\": {\n        \"package\": \"lawtwin.kafka\",\n        \"version\": \">=0.1.0, <0.2.0\",\n        \"abilities\": [\n          \"lawtwin.kafka::ability::Broker\"\n        ]\n      },\n      \"implementation\": {\n        \"kind\": \"fixture\",\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\"\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ],\n  \"architecture\": {\n    \"document\": \"shop.calm.json\",\n    \"digest\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"unique_id\": \"calm-shop\",\n    \"decorators\": \"shop.decorators.json\",\n    \"decorators_digest\": \"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n    \"topology_digest\": \"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\n    \"elements\": [\n      \"adoptions-service\",\n      \"service-publishes-adoptions\",\n      \"adoptions-log\"\n    ]\n  },\n  \"application\": {\n    \"node\": \"adoptions-service\",\n    \"contract\": {\n      \"package\": \"shop.adoptions\",\n      \"version\": \"0.1.0\"\n    },\n    \"implementation\": {\n      \"kind\": \"application\",\n      \"product\": \"shop.adoptions\",\n      \"version\": \"0.1.0\",\n      \"commit\": \"69f9de1\"\n    }\n  },\n  \"execution\": {\n    \"status\": \"wired\"\n  }\n}\n"
+    }
+  },
+  {
+    "name": "attestation/037-status-other",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"done\",\"command\":[\"lawspec\",\"test\"],\"exit_code\":0,\"finished_at\":\"2026-10-09T12:00:05.25Z\",\"environment_run\":\"up-run\"}}"
+    },
+    "expected": {
+      "error": "not an environment attestation: unknown variant `done`, expected one of `wired`, `running`, `completed`"
+    }
+  },
+  {
+    "name": "attestation/038-exit-negative",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\":\"environment-attestation\",\"version\":1,\"environment\":\"local\",\"run\":{\"id\":\"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\"started_at\":\"2026-10-09T12:00:00Z\",\"recorded_at\":\"2026-10-09T12:00:05Z\"},\"producer\":{\"name\":\"ironframe\",\"version\":\"0.1.0\"},\"dependencies\":[{\"name\":\"kafka\",\"endpoint\":\"localhost:9092\",\"reached\":true,\"kind\":\"stand-in\",\"stand_in\":{\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\",\"conformance\":\"unrated\",\"seed\":42,\"history_digest\":\"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"history_entries\":7,\"stands_in_for\":{\"package\":\"lawtwin.kafka\",\"version\":\"0.1.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]}},\"node\":\"adoptions-log\",\"edge\":\"service-publishes-adoptions\",\"contract\":{\"package\":\"lawtwin.kafka\",\"version\":\">=0.1.0, <0.2.0\",\"abilities\":[\"lawtwin.kafka::ability::Broker\"]},\"implementation\":{\"kind\":\"fixture\",\"product\":\"lawtwin/kafka\",\"version\":\"0.1.0\"},\"completed\":{\"reached\":true,\"history_digest\":\"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"history_entries\":12}},{\"name\":\"payments\",\"endpoint\":\"https://payments.example.com\",\"reached\":false,\"kind\":\"real\"}],\"architecture\":{\"document\":\"shop.calm.json\",\"digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"unique_id\":\"calm-shop\",\"decorators\":\"shop.decorators.json\",\"decorators_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"topology_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"elements\":[\"adoptions-service\",\"service-publishes-adoptions\",\"adoptions-log\"]},\"application\":{\"node\":\"adoptions-service\",\"contract\":{\"package\":\"shop.adoptions\",\"version\":\"0.1.0\"},\"implementation\":{\"kind\":\"application\",\"product\":\"shop.adoptions\",\"version\":\"0.1.0\",\"commit\":\"69f9de1\"}},\"execution\":{\"status\":\"completed\",\"command\":[\"lawspec\",\"test\"],\"exit_code\":-9,\"finished_at\":\"2026-10-09T12:00:05.25Z\",\"environment_run\":\"up-run\"}}"
+    },
+    "expected": {
+      "ok": "{\n  \"format\": \"environment-attestation\",\n  \"version\": 1,\n  \"environment\": \"local\",\n  \"run\": {\n    \"id\": \"0b7c4f5e-9a51-4d7e-8f53-0c3f4a2b6d10\",\n    \"started_at\": \"2026-10-09T12:00:00Z\",\n    \"recorded_at\": \"2026-10-09T12:00:05Z\"\n  },\n  \"producer\": {\n    \"name\": \"ironframe\",\n    \"version\": \"0.1.0\"\n  },\n  \"dependencies\": [\n    {\n      \"name\": \"kafka\",\n      \"endpoint\": \"localhost:9092\",\n      \"reached\": true,\n      \"kind\": \"stand-in\",\n      \"stand_in\": {\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\",\n        \"conformance\": \"unrated\",\n        \"seed\": 42,\n        \"history_digest\": \"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\n        \"history_entries\": 7,\n        \"stands_in_for\": {\n          \"package\": \"lawtwin.kafka\",\n          \"version\": \"0.1.0\",\n          \"abilities\": [\n            \"lawtwin.kafka::ability::Broker\"\n          ]\n        }\n      },\n      \"node\": \"adoptions-log\",\n      \"edge\": \"service-publishes-adoptions\",\n      \"contract\": {\n        \"package\": \"lawtwin.kafka\",\n        \"version\": \">=0.1.0, <0.2.0\",\n        \"abilities\": [\n          \"lawtwin.kafka::ability::Broker\"\n        ]\n      },\n      \"implementation\": {\n        \"kind\": \"fixture\",\n        \"product\": \"lawtwin/kafka\",\n        \"version\": \"0.1.0\"\n      },\n      \"completed\": {\n        \"reached\": true,\n        \"history_digest\": \"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\n        \"history_entries\": 12\n      }\n    },\n    {\n      \"name\": \"payments\",\n      \"endpoint\": \"https://payments.example.com\",\n      \"reached\": false,\n      \"kind\": \"real\"\n    }\n  ],\n  \"architecture\": {\n    \"document\": \"shop.calm.json\",\n    \"digest\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"unique_id\": \"calm-shop\",\n    \"decorators\": \"shop.decorators.json\",\n    \"decorators_digest\": \"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\n    \"topology_digest\": \"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\n    \"elements\": [\n      \"adoptions-service\",\n      \"service-publishes-adoptions\",\n      \"adoptions-log\"\n    ]\n  },\n  \"application\": {\n    \"node\": \"adoptions-service\",\n    \"contract\": {\n      \"package\": \"shop.adoptions\",\n      \"version\": \"0.1.0\"\n    },\n    \"implementation\": {\n      \"kind\": \"application\",\n      \"product\": \"shop.adoptions\",\n      \"version\": \"0.1.0\",\n      \"commit\": \"69f9de1\"\n    }\n  },\n  \"execution\": {\n    \"status\": \"completed\",\n    \"command\": [\n      \"lawspec\",\n      \"test\"\n    ],\n    \"exit_code\": -9,\n    \"finished_at\": \"2026-10-09T12:00:05.25Z\",\n    \"environment_run\": \"up-run\"\n  }\n}\n"
+    }
+  },
+  {
+    "name": "attestation/039-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": ""
+    },
+    "expected": {
+      "error": "not an environment attestation: EOF while parsing a value at line 1 column 0"
+    }
+  },
+  {
+    "name": "attestation/040-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "not json"
+    },
+    "expected": {
+      "error": "not an environment attestation: expected ident at line 1 column 2"
+    }
+  },
+  {
+    "name": "attestation/041-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "[]"
+    },
+    "expected": {
+      "error": "not an environment attestation: invalid length 0, expected struct Attestation with 9 elements"
+    }
+  },
+  {
+    "name": "attestation/042-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"format\": \"environment-attestation\"}"
+    },
+    "expected": {
+      "error": "not an environment attestation: missing field `version`"
+    }
+  },
+  {
+    "name": "attestation/043-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"a\": 1,}"
+    },
+    "expected": {
+      "error": "not an environment attestation: trailing comma at line 1 column 9"
+    }
+  },
+  {
+    "name": "attestation/044-malformed",
+    "method": "attestation.fromJson",
+    "input": {
+      "text": "{\"version\": 1, \"format\": \"x\"}"
+    },
+    "expected": {
+      "error": "format is \"x\", expected \"environment-attestation\""
+    }
+  },
+  {
+    "name": "attestation/045-empty",
+    "method": "attestation.historyDigest",
+    "input": {
+      "history": ""
+    },
+    "expected": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "attestation/046-lines",
+    "method": "attestation.historyDigest",
+    "input": {
+      "history": "{\"seq\":1}\n{\"seq\":2}\n"
+    },
+    "expected": "sha256:2dc3eda31cdc4f48b964946ebb421f585e14e377623c34652b6bd6840db370cf"
+  },
+  {
+    "name": "attestation/047-unicode",
+    "method": "attestation.historyDigest",
+    "input": {
+      "history": "café\n"
+    },
+    "expected": "sha256:7b49b9e063bd91a4f9252b413261f5557b9c570aa61516989499f64a62dbcdd6"
+  },
+  {
+    "name": "attestation/048-is-digest",
+    "method": "attestation.isHistoryDigest",
+    "input": {
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "expected": true
+  },
+  {
+    "name": "attestation/049-is-digest",
+    "method": "attestation.isHistoryDigest",
+    "input": {
+      "digest": "sha256:XYZ"
+    },
+    "expected": false
+  },
+  {
+    "name": "attestation/050-is-digest",
+    "method": "attestation.isHistoryDigest",
+    "input": {
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "expected": false
+  },
+  {
+    "name": "attestation/051-is-digest",
+    "method": "attestation.isHistoryDigest",
+    "input": {
+      "digest": "md5:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "expected": false
+  }
+]
