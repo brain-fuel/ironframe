@@ -139,7 +139,11 @@ application do not change; only the settings and the attestation do.
 The `b178230` core passed this chain with LawSpec `03218926` (including the cached-run
 evidence correction) and
 fresh fixtures from LawTwin `8c592d7`. All 46 recorded core source/artifact
-fingerprints remained unchanged. The two authored laws produced four native
+fingerprints remained unchanged. Architecture and decorator digests match the
+retained source bytes, and the topology digest matches the compact exported
+JSON; the maintained test checks these exact identities in every binding.
+Dependency contracts, node/edge identities and both applications' settings also
+match the retained topology. The two authored laws produced four native
 law instances in each binding (12 executed instances), all property tested and
 linked to their completed service run. This establishes the local integration;
 provider conformance remains a separate LawTwin check.

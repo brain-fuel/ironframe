@@ -112,7 +112,12 @@ function runLaws(dir, environment) {
   const attestation = JSON.parse(readFileSync(path, "utf8"));
   assert.equal(attestation.execution.status, "completed");
   assert.equal(attestation.execution.exit_code, 0);
-  assert.ok(attestation.architecture.digest.startsWith("sha256:") && attestation.architecture.topology_digest);
+  const architecture = join(dir, "architecture");
+  const digest = (value) => `sha256:${createHash("sha256").update(value).digest("hex")}`;
+  assert.equal(attestation.architecture.digest, digest(readFileSync(join(architecture, "shop.calm.json"))));
+  assert.equal(attestation.architecture.decorators_digest, digest(readFileSync(join(architecture, "shop.decorators.json"))));
+  const topology = JSON.parse(readFileSync(join(architecture, ".ironframe", environment, "topology.json"), "utf8"));
+  assert.equal(attestation.architecture.topology_digest, digest(JSON.stringify(topology)), "the attestation names the exported topology");
   assert.equal(attestation.application.node, "adoptions-service");
   for (const [ability, kind] of expectedKinds(environment)) {
     const record = attestation.dependencies.find((d) => d.name === ability);
