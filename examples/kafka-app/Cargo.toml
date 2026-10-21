@@ -1,9 +1,0 @@
-[package]
-name = "kafka-app"
-description = "A tiny application that reads its Kafka bootstrap servers from its configuration and asks each broker which API versions it supports"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-publish = false
-
-[dependencies]

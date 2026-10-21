@@ -1,7 +1,7 @@
 // AWS AppConfig over the official SDK, @aws-sdk/client-appconfig: the calls
 // Ironframe's sync makes, each answering {ok: value} or {error: reason}.
 // Credentials come from the SDK's default chain; AWS_ENDPOINT_URL points it at
-// an emulator. Mirrors crates/ironframe-core/src/sync/aws.rs. ref:DEC-config-sync
+// an emulator. Mirrors the Rust adapter it replaced. ref:DEC-config-sync
 import { chainText } from "../errors.mjs";
 
 /**

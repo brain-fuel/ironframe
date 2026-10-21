@@ -1,6 +1,6 @@
 // GCP Parameter Manager over Google's official client,
 // @google-cloud/parametermanager, with Application Default Credentials.
-// Mirrors crates/ironframe-core/src/sync/gcp.rs. ref:DEC-config-sync
+// Mirrors the Rust adapter it replaced. ref:DEC-config-sync
 import { answering } from "./aws.mjs";
 
 const NOT_FOUND = 5;

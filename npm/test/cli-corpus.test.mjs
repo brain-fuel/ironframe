@@ -1,5 +1,5 @@
-// Replays corpus/cli.json through the real command, as
-// crates/ironframe-cli/tests/corpus_cli.rs recorded it: each case copies its
+// Replays corpus/cli.json through the real command, as the
+// Rust capture harness recorded it before the port: each case copies its
 // examples into a fresh directory with fake podman and OpenTofu scripts, runs
 // its steps, and compares standard output, standard error and exit status of
 // each, then the files that changed, with the directory written as /work and

@@ -1,7 +1,7 @@
 // Azure App Configuration over the official client, @azure/app-configuration,
 // with the access key of the connection string in the environment variable the
-// target names, used against the target's endpoint. Mirrors
-// crates/ironframe-core/src/sync/azure.rs and ops.rs. ref:DEC-config-sync
+// target names, used against the target's endpoint, as the Rust adapter it
+// replaced was. ref:DEC-config-sync
 import { STATUS_CODES } from "node:http";
 import { answering } from "./aws.mjs";
 

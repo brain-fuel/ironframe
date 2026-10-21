@@ -2,7 +2,7 @@
 // The configuration service: an HTTP server whose every answer is the core's
 // "configService.handle" over the settings document, re-read on each request.
 // IRONFRAME_SETTINGS names the document and IRONFRAME_LISTEN the address.
-// Mirrors crates/ironframe-config-service. ref:DEC-config-service
+// Mirrors the Rust service it replaced. ref:DEC-config-service
 import { createServer } from "node:http";
 import { pathToFileURL } from "node:url";
 import { errorText } from "./errors.mjs";

@@ -134,7 +134,11 @@ and none proven equivalent.
 `corpus/*.json` was captured from the Rust implementation before the port: the
 inputs and exact outputs of every core operation, the command line and the
 configuration service, and `corpus/libs-*.json` for each library the core
-emulates. It is the parity oracle.
+emulates. It is the parity oracle. The capture harnesses were Rust tests,
+removed with the Rust code: `crates/ironframe-core/tests/corpus.rs`,
+`corpus_libs.rs` and `crates/ironframe-cli/tests/corpus_cli.rs` in the
+commits that added the corpus. One recorded case was corrected after the
+capture: a fake twin's random port the harness had left in a progress line.
 
 - `Ironframe.Corpus` checks every case with a scripted host: files in memory,
   and each process, HTTP request and cloud call answered from the recording,
