@@ -289,13 +289,18 @@ httpRequest method url headers body timeoutMs = do
 
 -- | Whether a TCP connection to the host and port opens within the timeout
 -- and stays open a moment, as a port forwarder's immediate close does not.
-tcpProbe :: Text -> Int -> Int -> Eff Bool
-tcpProbe host port timeoutMs = do
+-- The endpoint it was split from rides along for a scripted host.
+tcpProbe :: Text -> Text -> Int -> Int -> Eff Bool
+tcpProbe endpoint host port timeoutMs = do
   r <-
     perform
       ( effect
           "tcpProbe"
-          ["host" .= String host, "port" .= Number (I (toInteger port)), "timeoutMs" .= Number (I (toInteger timeoutMs))]
+          [ "endpoint" .= String endpoint
+          , "host" .= String host
+          , "port" .= Number (I (toInteger port))
+          , "timeoutMs" .= Number (I (toInteger timeoutMs))
+          ]
       )
   pure (keyOr "ok" r == Bool True)
 
