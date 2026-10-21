@@ -100,9 +100,9 @@ parseArgs argv = do
   when ("version" `elem` flags parsed) $ Left (ParseHelp "ironframe 0.1.0\n")
   case positionals parsed of
     [] -> Left (ParseHelp helpText)
-    (verb : args) -> (,) globals <$> command verb args parsed one
+    (word : args) -> (,) globals <$> parseCommand word args parsed one
   where
-    command verb args parsed one =
+    parseCommand word args parsed one =
       let flag k = k `elem` flags parsed
           need k = maybe (Left (ParseError ("the following required arguments were not provided:\n  --" <> k <> " <" <> T.toUpper k <> ">"))) Right (one k)
           positional n name = case drop n args of
@@ -120,7 +120,7 @@ parseArgs argv = do
             Just v -> Left (ParseError ("invalid value '" <> v <> "' for '--" <> k <> " <" <> T.toUpper k <> ">': invalid digit found in string"))
           env = one "env"
           envRequired = maybe (Left (ParseError "the following required arguments were not provided:\n  --env <ENVIRONMENT>")) Right env
-       in case verb of
+       in case word of
             "validate" -> extra 0 >> Right (Validate (flag "calm-cli"))
             "resolve" -> extra 1 >> (\e -> Resolve (optionalPositional 0) e (one "output")) <$> envRequired
             "export" -> do

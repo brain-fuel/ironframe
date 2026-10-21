@@ -147,14 +147,14 @@ async function files(root) {
   return found;
 }
 
-/** Copies an example as the recorder did: no hidden entries, src or Cargo.toml. */
+/** Copies an example as the recorder did: no hidden entries, src or Cargo.toml, nor the Node port of the app that came later. */
 async function copyExample(from, to) {
   await cp(from, to, {
     recursive: true,
     filter: (source) => {
       if (source === from) return true;
       const name = source.slice(source.lastIndexOf("/") + 1);
-      return !(name.startsWith(".") || name === "src" || name === "Cargo.toml");
+      return !(name.startsWith(".") || name === "src" || name === "Cargo.toml" || name === "app.mjs");
     },
   });
 }

@@ -547,8 +547,7 @@ resolveCalm architecture decorators environment dir = do
           let at = "node " <> debugStr node
               consumers = length (filter ((== node) . edgeDestination) edges)
               consumerPs = [calmProblem at "has a dependency contract, but no application's connects relationship reaches it" | consumers == 0]
-              nodeName = maybe "" nodeName' (nodeOf architecture node)
-              nodeName' = Ironframe.Calm.Model.nodeName
+              displayName = maybe "" Ironframe.Calm.Model.nodeName (nodeOf architecture node)
           case Map.lookup node bindings of
             Nothing -> pure (ps ++ consumerPs ++ [calmProblem at ("has no binding in environment " <> debugStr environment <> "; it is unresolved")], rds, mbs)
             Just decorator -> do
@@ -561,7 +560,7 @@ resolveCalm architecture decorators environment dir = do
                   pure $ case decodeWith decodeReal (delete "provider" real) of
                     Right r ->
                       ( ps1
-                      , rds ++ [ResolvedDependencyNode node nodeName contract (decId decorator) BoundReal provider Nothing consumers]
+                      , rds ++ [ResolvedDependencyNode node displayName contract (decId decorator) BoundReal provider Nothing consumers]
                       , Map.insert node (BindReal r) mbs
                       )
                     Left err -> (ps1 ++ [calmProblem bindingAt ("real: " <> err)], rds, mbs)
@@ -586,7 +585,7 @@ resolveCalm architecture decorators environment dir = do
                                     (map faultName (twinFaults twin'))
                             pure
                               ( ps1
-                              , rds ++ [ResolvedDependencyNode node nodeName contract (decId decorator) BoundTwin Nothing (Just identity) consumers]
+                              , rds ++ [ResolvedDependencyNode node displayName contract (decId decorator) BoundTwin Nothing (Just identity) consumers]
                               , Map.insert node (BindTwin twin') mbs
                               )
       )
@@ -711,7 +710,7 @@ resolveCalm architecture decorators environment dir = do
       let prefix = "environments." <> environment <> ".dependencies."
        in case T.stripPrefix prefix at of
             Just rest ->
-              let node = head (T.splitOn "." rest)
+              let node = T.takeWhile (/= '.') rest
                   field = T.dropWhile (== '.') (T.drop (T.length node) rest)
                   decorator = case filter ((== node) . rnNode) resolved of
                     (d : _) -> rnBinding d
@@ -722,7 +721,7 @@ resolveCalm architecture decorators environment dir = do
                     )
                     message
             Nothing -> case T.stripPrefix "dependencies." at of
-              Just rest -> calmProblem ("settings of node " <> debugStr (head (T.splitOn "." rest))) message
+              Just rest -> calmProblem ("settings of node " <> debugStr (T.takeWhile (/= '.') rest)) message
               Nothing -> calmProblem ("environment " <> debugStr environment <> (if T.null at then "" else " at " <> at)) message
 
 -- | How a twin fails to satisfy the contract of the node it is bound to.

@@ -30,14 +30,11 @@ import Ironframe.Time (fromUnix, parseRfc3339)
 import Ironframe.Tofu (renderTofuError, rootModule)
 import Ironframe.Twin
 
--- | The differences from the Rust behaviour that are deliberate, by method,
--- with the reason. A case of one of these methods passes when both sides
--- agree on everything but the named part.
+-- | The methods whose output differs from the Rust behaviour on purpose,
+-- with the reason; none at present. The other deliberate differences, such
+-- as Azure signing by the SDK, sit outside the core and the corpus.
 deliberateDifferences :: [(Text, Text)]
-deliberateDifferences =
-  [ ("yaml.decode", "a YAML syntax error is worded by HsYAML, not by libyaml; both refuse the same text")
-  , ("manifest.parse", "a manifest that is not YAML is refused with HsYAML's wording after \"not valid YAML: \"")
-  ]
+deliberateDifferences = []
 
 -- The scripted host.
 
@@ -200,8 +197,8 @@ normaliseValue = \case
   other -> other
 
 -- | Checks one case: @{"pass": true}@, or @{"pass": false, "diff": ...}@.
-check :: (Text -> Value -> Maybe (Eff Value)) -> (ResolvedEnvironment -> Value) -> Value -> Value -> Value
-check dispatch resolvedJson c fixtures =
+check :: (Text -> Value -> Maybe (Eff Value)) -> Value -> Value -> Value
+check dispatch c fixtures =
   let method = text' "method" c
       input = keyOr "input" c
       expected = keyOr "expected" c
@@ -259,17 +256,8 @@ pass = Object ["pass" .= Bool True]
 verdict :: Text -> Value -> Value -> Value
 verdict method expected got
   | expected == got = pass
-  | Just reason <- lookup method deliberateDifferences
-  , isNotYaml expected
-  , isNotYaml got =
-      Object ["pass" .= Bool True, "deliberate" .= String reason]
+  | Just reason <- lookup method deliberateDifferences = Object ["pass" .= Bool True, "deliberate" .= String reason]
   | otherwise = failure ("expected " <> encode expected <> "\n     got " <> encode got)
-  where
-    isNotYaml v = case v of
-      Object _ -> case keyOr "error" v of
-        String e -> "not valid YAML: " `T.isInfixOf` e || (method == "yaml.decode" && not (T.null e))
-        _ -> False
-      _ -> False
 
 -- | Compares named parts; the first that differs is reported.
 parts :: [(Text, Value, Value)] -> Value

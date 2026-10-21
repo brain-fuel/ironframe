@@ -6,7 +6,7 @@ module CorpusSpec (spec, fixtures) where
 import Control.Monad (forM_)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import Ironframe.Api (dispatch, resolvedJson)
+import Ironframe.Api (dispatch)
 import qualified Ironframe.Corpus as Corpus
 import Ironframe.Json
 import System.Directory (listDirectory)
@@ -36,6 +36,6 @@ spec = do
       let name = case keyOr "name" c of
             String n -> T.unpack n
             _ -> file <> " #" <> show i
-      it name $ case Corpus.check dispatch resolvedJson c given of
+      it name $ case Corpus.check dispatch c given of
         o | keyOr "pass" o == Bool True -> pure ()
         o -> expectationFailure (T.unpack (case keyOr "diff" o of String d -> d; other -> encode other))

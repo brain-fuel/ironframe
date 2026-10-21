@@ -26,7 +26,7 @@ data Captured = Captured {capturedStdout :: Text, capturedStderr :: Text, captur
 -- | Runs a method to its end with real effects, in a working directory and
 -- an environment.
 runNative :: Text -> Value -> FilePath -> Map Text Text -> IO Captured
-runNative method params dir env = do
+runNative method params dir environment = do
   out <- newIORef []
   err <- newIORef []
   counter <- newIORef (0 :: Integer)
@@ -81,13 +81,13 @@ runNative method params dir env = do
         exists <- (||) <$> doesPathExist (path e) <*> pure False
         if exists then canonicalizePath (path e) >>= ok . String . T.pack else ioError (userError "missing") >> ok Null
       "cwd" -> getCurrentDirectory >>= ok . String . T.pack
-      "env" -> ok (maybe Null String (Map.lookup (text' "name" e) env))
+      "env" -> ok (maybe Null String (Map.lookup (text' "name" e) environment))
       "locate" -> do
         let variable = text' "variable" e
             names = [n | String n <- arrayOf (keyOr "names" e)]
             fallbacks = [n | String n <- arrayOf (keyOr "fallbacks" e)]
-            dirs = maybe [] (T.splitOn ":") (Map.lookup "PATH" env)
-        case Map.lookup variable env of
+            dirs = maybe [] (T.splitOn ":") (Map.lookup "PATH" environment)
+        case Map.lookup variable environment of
           Just v | not (T.null v) -> ok (String v)
           _ -> do
             onPath <- firstFile [d <> "/" <> n | n <- names, d <- dirs]
@@ -100,7 +100,7 @@ runNative method params dir env = do
             extra = case keyOr "env" e of
               Object ps -> [(T.unpack k, T.unpack v) | (k, String v) <- ps]
               _ -> []
-            childEnv = Map.toList (Map.fromList ([(T.unpack k, T.unpack v) | (k, v) <- Map.toList env] ++ extra))
+            childEnv = Map.toList (Map.fromList ([(T.unpack k, T.unpack v) | (k, v) <- Map.toList environment] ++ extra))
             stream = keyOr "stream" e == Bool True
             process' = (proc (resolveProgram program) args) {env = Just childEnv, cwd = T.unpack <$> textAt "cwd" e}
         (code, stdout', stderr') <- readCreateProcessWithExitCode process' ""

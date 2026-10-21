@@ -195,14 +195,14 @@ unsupported v = "attestation version " <> T.pack (show v) <> " is not supported;
 -- | Reads and validates an attestation from JSON text; unknown fields are ignored.
 fromJson :: Text -> Either Text Attestation
 fromJson text = do
-  value <- either (Left . malformed) Right (decode text)
-  case key "format" value of
+  document <- either (Left . malformed) Right (decode text)
+  case key "format" document of
     Just (String f) | f /= formatWord -> Left ("format is " <> debugStr f <> ", expected " <> debugStr formatWord)
     _ -> Right ()
-  case key "version" value of
+  case key "version" document of
     Just (Number (I v)) | v >= 0 && v /= formatVersion -> Left (unsupported (min v 4294967295))
     _ -> Right ()
-  attestation <- either (Left . malformed) Right (decodeAttestationValue value)
+  attestation <- either (Left . malformed) Right (decodeAttestationValue document)
   validate attestation
   pure attestation
   where

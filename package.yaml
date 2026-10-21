@@ -8,7 +8,7 @@ default-extensions: [OverloadedStrings, LambdaCase]
 ghc-options: [-Wall]
 library:
   source-dirs: src
-  dependencies: [HsYAML, SHA, mtl]
+  dependencies: [SHA]
 executables:
   ironframe-dev:
     main: Main.hs

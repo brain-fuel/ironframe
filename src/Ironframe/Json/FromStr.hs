@@ -30,7 +30,7 @@ fromStr expect decoder text =
             Right a -> Right a
   where
     tshow = T.pack . show
-    skip l c (x : xs) | x == '\n' = skip (l + 1) 0 xs
+    skip l _ (x : xs) | x == '\n' = skip (l + 1) 0 xs
     skip l c (x : xs) | x `elem` (" \t\r" :: String) = skip l (c + 1) xs
     skip l c xs = (l, c :: Int, xs) :: (Int, Int, String)
     trimmed = T.dropWhileEnd (`elem` (" \t\r\n" :: String)) text

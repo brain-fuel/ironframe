@@ -125,7 +125,7 @@ resolve manifest name deployed = do
             (Just pinned, _) -> Right pinned
             (Nothing, Just reported) -> Right reported
             (Nothing, Nothing)
-              | envRuntime environment == Podman -> Right ("localhost:" <> tshow (head (twinPorts twin)))
+              | envRuntime environment == Podman -> Right ("localhost:" <> maybe "" tshow (firstPort (twinPorts twin)))
               | otherwise -> Left (NotDeployed name dependency)
           let withConfig = Map.insert twinConfigVariable (encode (twinConfigJson twin)) (twinEnv twin)
               containerEnv = case twinAdvertiseVariable twin of
@@ -185,6 +185,11 @@ renderSetting dependency k template d = either (\p -> Left (MissingPart dependen
 tshow :: Show a => a -> Text
 tshow = T.pack . show
 
+firstPort :: [Integer] -> Maybe Integer
+firstPort = \case
+  (p : _) -> Just p
+  [] -> Nothing
+
 -- | The host and port of an endpoint, @host:port@ or a URL; a URL without a
 -- port takes its scheme's.
 splitEndpoint :: Text -> (Text, Maybe Integer)
@@ -215,7 +220,7 @@ splitEndpoint endpoint =
 -- Docker Hub name.
 qualifyImage :: Text -> Text
 qualifyImage image =
-  let first = head (T.splitOn "/" image)
+  let first = T.takeWhile (/= '/') image
       hasSlash = "/" `T.isInfixOf` image
       hasRegistry = hasSlash && ("." `T.isInfixOf` first || ":" `T.isInfixOf` first || first == "localhost")
    in if hasRegistry

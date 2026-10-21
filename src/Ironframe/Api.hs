@@ -9,7 +9,10 @@ import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Ironframe.Attestation as A
+import Ironframe.Calm.Export (mermaidProblems, settingsProblems, tofuProblems)
 import Ironframe.Calm.Model
+import Ironframe.Calm.Resolve (Resolution (..))
+import Ironframe.Calm.Run (loadAndResolve)
 import Ironframe.Cli (cli)
 import Ironframe.Compose (composeFile)
 import Ironframe.ConfigService (encodeResponse, handle)
@@ -76,7 +79,17 @@ dispatch method p = case method of
     code <- cli (texts (keyOr "argv" p)) (text' "cwd" p)
     pure (Object ["exitCode" .= Number (I code)])
   "configService.handle" -> Just (encodeResponse <$> handle (text' "settingsPath" p) (fromMaybe "GET" (textAt "method" p)) (text' "path" p))
-  "corpus.check" -> Just (pure (Corpus.check dispatch resolvedJson (keyOr "case" p) (keyOr "fixtures" p)))
+  "corpus.check" -> Just (pure (Corpus.check dispatch (keyOr "case" p) (keyOr "fixtures" p)))
+  "calm.problems" -> Just $ do
+    resolution <- loadAndResolve (text' "architecture" p) (textAt "decorators" p) (text' "environment" p) >>= either (failWith . renderCalmError) pure
+    let topology = resTopology resolution
+        textMapOf t = either (const Map.empty) id (decode t >>= decodeWith (textMap string))
+    pure $
+      Object
+        [ "mermaid" .= Array (map String (maybe [] (mermaidProblems topology) (textAt "mermaid" p)))
+        , "tofu" .= Array (map String (maybe [] (either (const ["the root is not JSON"]) (tofuProblems topology) . decode) (textAt "tofu" p)))
+        , "settings" .= Array (map String (maybe [] (settingsProblems topology (text' "app" p) . textMapOf) (textAt "settings" p)))
+        ]
   "manifest.parse" -> Just (pure (manifestResult (parseManifest (text' "text" p))))
   "manifest.load" -> Just (manifestResult <$> loadManifest (text' "path" p))
   "manifest.environment" -> Just $ pure $ case parseManifest (text' "text" p) of

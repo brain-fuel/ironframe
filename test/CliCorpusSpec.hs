@@ -55,17 +55,17 @@ spec = do
   describe "corpus/cli.json" $ forM_ cases $ \c -> it (T.unpack (textOf "name" c)) $
     withSystemTempDirectory "ironframe-cli" $ \tmp -> do
       root <- canonicalizePath tmp
-      forM_ [e | String e <- arrayOf (keyOr "examples" (keyOr "input" c))] $ \example ->
-        if example == "calm-shop"
+      forM_ [e | String e <- arrayOf (keyOr "examples" (keyOr "input" c))] $ \name ->
+        if name == "calm-shop"
           then copyTree (repo </> "examples/calm-shop/architecture") (root </> "calm-shop/architecture")
-          else copyTree (repo </> "examples" </> T.unpack example) (root </> T.unpack example)
+          else copyTree (repo </> "examples" </> T.unpack name) (root </> T.unpack name)
       let tools = root </> ".tools"
       createDirectoryIfMissing True tools
       forM_ [("podman", fakePodman), ("tofu", fakeTofu), ("broken-podman", brokenPodman)] $ \(name, script) -> do
         TIO.writeFile (tools </> name) script
         p <- getPermissions (tools </> name)
         setPermissions (tools </> name) (setOwnerExecutable True p)
-      before <- filesUnder root
+      initial <- filesUnder root
       let env0 =
             Map.insert "NO_COLOR" "1" $
               Map.insert "IRONFRAME_FAKE_LOG" (T.pack (tools </> "log")) $
@@ -86,12 +86,12 @@ spec = do
             code = keyOr "exitCode" (capturedResult captured)
         (norm (capturedStdout captured), norm (capturedStderr captured), code)
           `shouldBe` (textOf "stdout" expected, textOf "stderr" expected, keyOr "code" expected)
-      after <- filesUnder root
+      final <- filesUnder root
       let changed =
             Map.fromList
               [ (normalise (T.pack path), normalise (T.replace (T.pack root) "/work" (either (const "<binary>") id (TE.decodeUtf8' bytes))))
-              | (path, bytes) <- Map.toList after
-              , Map.lookup path before /= Just bytes
+              | (path, bytes) <- Map.toList final
+              , Map.lookup path initial /= Just bytes
               ]
           expectedFiles = case keyOr "files" (keyOr "expected" c) of
             Object ps -> Map.fromList [(k, v) | (k, String v) <- ps]
