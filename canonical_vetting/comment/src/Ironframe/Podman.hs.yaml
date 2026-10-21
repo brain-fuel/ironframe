@@ -1,0 +1,33 @@
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman:
+  digest: sha256:830565e816e48a20
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/data/ContainerState:
+  digest: sha256:34b32f8b5b68b075
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/buildImage:
+  digest: sha256:b8b24b271978a907
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/checkCompose:
+  digest: sha256:b382eec374a6b278
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/containers:
+  digest: sha256:645bbd421252f3e8
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/ensureImages:
+  digest: sha256:a8e0925c30a31d9e
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/imageDigest:
+  digest: sha256:6440dae10b97fe99
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/imageLabels:
+  digest: sha256:583de27c6f3b7d5f
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/locatePodman:
+  digest: sha256:7b21cc0abc15f81d
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/parsePs:
+  digest: sha256:40f2ba2f7d697f46
+  verdict: pending
+decision/haskell/src/Ironframe/Podman.hs/module/Ironframe.Podman/function/podmanFallbacks:
+  digest: sha256:1a575af83f3ca892
+  verdict: pending

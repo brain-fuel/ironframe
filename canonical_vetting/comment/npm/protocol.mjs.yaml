@@ -1,0 +1,9 @@
+decision/javascript/npm/protocol.mjs/class/ProtocolError:
+  digest: sha256:22a483be22ca7ca0
+  verdict: pending
+decision/javascript/npm/protocol.mjs/function/isMissingMethod:
+  digest: sha256:78b846ef113d2424
+  verdict: pending
+decision/javascript/npm/protocol.mjs/function/run:
+  digest: sha256:5e90f18a44901a88
+  verdict: pending

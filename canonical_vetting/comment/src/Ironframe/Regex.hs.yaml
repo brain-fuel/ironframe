@@ -1,0 +1,18 @@
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex:
+  digest: sha256:2b91b0314e06e23c
+  verdict: pending
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex/data/Regex:
+  digest: sha256:5b045b3c4f47806a
+  verdict: pending
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex/function/compile:
+  digest: sha256:6aec9d0d9f8a735d
+  verdict: pending
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex/function/match:
+  digest: sha256:b754e885ce3baf43
+  verdict: pending
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex/function/parseEscape:
+  digest: sha256:9bbf579aec36d12c
+  verdict: pending
+decision/haskell/src/Ironframe/Regex.hs/module/Ironframe.Regex/function/rustPattern:
+  digest: sha256:4f50608c7a54fc03
+  verdict: pending

@@ -1,0 +1,18 @@
+decision/javascript/npm/errors.mjs/function/chainText:
+  digest: sha256:b9bc2987a9845479
+  verdict: pending
+decision/javascript/npm/errors.mjs/function/errorText:
+  digest: sha256:c06fe63ffe1dad80
+  verdict: pending
+decision/javascript/npm/errors.mjs/function/osErrorText:
+  digest: sha256:8feefe4358ca79c4
+  verdict: pending
+decision/javascript/npm/errors.mjs/function/rootCause:
+  digest: sha256:64e64846f4480de9
+  verdict: pending
+decision/javascript/npm/errors.mjs/variable/lookup:
+  digest: sha256:af468313d89e819d
+  verdict: pending
+decision/javascript/npm/errors.mjs/variable/messages:
+  digest: sha256:67e8aa560033b4f2
+  verdict: pending

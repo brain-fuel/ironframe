@@ -1,0 +1,36 @@
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli:
+  digest: sha256:ad823364ec1f6f93
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/data/Command:
+  digest: sha256:46951a4a69722951
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/data/Parsed:
+  digest: sha256:8d11e7d4893d17b5
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/calmTemplate:
+  digest: sha256:ef793734f6410c3b
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/cli:
+  digest: sha256:4149884b99604d62
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/exitCodeOf:
+  digest: sha256:51f99bc13076be76
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/export:
+  digest: sha256:a8582a2a8d56d396
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/manifestDirOf:
+  digest: sha256:672112b5f5b7d8b8
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/padRight:
+  digest: sha256:6da5da7ae16ae267
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/twin:
+  digest: sha256:418c4cd1b52726fa
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/validateArchitecture:
+  digest: sha256:03c6590802eb6d40
+  verdict: pending
+decision/haskell/src/Ironframe/Cli.hs/module/Ironframe.Cli/function/valueOptions:
+  digest: sha256:6b9f15d6a8c096ca
+  verdict: pending

@@ -1,0 +1,6 @@
+decision/javascript/npm/clouds/azure.mjs/function/createAzure:
+  digest: sha256:3de1ef672f602793
+  verdict: pending
+decision/javascript/npm/clouds/azure.mjs/function/parseConnectionString:
+  digest: sha256:6dd149f3c8601cef
+  verdict: pending

@@ -1,0 +1,195 @@
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json:
+  digest: sha256:efe5470f9b475b5b
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/data/Number:
+  digest: sha256:67910d2ad5cc4a5a
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/data/Value:
+  digest: sha256:ee01269d28fe374d
+  verdict: pending
+"decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/(.=)":
+  digest: sha256:087daa2a01ad38ed
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/decode:
+  digest: sha256:b32288439390efcc
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/decodeBytes:
+  digest: sha256:7d544a026ae45f5a
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/delete:
+  digest: sha256:1b87b7a70fb9dbe4
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/eat:
+  digest: sha256:17e72bd206b4b9a5
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/encode:
+  digest: sha256:714ef850e0acd1cf
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/encodeNumber:
+  digest: sha256:9dd387b3425bb5e5
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/encodePretty:
+  digest: sha256:dcccdb1c306529bf
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/encodeString:
+  digest: sha256:1b31ad3a6bd5e7fa
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/endMap:
+  digest: sha256:87dfd00218ff17a2
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/endSeq:
+  digest: sha256:b8079b70739bcc36
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/exponentOverflow:
+  digest: sha256:ce340e704df4d3f5
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/failAt:
+  digest: sha256:9267b22601a5d189
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/formatDouble:
+  digest: sha256:be99ba93ebc6a2d6
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/fromParts:
+  digest: sha256:4d66ba9ab9b34a33
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/fromTextMap:
+  digest: sha256:7a4a9be0cd8f19b8
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/getIndex:
+  digest: sha256:304a8318a4bb9ea8
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/hexEscape:
+  digest: sha256:65d8ef268b531a69
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/i32Max:
+  digest: sha256:05e3e808c5d2e4cc
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/ident:
+  digest: sha256:15319c5efd699e04
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/inputLength:
+  digest: sha256:e358400c6938378d
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/insert:
+  digest: sha256:bb903ffeb956ed7d
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/insertPair:
+  digest: sha256:02a5e48f056ec9fc
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/isDigitW:
+  digest: sha256:c68f729d8ea355ea
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/isObject:
+  digest: sha256:f35ad9c2c623909e
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/key:
+  digest: sha256:2b80e338d5eada4c
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/keyOr:
+  digest: sha256:6cd2fa025d3c75d1
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/mapItems:
+  digest: sha256:5f48ffda09d7727f
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/member:
+  digest: sha256:7fe026714a2ae68c
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/next:
+  digest: sha256:44f3a73d88e61a15
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/nextOrEof:
+  digest: sha256:46c6a909d4773b2c
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/object:
+  digest: sha256:59638da8f62dd8e8
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/overflows:
+  digest: sha256:1e4f757cb4f4ff71
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseDecimal:
+  digest: sha256:85af45b7ad0fe401
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseDecimalOverflow:
+  digest: sha256:ee36ffbc3c01a288
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseEscape:
+  digest: sha256:24ac880f12d1626e
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseExponent:
+  digest: sha256:8ecf23d67986f804
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseInteger:
+  digest: sha256:6a5409f32b3040d1
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseLongInteger:
+  digest: sha256:9fdf645e554ab01b
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseNumber:
+  digest: sha256:d0679445a8d7257b
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseStr:
+  digest: sha256:def8155434c689c8
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseUnicodeEscape:
+  digest: sha256:8b398c3a00fcb716
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/parseValue:
+  digest: sha256:1a17b32bf98bd120
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/peek:
+  digest: sha256:7a3ac895bc1cd981
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/peekError:
+  digest: sha256:59cf70880e235508
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/peekOrEof:
+  digest: sha256:0af9101784a364c0
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/peekOrNull:
+  digest: sha256:cd7acfc9171c1b81
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/positioned:
+  digest: sha256:401ba8d3baffd766
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/pow10:
+  digest: sha256:a57c9e4935e6ef9d
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/pow10Table:
+  digest: sha256:46c21ccea8e0345c
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/seqItems:
+  digest: sha256:4b3d9d1cc4665b95
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/setIndex:
+  digest: sha256:ba785649971ab2ed
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/shortestDigits:
+  digest: sha256:0461e7665dc49c21
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/skipDigits:
+  digest: sha256:c4697d24cb0ff26e
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/slice:
+  digest: sha256:956810d3c752b9e9
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/textAt:
+  digest: sha256:ef62248956090b56
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/textsAt:
+  digest: sha256:0f636174a01ad708
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/toMap:
+  digest: sha256:4e297df082b941ed
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/typeName:
+  digest: sha256:490c50960e67c377
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/u64Max:
+  digest: sha256:9b97fc3913ca2701
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/u64ToDouble:
+  digest: sha256:b89863c5e540aec2
+  verdict: pending
+decision/haskell/src/Ironframe/Json.hs/module/Ironframe.Json/function/whitespace:
+  digest: sha256:bdb47bcea2fa42de
+  verdict: pending

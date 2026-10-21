@@ -1,0 +1,24 @@
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu:
+  digest: sha256:f74fb66075202cfb
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/data/Tofu:
+  digest: sha256:df08e372da2b2e50
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/deploymentName:
+  digest: sha256:30d42f706c17f8cb
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/locateTofu:
+  digest: sha256:5620fa0e56d8ae70
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/moduleSource:
+  digest: sha256:474ea215d8ca6d30
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/releasedModules:
+  digest: sha256:213752f453c899de
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/rootModule:
+  digest: sha256:8c3c6ab1e1fdcb84
+  verdict: pending
+decision/haskell/src/Ironframe/Tofu.hs/module/Ironframe.Tofu/function/tofuEndpoints:
+  digest: sha256:521a17bd06dd75d6
+  verdict: pending

@@ -16,8 +16,8 @@ diataxis:
   locator: https://diataxis.fr/
 canon:
   kind: package
-  title: canon, the canonical format checker, version 0.2.0 at commit 2f22e6e
-  locator: https://github.com/brain-fuel/canon/tree/2f22e6e
+  title: canon, the canonical format checker, version 0.2.2
+  locator: https://github.com/brain-fuel/canon/tree/v0.2.2
 lawspec:
   kind: package
   title: LawSpec, executable laws for business contracts, whose evidence command reads environment attestations
@@ -54,30 +54,26 @@ aws-appconfig:
   kind: article
   title: AWS AppConfig, hosted configuration profiles and deployments
   locator: https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html
-aws-sdk-rust:
-  kind: package
-  title: The AWS SDK for Rust, crate aws-sdk-appconfig
-  locator: https://docs.rs/aws-sdk-appconfig
 gcp-parameter-manager:
   kind: article
   title: Google Cloud Parameter Manager
   locator: https://cloud.google.com/secret-manager/parameter-manager/docs/overview
-google-cloud-rust:
-  kind: package
-  title: Google Cloud Client Libraries for Rust, crate google-cloud-parametermanager-v1
-  locator: https://docs.rs/google-cloud-parametermanager-v1
 azure-app-configuration:
   kind: article
   title: Azure App Configuration
   locator: https://learn.microsoft.com/azure/azure-app-configuration/overview
-azure-appconfig-rest:
-  kind: article
-  title: Azure App Configuration REST API, key-values
-  locator: https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value
-azure-appconfig-hmac:
-  kind: article
-  title: Azure App Configuration REST API, HMAC authentication
-  locator: https://learn.microsoft.com/azure/azure-app-configuration/rest-api-authentication-hmac
+aws-sdk-js-appconfig:
+  kind: package
+  title: The AWS SDK for JavaScript v3, package @aws-sdk/client-appconfig
+  locator: https://www.npmjs.com/package/@aws-sdk/client-appconfig
+google-cloud-parametermanager-node:
+  kind: package
+  title: Google Cloud Parameter Manager client library for Node.js, package @google-cloud/parametermanager
+  locator: https://www.npmjs.com/package/@google-cloud/parametermanager
+azure-app-configuration-js:
+  kind: package
+  title: Azure App Configuration client library for JavaScript, package @azure/app-configuration
+  locator: https://www.npmjs.com/package/@azure/app-configuration
 cloud-run-ports:
   kind: article
   title: Cloud Run, configure the container port; one port per service, HTTP/1 or HTTP/2
@@ -186,3 +182,35 @@ REQ-calm-end-to-end:
   kind: requirement
   title: One application's unchanged LawSpec laws run against real, twin and mixed bindings resolved from its CALM architecture, with shared dependencies, faults, resets and deterministic replay, and LawSpec reads each completed attestation
   locator: docs/how-to/run-the-calm-demonstrations.md
+ghc-wasm-meta:
+  kind: package
+  title: ghc-wasm-meta, the GHC WebAssembly backend toolchain, wasm32-wasi-ghc and wasm32-wasi-cabal
+  locator: https://gitlab.haskell.org/haskell-wasm/ghc-wasm-meta
+ghc-wasm-jsffi:
+  kind: article
+  title: GHC User's Guide, the WebAssembly backend and its JavaScript FFI
+  locator: https://ghc.gitlab.haskell.org/ghc/doc/users_guide/wasm.html#javascript-ffi
+node-wasi:
+  kind: article
+  title: Node.js, the node:wasi module, WebAssembly System Interface preview1
+  locator: https://nodejs.org/api/wasi.html
+node-22:
+  kind: package
+  title: Node.js 22, the runtime of the npm package and the configuration service's image
+  locator: https://nodejs.org/docs/latest-v22.x/api/
+unsafe-libyaml:
+  kind: package
+  title: unsafe-libyaml 0.2.11, libyaml translated to Rust, whose reader, scanner, parser and emitter Ironframe's YAML ports
+  locator: https://docs.rs/unsafe-libyaml/0.2.11
+serde-yaml:
+  kind: package
+  title: serde_yaml 0.9.34, whose loader and quoting rules Ironframe's YAML follows
+  locator: https://docs.rs/serde_yaml/0.9.34
+sha-package:
+  kind: package
+  title: SHA, implementations of the SHA family of hashes in pure Haskell
+  locator: https://hackage.haskell.org/package/SHA
+jsonschema-rs:
+  kind: package
+  title: jsonschema-rs 0.33, the Rust JSON Schema validator whose errors the corpus recorded
+  locator: https://docs.rs/jsonschema/0.33.0

@@ -1,0 +1,18 @@
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api:
+  digest: sha256:0902514ef05103c9
+  verdict: pending
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api/function/call:
+  digest: sha256:2f3f034386aa844a
+  verdict: pending
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api/function/callValue:
+  digest: sha256:57ccb848dc46c287
+  verdict: pending
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api/function/corpusCase:
+  digest: sha256:ece8ee15506f6965
+  verdict: pending
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api/function/dispatch:
+  digest: sha256:321a27b5b26e2a4d
+  verdict: pending
+decision/haskell/src/Ironframe/Api.hs/module/Ironframe.Api/function/resolvedJson:
+  digest: sha256:76e4741f5641c853
+  verdict: pending

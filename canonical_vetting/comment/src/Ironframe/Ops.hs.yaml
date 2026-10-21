@@ -1,0 +1,42 @@
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops:
+  digest: sha256:054d0727de97aa5f
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/data/DependencyStatus:
+  digest: sha256:1db9c474520a59b7
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/adminUrls:
+  digest: sha256:bf60ad5c57b1d0dd
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/attestNow:
+  digest: sha256:c7db9e0b321e644a
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/controlPlaneFor:
+  digest: sha256:354e793b02600b3d
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/down:
+  digest: sha256:56807e8e65cbdd8f
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/ioFailure:
+  digest: sha256:8940900ce2852a7a
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/labelledLevels:
+  digest: sha256:99e53234ea70e7cc
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/observeTwins:
+  digest: sha256:ca9a080a2cbb2eb4
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/plan:
+  digest: sha256:1fdc8f4ea5ab98fe
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/resolveIn:
+  digest: sha256:019503f0e470658d
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/status:
+  digest: sha256:dbb37c815fcfd7b4
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/syncEnvironment:
+  digest: sha256:f4ddb7af3f582660
+  verdict: pending
+decision/haskell/src/Ironframe/Ops.hs/module/Ironframe.Ops/function/up:
+  digest: sha256:49d709b960d2e1cc
+  verdict: pending

@@ -1,0 +1,15 @@
+decision/javascript/npm/test/e2e-calm.test.mjs/function/attestationPath:
+  digest: sha256:df9601a614f4712e
+  verdict: pending
+decision/javascript/npm/test/e2e-calm.test.mjs/function/copyTree:
+  digest: sha256:8121fcbe5ae0a8bc
+  verdict: pending
+decision/javascript/npm/test/e2e-calm.test.mjs/function/lawsDigest:
+  digest: sha256:88df83e0528e1920
+  verdict: pending
+decision/javascript/npm/test/e2e-calm.test.mjs/function/problems:
+  digest: sha256:053aed19a7a7d2b7
+  verdict: pending
+decision/javascript/npm/test/e2e-calm.test.mjs/function/waitForHttp:
+  digest: sha256:ff656c9087936792
+  verdict: pending

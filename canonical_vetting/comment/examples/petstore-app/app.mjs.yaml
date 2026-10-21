@@ -1,0 +1,39 @@
+decision/javascript/examples/petstore-app/app.mjs/class/Failure:
+  digest: sha256:1d0cb4e449bb3d63
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/baseUrl:
+  digest: sha256:fb65319eb53dd336
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/connect:
+  digest: sha256:cb002d9cd6bb6714
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/debugOption:
+  digest: sha256:8b8e2a33cf316af7
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/exchange:
+  digest: sha256:3d611efcef653cff
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/field:
+  digest: sha256:9dabfc3efe1721c4
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/parseResponse:
+  digest: sha256:8fe65e02b79fb3f8
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/readToEnd:
+  digest: sha256:066d26d6721c2186
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/function/splitUrl:
+  digest: sha256:940a6beb060aa157
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/variable/ERRNO_TEXT:
+  digest: sha256:1da74023ca708666
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/variable/READ_TIMEOUT_MS:
+  digest: sha256:b5d94a5bcf544937
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/variable/SETTING:
+  digest: sha256:20e3f98209d49985
+  verdict: pending
+decision/javascript/examples/petstore-app/app.mjs/variable/WS:
+  digest: sha256:cc7ba9829eaeb9e0
+  verdict: pending

@@ -1,0 +1,12 @@
+decision/haskell/src/Ironframe/ConfigService.hs/module/Ironframe.ConfigService:
+  digest: sha256:85274f1a88d8bfae
+  verdict: pending
+decision/haskell/src/Ironframe/ConfigService.hs/module/Ironframe.ConfigService/data/Response:
+  digest: sha256:848fdde72c5e9914
+  verdict: pending
+decision/haskell/src/Ironframe/ConfigService.hs/module/Ironframe.ConfigService/function/decodePath:
+  digest: sha256:f192ef26d59e128e
+  verdict: pending
+decision/haskell/src/Ironframe/ConfigService.hs/module/Ironframe.ConfigService/function/handle:
+  digest: sha256:6bb49f3e5f291ef1
+  verdict: pending

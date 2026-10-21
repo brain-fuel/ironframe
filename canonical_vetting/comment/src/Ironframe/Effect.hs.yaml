@@ -1,0 +1,69 @@
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect:
+  digest: sha256:6634e57ab08449bb
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/data/HttpReply:
+  digest: sha256:5110f402877c0081
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/data/IoError:
+  digest: sha256:11347298880df2c3
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/data/ProcessOutput:
+  digest: sha256:d709c862f134a80e
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/data/Step:
+  digest: sha256:a6b0582c585e8597
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/canonicalize:
+  digest: sha256:aa1f63206864dc47
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/catchError:
+  digest: sha256:49839593030d2721
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/cloudCall:
+  digest: sha256:9b75a3cce2eae178
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/httpRequest:
+  digest: sha256:c19fe1a525c37f80
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/ioResult:
+  digest: sha256:02768726afd83487
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/locate:
+  digest: sha256:1f120306152dd628
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/monotonicMs:
+  digest: sha256:92a7a394b93af4fc
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/now:
+  digest: sha256:f1d6ebea6c5337a8
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/perform:
+  digest: sha256:08a97a92ccd22396
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/progress:
+  digest: sha256:fa258e74fb8d40bd
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/removeTree:
+  digest: sha256:d590153ba63107bd
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/runEff:
+  digest: sha256:4a45fb5475ff33b0
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/runInherited:
+  digest: sha256:e46734cd75e197c1
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/runProcess:
+  digest: sha256:9ff9d5d5d29d8291
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/tcpProbe:
+  digest: sha256:8cec093e1671a083
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/writeAtomically:
+  digest: sha256:52aebf12cf94e0b1
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/function/writeFileE:
+  digest: sha256:9d81e5a595e9ba0d
+  verdict: pending
+decision/haskell/src/Ironframe/Effect.hs/module/Ironframe.Effect/newtype/Eff:
+  digest: sha256:ffa184509a63b4fb
+  verdict: pending

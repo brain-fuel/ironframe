@@ -13,10 +13,23 @@ application's dependency up with Ironframe as a twin, drive the twin, and read
 the attestation of the run. The applications never change.
 ref:REQ-example-reads-config ref:REQ-end-to-end-with-twins
 
-You need Rust, podman with a running machine, podman-compose, and a checkout
-of LawTwin beside this one.
+You need Node 22 or later, podman with a running machine, podman-compose,
+and a checkout of LawTwin beside this one.
 
-## Build the images and Ironframe
+## Install Ironframe and build the images
+
+Install the command from the npm package:
+
+```sh
+npm i -g ironframe
+```
+
+From a checkout of this repository, the package is in `npm/`; run
+`tools/wasm.sh` first if you changed the core:
+
+```sh
+alias ironframe="node $PWD/npm/bin/ironframe.mjs"
+```
 
 LawTwin's images are built in its repository; Ironframe's configuration
 service in this one:
@@ -24,8 +37,6 @@ service in this one:
 ```sh
 (cd ../lawtwin && make image image-http)
 make config-service-image
-cargo build
-export PATH="$PWD/target/debug:$PATH"
 ```
 
 ## Bring the Kafka twin up
@@ -46,7 +57,7 @@ on `localhost:9092`, writes `.env`, and writes the attestation.
 Run the app:
 
 ```sh
-cargo run -p kafka-app
+node app.mjs
 ```
 
 It reads `.env` the way a dotenv library would and prints
@@ -87,7 +98,7 @@ and at what level. ref:DEC-attestation-format ref:DEC-history-digest
 ```sh
 cd ../petstore-app
 ironframe up local
-cargo run -p petstore-app
+node app.mjs
 ironframe twin petstore history
 ironframe attest local
 ```

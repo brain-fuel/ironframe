@@ -49,8 +49,8 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `ironframe plan` and `up` and `down` for AWS, GCP and Azure environments,
   through OpenTofu modules for ECS Fargate, Cloud Run and Container Apps, each
   tested with `tofu test` against a mocked provider.
-- The configuration service, a 2.4 MB static image that serves each
-  environment's settings as JSON, dotenv or single values.
+- The configuration service, a small HTTP server in a container that serves
+  each environment's settings as JSON, dotenv or single values.
 - `ironframe sync`: settings written to env files, AWS AppConfig, GCP
   Parameter Manager and Azure App Configuration, writing nothing when a target
   already holds them.
@@ -84,3 +84,22 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Cloud Run cannot serve: a twin with `protocol: tcp` runs there, and
   `advertise_variable` hands it its reserved address. Each module is handed
   only the inputs it takes.
+
+### Changed
+
+- Ironframe is a pure Haskell core compiled to WebAssembly with a thin Node
+  host, distributed as the npm package `ironframe` (`npm i -g ironframe`),
+  instead of Rust crates. The core does no IO: it names each effect it needs
+  and the host performs it (`docs/reference/host-protocol.md`). Behaviour is
+  held to a corpus recorded from the Rust implementation; the deliberate
+  differences are listed in `docs/explanation/architecture.md`.
+- The configuration service runs the npm package's Node host over the same
+  core, in an image built from `config-service/Containerfile` on
+  `node:22-alpine`.
+- Cloud sync calls the official JavaScript SDKs, `@aws-sdk/client-appconfig`,
+  `@google-cloud/parametermanager` and `@azure/app-configuration`, which also
+  sign Azure's requests.
+- The examples `kafka-app` and `petstore-app` are Node applications, run with
+  `node app.mjs`.
+- `make` keeps its verbs over stack, `tools/wasm.sh` and `node --test`, and
+  adds `make wasm` and `make integrity`.

@@ -1,0 +1,9 @@
+decision/haskell/src/Ironframe/Workdir.hs/module/Ironframe.Workdir:
+  digest: sha256:5df833edf7ac38f6
+  verdict: pending
+decision/haskell/src/Ironframe/Workdir.hs/module/Ironframe.Workdir/function/readEndpoints:
+  digest: sha256:7d6b8705d7a32279
+  verdict: pending
+decision/haskell/src/Ironframe/Workdir.hs/module/Ironframe.Workdir/function/readTwins:
+  digest: sha256:c81b17747a8f3e01
+  verdict: pending

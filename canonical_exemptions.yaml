@@ -1,10 +1,30 @@
-/crates/:
+/src/:
   kinds: [comment]
-  reason: "The crates' comments are written from the first commit and ingested pending; the owner defers vetting them to 1.0"
+  reason: "The Haskell core's comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/test/:
+  kinds: [comment]
+  reason: "The Haskell tests' comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/dev/:
+  kinds: [comment]
+  reason: "The development tool's comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/wasm/:
+  kinds: [comment]
+  reason: "The WASM build's comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/npm/:
+  kinds: [comment]
+  reason: "The Node host's and its tests' comments are ingested pending; the owner defers vetting them to 1.0"
+  revisit: 1.0.0
+/tools/:
+  kinds: [comment]
+  reason: "The build scripts' comments are ingested pending; the owner defers vetting them to 1.0"
   revisit: 1.0.0
 /examples/:
   kinds: [comment]
-  reason: "The example application's comments are ingested pending; the owner defers vetting them to 1.0"
+  reason: "The example applications' comments are ingested pending; the owner defers vetting them to 1.0"
   revisit: 1.0.0
 /modules/:
   kinds: [comment]

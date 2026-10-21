@@ -1,5 +1,41 @@
+ledger/DEC-attestation-architecture:
+  digest: sha256:d9aedef668bc1340
+  verdict: pending
 ledger/DEC-attestation-format:
   digest: sha256:72f11034ee11b73c
+  verdict: pending
+ledger/DEC-calm-architecture:
+  digest: sha256:2680d6defc372c41
+  verdict: pending
+ledger/DEC-calm-compatibility:
+  digest: sha256:2f2c43fc5e5e4690
+  verdict: pending
+ledger/DEC-calm-decorators:
+  digest: sha256:774849f309168b7e
+  verdict: pending
+ledger/DEC-calm-deployment:
+  digest: sha256:901847fc277bdc97
+  verdict: pending
+ledger/DEC-calm-exports:
+  digest: sha256:a57547fa8aa542cd
+  verdict: pending
+ledger/DEC-calm-identity:
+  digest: sha256:fc86685fd81e83d4
+  verdict: pending
+ledger/DEC-calm-planned-vs-completed:
+  digest: sha256:588b80eff987056a
+  verdict: pending
+ledger/DEC-calm-refusals:
+  digest: sha256:16b58039fd4fe822
+  verdict: pending
+ledger/DEC-calm-resolution:
+  digest: sha256:f2f598445e42d9f9
+  verdict: pending
+ledger/DEC-calm-run:
+  digest: sha256:50cfcfaf3e7fe0f2
+  verdict: pending
+ledger/DEC-canon-haskell-field-haddock:
+  digest: sha256:24d1775a486b3d91
   verdict: pending
 ledger/DEC-cloud-run-http-only:
   digest: sha256:6c6949197d54067b
@@ -19,8 +55,17 @@ ledger/DEC-credentials-by-reference:
 ledger/DEC-gce-for-tcp-twins:
   digest: sha256:fe8dce18bb3cc8ee
   verdict: pending
+ledger/DEC-haskell-wasm-core:
+  digest: sha256:7f7554c8e4066741
+  verdict: pending
 ledger/DEC-history-digest:
   digest: sha256:8a32d47068b164b1
+  verdict: pending
+ledger/DEC-host-protocol:
+  digest: sha256:1b7d6747ab3e6f55
+  verdict: pending
+ledger/DEC-manifest-compat:
+  digest: sha256:1d65207fab358329
   verdict: pending
 ledger/DEC-manifest-shape:
   digest: sha256:e23c212fce95c84d
@@ -30,9 +75,6 @@ ledger/DEC-opentofu:
   verdict: pending
 ledger/DEC-podman-compose:
   digest: sha256:8ce294d89f4d0d58
-  verdict: pending
-ledger/DEC-rust:
-  digest: sha256:f953303ac03ac798
   verdict: pending
 ledger/DEC-three-planes:
   digest: sha256:6fc45d8e4f90e17d

@@ -1,0 +1,9 @@
+decision/javascript/npm/config-service.mjs/function/main:
+  digest: sha256:1f5f9d3053fbdafc
+  verdict: pending
+decision/javascript/npm/config-service.mjs/function/parseListen:
+  digest: sha256:d9a1d11cbb0ce09b
+  verdict: pending
+decision/javascript/npm/config-service.mjs/function/startConfigService:
+  digest: sha256:dc0696e732545da4
+  verdict: pending

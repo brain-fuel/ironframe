@@ -1,0 +1,33 @@
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver:
+  digest: sha256:9de0829eb3bb189e
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/data/Comparator:
+  digest: sha256:dd4ffb4df8c8a7a8
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/data/Op:
+  digest: sha256:a4505d7891fe041e
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/data/Version:
+  digest: sha256:66ed11b0fedf83bc
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/comparePrerelease:
+  digest: sha256:c551577c06a3738c
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/matches:
+  digest: sha256:d4796a72a1e62b91
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/parseReq:
+  digest: sha256:61d78831797de412
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/parseVersion:
+  digest: sha256:25f084abd3eee5a2
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/renderReq:
+  digest: sha256:4c0f0a29f3835367
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/function/renderVersion:
+  digest: sha256:298e5b20ac066dd2
+  verdict: pending
+decision/haskell/src/Ironframe/Semver.hs/module/Ironframe.Semver/newtype/VersionReq:
+  digest: sha256:000c8641cfcac547
+  verdict: pending

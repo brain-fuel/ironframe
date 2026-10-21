@@ -1,0 +1,36 @@
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model:
+  digest: sha256:1e31c13e540e1af0
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/data/CalmError:
+  digest: sha256:e3da6aaa5ec2b1dc
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/data/CalmProblem:
+  digest: sha256:e7562ecb236e6a97
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/data/Decorator:
+  digest: sha256:0753e03acd0d927f
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/architectureProblems:
+  digest: sha256:61300faeb3d59a1d
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/digest:
+  digest: sha256:e366e1b54787fa1c
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/elementIds:
+  digest: sha256:48e609b78393a218
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/loadArchitecture:
+  digest: sha256:221444ae8aef1364
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/loadDecorators:
+  digest: sha256:b07481a772c293c3
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/parseArchitecture:
+  digest: sha256:ae3c13082f3759cc
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/parseDecorators:
+  digest: sha256:ac357aed4629bf32
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Model.hs/module/Ironframe.Calm.Model/function/targetProblems:
+  digest: sha256:b36f994f6a1202fa
+  verdict: pending

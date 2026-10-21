@@ -1,0 +1,12 @@
+decision/haskell/src/Ironframe/Compose.hs/module/Ironframe.Compose:
+  digest: sha256:c2ea8bb6c4d739c8
+  verdict: pending
+decision/haskell/src/Ironframe/Compose.hs/module/Ironframe.Compose/function/composeFile:
+  digest: sha256:1cc488b73bde4b34
+  verdict: pending
+decision/haskell/src/Ironframe/Compose.hs/module/Ironframe.Compose/function/configServiceName:
+  digest: sha256:1c5322bd01424bf5
+  verdict: pending
+decision/haskell/src/Ironframe/Compose.hs/module/Ironframe.Compose/function/configServiceSettingsPath:
+  digest: sha256:70341d6723148beb
+  verdict: pending

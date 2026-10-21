@@ -20,27 +20,45 @@ DEC-config-service:
   status: decided
   question: How do applications learn where their dependencies are in each environment, without changing how they read configuration?
   answer: |
-    Through an AppConfig-like layer that Ironframe owns: its own configuration service, a small Rust HTTP service in a container that serves each environment's connection settings as JSON, as dotenv, or one value at a time, beside the sync targets of DEC-config-sync. The service serves a settings document Ironframe writes when it brings an environment up, re-read on each request, and never writes anything itself. Decided by the owner for 0.1.0.
+    Through an AppConfig-like layer that Ironframe owns: its own configuration service, a small HTTP server in a container that serves each environment's connection settings as JSON, as dotenv, or one value at a time, beside the sync targets of DEC-config-sync. The service serves a settings document Ironframe writes when it brings an environment up, re-read on each request, and never writes anything itself. The server is the npm package's Node host, npm/config-service.mjs, over the same WASM core as the command (DEC-haskell-wasm-core): the host only listens and reads the document, and every answer is the core's configService.handle. The image is built from config-service/Containerfile on node:22-alpine, uses no cloud SDK, and is tagged localhost/ironframe-config-service:0.1.0, the manifest's default. Decided by the owner for 0.1.0; the Node server over the core replaces the earlier Rust static binary, decided by the owner on 2026-10-20.
   opened: 0.1.0
   decided: 0.1.0
-  refs: [aws-appconfig]
+  refs: [aws-appconfig, node-22]
 
 DEC-config-sync:
   status: decided
   question: Applications already read configuration from their cloud's configuration store or from env files. How do the settings reach them there?
   answer: |
-    Ironframe syncs the same settings the configuration service serves into AWS AppConfig, GCP Parameter Manager and Azure App Configuration, and into env files for local runs, so applications read configuration the way they already do. AppConfig receives a hosted, freeform JSON profile and a deployment; Parameter Manager a JSON parameter with one version per distinct content; App Configuration one key-value per setting under a prefix and a label. A sync writes nothing when the target already holds the settings. The clients use the official Rust SDKs where they exist, aws-sdk-appconfig and google-cloud-parametermanager-v1, and App Configuration's REST API with HMAC signing, since Azure has released no Rust client for it. Each cloud sits behind a small trait of the calls the sync makes, so the sync is tested against recorded calls. LocalStack's image now requires an auth token, so the AWS client is not exercised against it. Decided by the owner for 0.1.0; the details of each target are this release's.
+    Ironframe syncs the same settings the configuration service serves into AWS AppConfig, GCP Parameter Manager and Azure App Configuration, and into env files for local runs, so applications read configuration the way they already do. AppConfig receives a hosted, freeform JSON profile and a deployment; Parameter Manager a JSON parameter with one version per distinct content; App Configuration one key-value per setting under a prefix and a label. A sync writes nothing when the target already holds the settings. What to create, when to write a version and when to leave a target alone are decided in the core (src/Ironframe/Sync.hs); each call into a cloud is an effect the Node host performs with the cloud's official JavaScript SDK, @aws-sdk/client-appconfig, @google-cloud/parametermanager and @azure/app-configuration, which also authenticate: the AWS SDK's default chain, Application Default Credentials, and the store's connection string, whose requests the Azure SDK signs, so Ironframe has no HMAC code of its own. The SDKs are the cloud boundary: the corpus checks the calls the core asks for and how it reads their answers, not the SDKs. LocalStack's image now requires an auth token, so the AWS client is not exercised against it. Decided by the owner for 0.1.0; the JavaScript SDKs replace the Rust SDKs and the bespoke Azure REST client, decided by the owner on 2026-10-20.
   opened: 0.1.0
   decided: 0.1.0
-  refs: [aws-appconfig, aws-sdk-rust, gcp-parameter-manager, google-cloud-rust, azure-app-configuration, azure-appconfig-rest, azure-appconfig-hmac]
+  refs: [aws-appconfig, aws-sdk-js-appconfig, gcp-parameter-manager, google-cloud-parametermanager-node, azure-app-configuration, azure-app-configuration-js]
 
-DEC-rust:
+DEC-haskell-wasm-core:
   status: decided
-  question: Which language are Ironframe's command, library and configuration service written in?
+  question: Which language and runtime are Ironframe's command, library and configuration service written in, and how are they distributed?
   answer: |
-    Rust, as LawTwin's twin servers are, so one toolchain builds the family's servers and the configuration service is a small static binary in a scratch image. Decided by the owner for 0.1.0.
+    A pure Haskell core compiled to WebAssembly, hosted by a thin Node package, distributed on npm as ironframe. Every piece of logic is Haskell under src/Ironframe/: the manifest's parsing and checks, CALM 1.2 schema checks and identity resolution, decorators, real and twin binding resolution and its refusals, the exports (Mermaid, Graphviz, docify, settings, OpenTofu, compose), building and verifying the attestation, sync planning, the configuration service's answers and the command line. The core never does IO: it asks its host for each effect (DEC-host-protocol). It is a stack project (package.yaml, lts-24.58) compiled natively for its tests and to WASM by tools/wasm.sh with wasm32-wasi-cabal from ghc-wasm-meta (GHC 9.14) into npm/core.wasm and npm/core_jsffi.js, fingerprinted in npm/build.json by ironframe-dev integrity. The Node host (npm/host.mjs, launcher.mjs, protocol.mjs, clouds/) performs effects and nothing else; bin/ironframe.mjs runs the core's cli method, and config-service.mjs its configService.handle (DEC-config-service).
+
+    The precedent is LawSpec's own compiler, a Haskell core compiled with ghc-wasm-meta, exported through GHC's JSFFI and run under node:wasi by a thin npm package; Ironframe mirrors its launcher, its tools/wasm.sh and its integrity check. Ironframe takes no Haskell dependency on LawSpec, and LawSpec never imports Ironframe: the attestation stays a neutral published JSON schema (schema/attestation-v1.schema.json) that Ironframe writes and LawSpec reads (DEC-three-planes).
+
+    Trust boundaries. JSON Schema validation is a bespoke minimal validator (src/Ironframe/Json/Schema.hs and Regex.hs), since no maintained Haskell library validates draft 2020-12 as pure Haskell buildable under ghc-wasm: hjsonschema is draft 4 and needs PCRE's C library and Template Haskell, aeson-schema is draft 3 with Template Haskell, json-schema does not implement json-schema.org's language, and aeson-schemas is type-level. It implements $ref (JSON-pointer fragments, CALM's #/defs included), type, const, enum, required, minLength, maxLength, minItems, maxItems, minProperties, maxProperties, minimum, maximum, exclusiveMinimum, exclusiveMaximum, pattern, properties, patternProperties, additionalProperties, propertyNames, items, allOf, anyOf, oneOf, not and if/then/else; format is an annotation only, as jsonschema-rs treats it for 2020-12; and compiling a schema refuses every other keyword (contains, uniqueItems, multipleOf, prefixItems, the dependent and unevaluated keywords, $dynamicRef and the rest), so a schema change that needs one fails loudly. YAML is a bespoke pure-Haskell port (src/Ironframe/Yaml.hs) of unsafe-libyaml 0.2.11's reader, scanner, parser and emitter and of serde_yaml 0.9.34's loader and quoting rules, so YAML is read, refused and written, error messages included, as the Rust implementation did; it is checked against the corpus and about 100,000 differential cases against the real serde_yaml. JSON is written as serde_json 1.0.151 writes it, floats included, and YAML floats as ryu writes them. Semantic versions, RFC 3339 times and SHA-256 (the SHA package) are pure Haskell too. None of these emulations is proven equivalent to the Rust library it replaces; each is checked only against the corpus, and YAML also by the differential cases.
+
+    The parity oracle is corpus/*.json, captured from the Rust implementation before the port: the inputs and exact outputs of every core operation, the command line and the configuration service, and corpus/libs-*.json for the libraries emulated (serde_json, serde_yaml, jsonschema-rs 0.33, semver 1.0.28, the time crate's RFC 3339, Rust's Debug quoting, serde's typed errors). Ironframe.Corpus checks every case with a scripted host, natively under stack test and in WASM under node --test; the command's corpus also runs through the real command. Deliberate differences: Azure requests are signed by the official SDK, not Ironframe's own HMAC code (DEC-config-sync); timestamps have the millisecond precision of Node's clock; the help and usage text is Ironframe's own, not clap's; and operating-system error texts are mapped from Node's error codes. The cloud SDKs are the cloud boundary, outside the corpus.
+
+    Decided by the owner on 2026-10-20 for 0.1.0, replacing the earlier choice of Rust.
   opened: 0.1.0
   decided: 0.1.0
+  refs: [ghc-wasm-meta, ghc-wasm-jsffi, node-wasi, node-22, unsafe-libyaml, serde-yaml, sha-package, json-schema-2020-12, jsonschema-rs, lawspec, fips-180-4, rfc3339, semver-2]
+
+DEC-host-protocol:
+  status: decided
+  question: The core does no IO, yet a command reads files, runs podman, OpenTofu, the CALM CLI and git, speaks HTTP to twins' control planes, probes TCP ports, reads clocks and calls cloud SDKs. How does the core get those done?
+  answer: |
+    By effect replay. The core exposes one call: a JSON request {method, params, effects}, where effects holds the result of every effect performed so far, answered by {done: value}, {failed: message}, or {effect: request, index: n}, the next effect the host must perform, n being how many results it has. The host performs that effect, appends its result and calls again with the same method and parameters; the core runs the method from the start over the longer list, so it replays deterministically and asks for the same effects in the same order. A malformed request or an unknown method is answered {error: message}. Every effect is a JSON object named by its effect field: files (readFile, writeAtomically, writeFile, removeFile, removeTree, createDir, canonicalize, cwd), the environment and tools (env, locate, run, readStdin, tempDir, processId), network and time (http, tcpProbe, sleep, now, monotonic, uuid), output (print, progress), and the cloud calls aws.*, gcp.* and azure.* (DEC-config-sync). A result is {ok: value} or {error: text}, with notFound for a missing file. The host is npm/host.mjs, the loop npm/protocol.mjs; the corpus's scripted host and the tests' native host answer the same effects, which is how the corpus checks a command's effects in order. docs/reference/host-protocol.md lists each effect's fields and result. Decided by the owner on 2026-10-20 for 0.1.0, with DEC-haskell-wasm-core.
+  opened: 0.1.0
+  decided: 0.1.0
+  refs: [ghc-wasm-jsffi]
 
 DEC-opentofu:
   status: decided
@@ -244,3 +262,12 @@ DEC-attestation-architecture:
   opened: 0.1.0
   revisit: 1.0.0
   refs: [lawspec]
+
+DEC-canon-haskell-field-haddock:
+  status: open
+  question: canon 0.2.2 reports that a doc comment is not attached to any unit at src/Ironframe/Manifest/Types.hs line 114, a record field's Haddock written after the separating comma (a line holding a comma and then the Haddock opener, before the line declaring twinReport), the layout ormolu and fourmolu write and GHC and Haddock accept. How is the file checked meanwhile?
+  answer: |
+    Proposed for 0.1.0, until canon attaches a Haddock comment that follows a record's comma to the field after it. The code is not reshaped for canon: canon.yaml ignores src/Ironframe/Manifest/Types.hs alone, so its other comments go unchecked until then. The bug is to be reported to canon with this construct; when a canon release attaches the comment, the ignore is removed and this decision closed.
+  opened: 0.1.0
+  revisit: 0.2.0
+  refs: [canon]

@@ -1,0 +1,12 @@
+decision/javascript/npm/test/cli-corpus.test.mjs/function/copyExample:
+  digest: sha256:524a23519c138706
+  verdict: pending
+decision/javascript/npm/test/cli-corpus.test.mjs/function/files:
+  digest: sha256:adc4efbbb36afc49
+  verdict: pending
+decision/javascript/npm/test/cli-corpus.test.mjs/function/replaceTimes:
+  digest: sha256:b867b3d0ee46c85c
+  verdict: pending
+decision/javascript/npm/test/cli-corpus.test.mjs/function/replaceUuids:
+  digest: sha256:6750f19d469c89ab
+  verdict: pending

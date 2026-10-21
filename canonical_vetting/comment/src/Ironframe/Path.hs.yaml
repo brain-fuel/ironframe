@@ -1,0 +1,21 @@
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path:
+  digest: sha256:80751e6f0583d573
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/components:
+  digest: sha256:af4bf4a7b1e762f1
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/fileName:
+  digest: sha256:89e6e505ea52d1c4
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/fileStem:
+  digest: sha256:da4f9e594ee6da6f
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/join:
+  digest: sha256:fdac97cf4fe17a38
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/parent:
+  digest: sha256:dc9e928b331bffe3
+  verdict: pending
+decision/haskell/src/Ironframe/Path.hs/module/Ironframe.Path/function/withFileName:
+  digest: sha256:5032dda4b5477671
+  verdict: pending

@@ -31,8 +31,13 @@ settings, so syncing twice changes nothing.
 | Target | What is written | Credentials |
 | --- | --- | --- |
 | `env_file` | `KEY=value` lines under a header, relative to the manifest. | None. |
-| `aws_appconfig` | A hosted, freeform configuration profile holding the settings as one JSON object, under an application and environment created when missing; a new version is created and deployed only when the content changed. ref:aws-appconfig | The AWS SDK's default chain: environment, profile, SSO or role. ref:aws-sdk-rust |
-| `gcp_parameter_manager` | A JSON-format parameter, created when missing, with one version per distinct content, its id the content's digest. ref:gcp-parameter-manager | Application Default Credentials. ref:google-cloud-rust |
-| `azure_app_configuration` | One key-value per setting, keyed `<prefix><KEY>`, labelled with the environment's name unless `label` is set; only changed keys are written. ref:azure-app-configuration | The store's connection string in `AZURE_APPCONFIG_CONNECTION_STRING`, or the variable `connection_string_env` names; requests are HMAC-signed. ref:azure-appconfig-hmac |
+| `aws_appconfig` | A hosted, freeform configuration profile holding the settings as one JSON object, under an application and environment created when missing; a new version is created and deployed only when the content changed. ref:aws-appconfig | The AWS SDK's default chain: environment, profile, SSO or role. ref:aws-sdk-js-appconfig |
+| `gcp_parameter_manager` | A JSON-format parameter, created when missing, with one version per distinct content, its id the content's digest. ref:gcp-parameter-manager | Application Default Credentials. ref:google-cloud-parametermanager-node |
+| `azure_app_configuration` | One key-value per setting, keyed `<prefix><KEY>`, labelled with the environment's name unless `label` is set; only changed keys are written. ref:azure-app-configuration | The store's connection string in `AZURE_APPCONFIG_CONNECTION_STRING`, or the variable `connection_string_env` names; the Azure SDK signs each request with its access key. ref:azure-app-configuration-js |
 
 Settings removed from the manifest are not deleted from a cloud store.
+
+Each cloud call is made by the command's Node host with the cloud's official
+JavaScript SDK, `@aws-sdk/client-appconfig`, `@google-cloud/parametermanager`
+or `@azure/app-configuration`, installed with the `ironframe` package. Set
+`AWS_ENDPOINT_URL` to point the AWS SDK at an emulator. ref:DEC-config-sync

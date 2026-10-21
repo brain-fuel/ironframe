@@ -1,0 +1,129 @@
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde:
+  digest: sha256:0c52325f6e96d3b5
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/always:
+  digest: sha256:adc8e5a5a47a3fa7
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeAdmin:
+  digest: sha256:a4f5c1d8fe8b7efc
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeAwsAppConfigTarget:
+  digest: sha256:d2e1e125ca877804
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeAzureAppConfigurationTarget:
+  digest: sha256:252604a075eef535
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeBinding:
+  digest: sha256:3c7b6c784d5ea90b
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeCloud:
+  digest: sha256:2e3868bf33c90a51
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeConfigService:
+  digest: sha256:3fc2f32c7ca5187d
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeConformance:
+  digest: sha256:0e583300ce3894ce
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeConformanceSource:
+  digest: sha256:85bcd15c103352d6
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeDependencyDecl:
+  digest: sha256:dfec9583d3fc03d7
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeEnvFileTarget:
+  digest: sha256:2763c6c9526dd737
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeEnvironment:
+  digest: sha256:03e8b961f91872de
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeFault:
+  digest: sha256:d47d2febf84bc0ab
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeGcpParameterTarget:
+  digest: sha256:32f37a9e6f3565fa
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeManifest:
+  digest: sha256:b70c7be190d0a495
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeProtocol:
+  digest: sha256:ae67f3038476476a
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeReal:
+  digest: sha256:c946b5b176bb7041
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeRuntime:
+  digest: sha256:470e8be9f16b5f1c
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeSyncTarget:
+  digest: sha256:95925cf07319c2e3
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/decodeTwin:
+  digest: sha256:160dc51bb5716d9f
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeAdmin:
+  digest: sha256:a4f5c1d8fe8b7efc
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeBinding:
+  digest: sha256:642e342d03db5187
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeCloud:
+  digest: sha256:781d921da3de6b8c
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeConfigService:
+  digest: sha256:3fc2f32c7ca5187d
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeConformance:
+  digest: sha256:c1afe33d68c0d850
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeConformanceSource:
+  digest: sha256:85bcd15c103352d6
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeDependencyDecl:
+  digest: sha256:dfec9583d3fc03d7
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeEnvironment:
+  digest: sha256:03e8b961f91872de
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeFault:
+  digest: sha256:d47d2febf84bc0ab
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeManifest:
+  digest: sha256:b7752146d0fa4b9f
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeProtocol:
+  digest: sha256:a65f22a18797cb52
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeReal:
+  digest: sha256:c946b5b176bb7041
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeRuntime:
+  digest: sha256:b22a2bfb9acd7af5
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeSyncTarget:
+  digest: sha256:95925cf07319c2e3
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/encodeTwin:
+  digest: sha256:30b07fa83f85aadc
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/fields:
+  digest: sha256:c122089d8ccc4d4b
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/int:
+  digest: sha256:4803fb28a3a91150
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/manifestDecoder:
+  digest: sha256:fe99609e45e480dd
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/text:
+  digest: sha256:5b6cd49bf5667253
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/textMapValue:
+  digest: sha256:4963bc5acf462616
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/unlessEmptyList:
+  digest: sha256:73aec5acac234b7d
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Serde.hs/module/Ironframe.Manifest.Serde/function/unlessEmptyMap:
+  digest: sha256:c8b451652ec72f9a
+  verdict: pending

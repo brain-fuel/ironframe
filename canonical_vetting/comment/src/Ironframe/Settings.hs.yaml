@@ -1,0 +1,30 @@
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings:
+  digest: sha256:4e73094838becee6
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/data/SettingsDocument:
+  digest: sha256:dacef2f597215fa6
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/environmentSettings:
+  digest: sha256:c9258daa4d2d51e7
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/parseDotenv:
+  digest: sha256:c0390684720b2667
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/qualifyImage:
+  digest: sha256:f4b45e86bd9a2177
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/renderDotenv:
+  digest: sha256:f8a7cb9332999993
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/resolve:
+  digest: sha256:c5f71caf6214615b
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/rustLines:
+  digest: sha256:785006dd2ad922e7
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/splitEndpoint:
+  digest: sha256:bb34a76a41ba2d9e
+  verdict: pending
+decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/stackName:
+  digest: sha256:7b10114e20bf846d
+  verdict: pending

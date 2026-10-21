@@ -1,0 +1,30 @@
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export:
+  digest: sha256:666deaee2304e702
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/annotatedArchitecture:
+  digest: sha256:8e6269f5870192e1
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/applicationSettings:
+  digest: sha256:22d91fbe7922c33f
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/bindingLabel:
+  digest: sha256:626c8a072afd00c9
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/calmDiagramTemplate:
+  digest: sha256:0f37592475238172
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/dot:
+  digest: sha256:65b2aa9a50868d93
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/mermaid:
+  digest: sha256:84c019aaf82aa1da
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/mermaidProblems:
+  digest: sha256:3c706264ab6b5b65
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/settingsProblems:
+  digest: sha256:38207054ecd533a1
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Export.hs/module/Ironframe.Calm.Export/function/tofuProblems:
+  digest: sha256:a09449c69c8524f1
+  verdict: pending

@@ -1,0 +1,24 @@
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time:
+  digest: sha256:f5bbe0726938900d
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/data/Timestamp:
+  digest: sha256:731bd6db961c90af
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/compareInstant:
+  digest: sha256:9e5f4fac6c67abe9
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/formatRfc3339:
+  digest: sha256:6bd12a61ee285cd0
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/fromUnix:
+  digest: sha256:31727e83e83a2688
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/maxInstant:
+  digest: sha256:db300c44530963da
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/parseRfc3339:
+  digest: sha256:9e7966d1831c2ef5
+  verdict: pending
+decision/haskell/src/Ironframe/Time.hs/module/Ironframe.Time/function/unixNanos:
+  digest: sha256:3af9aafeaddd283e
+  verdict: pending

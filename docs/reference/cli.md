@@ -5,6 +5,12 @@ title: CLI
 ---
 # CLI
 
+`ironframe` is the npm package's command: install it with `npm i -g ironframe`
+(Node 22 or later), or run `node npm/bin/ironframe.mjs` from a checkout after
+`tools/wasm.sh`. The command is the WASM core's `cli` method; the Node host
+around it performs every file, process, network and cloud effect the core asks
+for ([host protocol](host-protocol.md)). ref:DEC-haskell-wasm-core
+
 ```text
 ironframe [-f <manifest>] validate
 ironframe schema [manifest | attestation]

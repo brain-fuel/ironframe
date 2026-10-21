@@ -1,0 +1,30 @@
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync:
+  digest: sha256:fed5d26408f90369
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/data/ConnectionString:
+  digest: sha256:cdc40c919e0fb556
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/defaultStrategy:
+  digest: sha256:fc55f855133755ad
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/describeTarget:
+  digest: sha256:968c76781068b606
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/settingsJson:
+  digest: sha256:d8cfe9f4d94f4282
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/syncAws:
+  digest: sha256:2cb667522c27421a
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/syncAzure:
+  digest: sha256:17368fa54daef31e
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/syncEnvFile:
+  digest: sha256:18e9bb08c03bf01f
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/function/syncGcp:
+  digest: sha256:bbb7f14ce955ffc8
+  verdict: pending
+decision/haskell/src/Ironframe/Sync.hs/module/Ironframe.Sync/newtype/CloudClients:
+  digest: sha256:cb4396cd56ec53f1
+  verdict: pending

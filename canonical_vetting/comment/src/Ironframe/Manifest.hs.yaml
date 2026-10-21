@@ -1,0 +1,72 @@
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest:
+  digest: sha256:69268270af9c043e
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/data/ManifestError:
+  digest: sha256:496cc1293fe39564
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/data/Problem:
+  digest: sha256:d0922220d5ae0c14
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/adminUrlOn:
+  digest: sha256:d068149d80cd2896
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/conformanceLevel:
+  digest: sha256:6eb4ddab59206184
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/credentialSchemes:
+  digest: sha256:f936500fe67ab121
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/defaultManifest:
+  digest: sha256:194c98dbc03b7d36
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/environmentOf:
+  digest: sha256:784ae262f0d63206
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/inputsOfModule:
+  digest: sha256:f5ef72b2e2dac4b4
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/isName:
+  digest: sha256:4f8bd0fe02f2f0af
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/loadManifest:
+  digest: sha256:6bdcdfc790f6290f
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/manifestProblems:
+  digest: sha256:53e5f63c25ea9fca
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/parseManifest:
+  digest: sha256:edb5e855308a675a
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/parseReport:
+  digest: sha256:8b65607f04a8cad4
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/placeholderNames:
+  digest: sha256:869e2c44833d6bfe
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/placeholders:
+  digest: sha256:6b876dd609379148
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/readReports:
+  digest: sha256:1baafa33a98f07a3
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/reportMatches:
+  digest: sha256:1c0212c678d198d1
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/reportProblems:
+  digest: sha256:58dac6ef1f508430
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/runtimeModule:
+  digest: sha256:c8aea79ecfef079c
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/supportedVersion:
+  digest: sha256:b6d0238259084f71
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/twinConfigJson:
+  digest: sha256:eeb772ecc020fed8
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/twinConfigVariable:
+  digest: sha256:02592585206796ed
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest.hs/module/Ironframe.Manifest/function/unrated:
+  digest: sha256:2a6a0d838b6d2bc5
+  verdict: pending

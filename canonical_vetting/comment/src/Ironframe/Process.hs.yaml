@@ -1,0 +1,6 @@
+decision/haskell/src/Ironframe/Process.hs/module/Ironframe.Process:
+  digest: sha256:dac848fdd4685f1b
+  verdict: pending
+decision/haskell/src/Ironframe/Process.hs/module/Ironframe.Process/function/lastLine:
+  digest: sha256:72487f6c56757f57
+  verdict: pending

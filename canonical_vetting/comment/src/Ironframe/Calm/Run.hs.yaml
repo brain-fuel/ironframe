@@ -1,0 +1,39 @@
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run:
+  digest: sha256:d7df1d46ba81f3a9
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/applicationIn:
+  digest: sha256:a938130e150760b2
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/begin:
+  digest: sha256:0d31da7a12086d67
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/commitOf:
+  digest: sha256:4b73224828a95c99
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/complete:
+  digest: sha256:1c6ba47ffa2e1d8a
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/defaultDecorators:
+  digest: sha256:45be56c54d20652b
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/loadAndResolve:
+  digest: sha256:0b4ef2055759c0f3
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/runAttestationPath:
+  digest: sha256:44b6c0b7a412851b
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/runCommand:
+  digest: sha256:62aea5d734aef94f
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/runManaged:
+  digest: sha256:5f7e2ee3790e188a
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/settingsOf:
+  digest: sha256:75e210258f470ba6
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/writeRun:
+  digest: sha256:a8cdbe09d8347552
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Run.hs/module/Ironframe.Calm.Run/function/writeTopology:
+  digest: sha256:fe82169fbef31bb0
+  verdict: pending

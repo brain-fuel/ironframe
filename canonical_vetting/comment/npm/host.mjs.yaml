@@ -1,0 +1,30 @@
+decision/javascript/npm/host.mjs/function/createHost:
+  digest: sha256:f8d276c2a8ef1b86
+  verdict: pending
+decision/javascript/npm/host.mjs/function/createHost/function/perform:
+  digest: sha256:ec6c0a37ebde8aae
+  verdict: pending
+decision/javascript/npm/host.mjs/function/defaultClouds:
+  digest: sha256:590a8b9821a9696e
+  verdict: pending
+decision/javascript/npm/host.mjs/function/httpReason:
+  digest: sha256:d171f272dc67cc70
+  verdict: pending
+decision/javascript/npm/host.mjs/function/join:
+  digest: sha256:61f87f9725f48836
+  verdict: pending
+decision/javascript/npm/host.mjs/function/tcpReachable:
+  digest: sha256:cf643a6185d6bfb9
+  verdict: pending
+decision/javascript/npm/host.mjs/function/temporaryPath:
+  digest: sha256:382f4ff256ce5260
+  verdict: pending
+decision/javascript/npm/host.mjs/function/write:
+  digest: sha256:b0ddc84191ff4468
+  verdict: pending
+decision/javascript/npm/host.mjs/variable/cloudCalls:
+  digest: sha256:8667b76cbcde9681
+  verdict: pending
+decision/javascript/npm/host.mjs/variable/strict:
+  digest: sha256:999941a5494fd4fa
+  verdict: pending

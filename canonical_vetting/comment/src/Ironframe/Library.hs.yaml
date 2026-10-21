@@ -1,0 +1,9 @@
+decision/haskell/src/Ironframe/Library.hs/module/Ironframe.Library:
+  digest: sha256:8cbecf4b2b6cb746
+  verdict: pending
+decision/haskell/src/Ironframe/Library.hs/module/Ironframe.Library/function/corpusVersions:
+  digest: sha256:77edfb8c0d811360
+  verdict: pending
+decision/haskell/src/Ironframe/Library.hs/module/Ironframe.Library/function/schemaNamed:
+  digest: sha256:23ad6264a03b88b2
+  verdict: pending

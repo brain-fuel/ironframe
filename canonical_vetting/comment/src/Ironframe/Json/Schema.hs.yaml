@@ -1,0 +1,45 @@
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema:
+  digest: sha256:54ea6242c0b5535c
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/data/Schema:
+  digest: sha256:32ec99c213e5448f
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/data/SchemaError:
+  digest: sha256:8ecccc7923f882bb
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/compile:
+  digest: sha256:fc31c7dfd036da99
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/count:
+  digest: sha256:d28dcd020124b671
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/equal:
+  digest: sha256:9db4db99144b93c4
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/isValid:
+  digest: sha256:6ef5a1be17a71312
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/joinOr:
+  digest: sha256:474a40ef0ccc3e75
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/node:
+  digest: sha256:5cde2f745d7d5ee1
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/options:
+  digest: sha256:04cebb874ec94458
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/pointer:
+  digest: sha256:6a446ac21fb140c8
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/resolveRef:
+  digest: sha256:5be537d9df2d2af8
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/resolveUri:
+  digest: sha256:da6b0e0ee079170a
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/unsupported:
+  digest: sha256:78c9d8b99f31bb12
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Schema.hs/module/Ironframe.Json.Schema/function/validate:
+  digest: sha256:2871c2904a34f4b3
+  verdict: pending

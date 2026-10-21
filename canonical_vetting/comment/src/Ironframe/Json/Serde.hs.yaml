@@ -1,0 +1,102 @@
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde:
+  digest: sha256:ba2daee1ab1167d4
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/data/Fields:
+  digest: sha256:86de1f50ba4d4161
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/bool:
+  digest: sha256:a336c3aa1da8c37e
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/decodeWith:
+  digest: sha256:04e9a5ee16e00f15
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/defaulted:
+  digest: sha256:52e16757c7d88e77
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/enumAccess:
+  digest: sha256:e4d6655777fcdc4c
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/externallyTagged:
+  digest: sha256:6822558ee6d01bc0
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/f64:
+  digest: sha256:71134e5df0e268b3
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/field:
+  digest: sha256:2a7070b3aee079c1
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/integer:
+  digest: sha256:dc8dd39ffb1a0aa8
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/invalidLength:
+  digest: sha256:1efb73d51da43eac
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/invalidType:
+  digest: sha256:b12c3a339231d178
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/invalidValue:
+  digest: sha256:cba01658ad9f868d
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/mapDecoder:
+  digest: sha256:c3f9db20851d9fd5
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/oneOf:
+  digest: sha256:4403f777c76782e0
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/option:
+  digest: sha256:6961be3b7693fb88
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/optional:
+  digest: sha256:386db0f998c473be
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/optionalNoDefault:
+  digest: sha256:f4c57a9490ef1d5d
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/pathBuf:
+  digest: sha256:39457eb7999e1f71
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/required:
+  digest: sha256:f2cfef9f2a21436f
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/string:
+  digest: sha256:c173f8b257e94dc2
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/struct:
+  digest: sha256:57f0fb0b8a37780d
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/textMap:
+  digest: sha256:f612f614a434a0df
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/tick:
+  digest: sha256:624571d32a925d12
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/u8:
+  digest: sha256:a3e01ba220587678
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/unexpected:
+  digest: sha256:78c9c6be8f2f8847
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/unitValue:
+  digest: sha256:a967ca0974f3daf1
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/unitVariants:
+  digest: sha256:c28cc647259cb277
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/unknownField:
+  digest: sha256:722e1749ae167986
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/unknownVariant:
+  digest: sha256:67a6bae81f3e97a3
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/untagged:
+  digest: sha256:bd14fedfb3ca4b32
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/value:
+  digest: sha256:7e0871bd8c3a5c07
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/function/vec:
+  digest: sha256:f13705f957f93f3b
+  verdict: pending
+decision/haskell/src/Ironframe/Json/Serde.hs/module/Ironframe.Json.Serde/newtype/Decoder:
+  digest: sha256:63d1c360a62991e1
+  verdict: pending

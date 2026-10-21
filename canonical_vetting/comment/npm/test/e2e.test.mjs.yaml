@@ -1,0 +1,12 @@
+decision/javascript/npm/test/e2e.test.mjs/function/copyExample:
+  digest: sha256:d2511363c19593ab
+  verdict: pending
+decision/javascript/npm/test/e2e.test.mjs/function/httpGet:
+  digest: sha256:281991f4832c70d6
+  verdict: pending
+decision/javascript/npm/test/e2e.test.mjs/function/ironframe:
+  digest: sha256:0da4e51fbad7ab38
+  verdict: pending
+decision/javascript/npm/test/e2e.test.mjs/function/runApp:
+  digest: sha256:286dfcb01d6b5e29
+  verdict: pending

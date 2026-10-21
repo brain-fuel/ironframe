@@ -5,7 +5,7 @@ title: Configuration service
 ---
 # Configuration service
 
-`ironframe-config-service` is a small HTTP server that serves each
+The configuration service is a small HTTP server that serves each
 environment's connection settings, the same settings Ironframe writes to env
 files and syncs into the clouds. It reads a settings document on every
 request, so the settings a new `ironframe up` writes are served at once, and
@@ -29,8 +29,10 @@ Build the image first, from the repository root:
 make config-service-image
 ```
 
-It is a static binary in a scratch image of about 2.4 MB. Run on its own, it
-reads two environment variables:
+The image runs `npm/config-service.mjs`, the npm package's Node host, on
+`node:22-alpine`. The host only listens and reads the settings document; every
+answer comes from the same WASM core as the `ironframe` command. The image
+needs no cloud SDK. Run on its own, it reads two environment variables:
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -64,3 +66,14 @@ exists. An unreadable settings document is a 503.
 `ironframe up <environment>` writes the environment's document to
 `.ironframe/<environment>/settings.json`, and the compose file mounts it read
 only into the service's container.
+
+## Running it without a container
+
+From a checkout, after `tools/wasm.sh`:
+
+```sh
+IRONFRAME_SETTINGS=.ironframe/local/settings.json IRONFRAME_LISTEN=127.0.0.1:8700 \
+  node npm/config-service.mjs
+```
+
+It stops on `SIGINT` or `SIGTERM`, and exits 2 when it cannot listen.

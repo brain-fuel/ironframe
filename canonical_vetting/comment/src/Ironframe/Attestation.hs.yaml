@@ -1,0 +1,21 @@
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation:
+  digest: sha256:2a5d47a7280332d0
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/formatVersion:
+  digest: sha256:3b9d80c619ba824e
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/formatWord:
+  digest: sha256:5bc6cff0a8e01fbc
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/fromJson:
+  digest: sha256:58c4e36dbc0db865
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/isHistoryDigest:
+  digest: sha256:59d467efb28b00d5
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/toJson:
+  digest: sha256:4ee3f6ea079a61db
+  verdict: pending
+decision/haskell/src/Ironframe/Attestation.hs/module/Ironframe.Attestation/function/validate:
+  digest: sha256:08f7f37a4f8c4447
+  verdict: pending

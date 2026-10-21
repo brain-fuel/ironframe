@@ -23,6 +23,8 @@ environment, the real dependency or a LawTwin twin. ref:DEC-wiring-in-ironframe
   Manager, Azure App Configuration and env files. ref:DEC-config-service
   ref:DEC-config-sync
 - The environment attestation, version 1. ref:DEC-attestation-format
+- A pure Haskell core in WebAssembly with a thin Node host, shipped as the npm
+  package `ironframe`. ref:DEC-haskell-wasm-core ref:DEC-host-protocol
 
 ## 0.1.x: LawTwin's twins
 

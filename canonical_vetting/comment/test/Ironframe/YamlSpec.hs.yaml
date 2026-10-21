@@ -1,0 +1,9 @@
+decision/haskell/test/Ironframe/YamlSpec.hs/module/Ironframe.YamlSpec:
+  digest: sha256:847434e621a8bbfa
+  verdict: pending
+decision/haskell/test/Ironframe/YamlSpec.hs/module/Ironframe.YamlSpec/function/label:
+  digest: sha256:3e0cb2bbb53fc71c
+  verdict: pending
+decision/haskell/test/Ironframe/YamlSpec.hs/module/Ironframe.YamlSpec/function/loadCases:
+  digest: sha256:b612c0c021b9d884
+  verdict: pending

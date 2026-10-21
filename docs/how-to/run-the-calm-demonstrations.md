@@ -21,7 +21,9 @@ service's alone; environments `twin`, `real`, `mixed` and `staging`.
 
 ## What you need
 
-podman with a compose provider, Go 1.25 or later, npm, and these images:
+Ironframe (`npm i -g ironframe`, or `node npm/bin/ironframe.mjs` from a
+checkout), podman with a compose provider, Go 1.25 or later, Node 22 or later
+with npm, and these images:
 `lawtwin/kafka:0.1.0` and `lawtwin/http:0.1.0` (built in the lawtwin
 repository with `make image image-http`), `apache/kafka:4.1.0`, and
 `localhost/lawtwin/petstore3-native:latest` (the Swagger Petstore built for
@@ -40,10 +42,9 @@ asserting each.
 ## Step by step
 
 ```sh
-cargo build
 cd examples/calm-shop/app && npm ci && npx lawspec generate && go build -o shop-bin ./cmd/shop && cd ..
 cd architecture
-I=../../../target/debug/ironframe
+I=ironframe    # or, from a checkout: I="node ../../../npm/bin/ironframe.mjs"
 $I -a shop.calm.json validate
 $I -a shop.calm.json up twin
 $I -a shop.calm.json run -e twin --app adoptions-service --dir ../app -- \

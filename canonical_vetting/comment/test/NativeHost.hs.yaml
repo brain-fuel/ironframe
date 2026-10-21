@@ -1,0 +1,12 @@
+decision/haskell/test/NativeHost.hs/module/NativeHost:
+  digest: sha256:0454cd9d00bb2d81
+  verdict: pending
+decision/haskell/test/NativeHost.hs/module/NativeHost/data/Captured:
+  digest: sha256:1d01eefb0aa50542
+  verdict: pending
+decision/haskell/test/NativeHost.hs/module/NativeHost/function/runNative:
+  digest: sha256:4b6b55b32e0dc463
+  verdict: pending
+decision/haskell/test/NativeHost.hs/module/NativeHost/function/rustMessage:
+  digest: sha256:c944223fba7fe674
+  verdict: pending

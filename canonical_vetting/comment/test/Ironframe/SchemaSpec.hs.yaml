@@ -1,0 +1,9 @@
+decision/haskell/test/Ironframe/SchemaSpec.hs/module/Ironframe.SchemaSpec:
+  digest: sha256:06061e9167467a09
+  verdict: pending
+decision/haskell/test/Ironframe/SchemaSpec.hs/module/Ironframe.SchemaSpec/function/readJson:
+  digest: sha256:bd6c5c04cda8c329
+  verdict: pending
+decision/haskell/test/Ironframe/SchemaSpec.hs/module/Ironframe.SchemaSpec/function/schemas:
+  digest: sha256:c40b1e0466b82299
+  verdict: pending

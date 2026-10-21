@@ -1,0 +1,18 @@
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve:
+  digest: sha256:46afe6ac1574a285
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve/data/Resolution:
+  digest: sha256:b9743841520e6c7a
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve/function/compatibilityProblems:
+  digest: sha256:7dc603dd080b0e9c
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve/function/isAbilityIdentity:
+  digest: sha256:ac55d97e7c40d8c4
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve/function/resolveCalm:
+  digest: sha256:d986743f65976fb7
+  verdict: pending
+decision/haskell/src/Ironframe/Calm/Resolve.hs/module/Ironframe.Calm.Resolve/function/topologyDigest:
+  digest: sha256:cbfb9800ecff065c
+  verdict: pending

@@ -1,0 +1,15 @@
+decision/haskell/src/Ironframe/Corpus.hs/module/Ironframe.Corpus:
+  digest: sha256:00fc68770df2bea5
+  verdict: pending
+decision/haskell/src/Ironframe/Corpus.hs/module/Ironframe.Corpus/function/check:
+  digest: sha256:4aa67c520204b712
+  verdict: pending
+decision/haskell/src/Ironframe/Corpus.hs/module/Ironframe.Corpus/function/deliberateDifferences:
+  digest: sha256:0c0ec6d9c54d20d1
+  verdict: pending
+decision/haskell/src/Ironframe/Corpus.hs/module/Ironframe.Corpus/function/normalise:
+  digest: sha256:99399486acd6fc0d
+  verdict: pending
+decision/haskell/src/Ironframe/Corpus.hs/module/Ironframe.Corpus/function/parts:
+  digest: sha256:d09039c69d3be5a2
+  verdict: pending

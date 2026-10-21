@@ -1,0 +1,21 @@
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust:
+  digest: sha256:45b6b250da06535e
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/debugChar:
+  digest: sha256:57b65b69000cbd1c
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/debugStr:
+  digest: sha256:0a25dbda246ae42b
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/escapeIn:
+  digest: sha256:7d35eecca47bdc26
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/escapeRanges:
+  digest: sha256:015ba3bdbd0acb6d
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/escapeTable:
+  digest: sha256:79c47d02da1d5927
+  verdict: pending
+decision/haskell/src/Ironframe/Rust.hs/module/Ironframe.Rust/function/escapedByDebug:
+  digest: sha256:ac5ac1aaac081349
+  verdict: pending

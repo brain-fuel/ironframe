@@ -1,5 +1,5 @@
 version: 0.1.0
-canon: 0.2.0
+canon: 0.2.2
 registry: canonical_refs.yaml
 decisions: canonical_decisions.yaml
 exemptions: canonical_exemptions.yaml
@@ -9,6 +9,21 @@ ignore:
   - .canon-cache/
   - .ironframe/
   - target/
+  # Build output: stack's, the WASM build's cabal, and npm's installed packages.
+  - .stack-work/
+  - dist-newstyle/
+  - npm/node_modules/
+  # Generated: the WASM core, its JSFFI glue (tools/wasm.sh) and the embedded
+  # schemas (ironframe-dev generate); their sources are checked instead.
+  - npm/core.wasm
+  - npm/core_jsffi.js
+  - src/Ironframe/Embedded.hs
+  # Recorded data: the parity corpus captured from the Rust implementation.
+  - corpus/
+  # canon 0.2.2 leaves a field's Haddock written after the comma, `, -- | doc`
+  # before the field, attached to no unit (DEC-canon-haskell-field-haddock).
+  # The code is valid Haskell and stays as written. Revisit by 0.2.0.
+  - src/Ironframe/Manifest/Types.hs
   - "**/.terraform/"
   - "**/.terraform.lock.hcl"
   - "*.md"
@@ -29,32 +44,13 @@ languages:
     lexer: .canon/grammars/hcl/canonically_commented/HCLLexer.g4
     parser: .canon/grammars/hcl/canonically_commented/HCLParser.g4
     start: configFile
-  rust:
-    extensions: [.rs]
-    lexer: .canon/grammars/rust/RustLexer.g4
-    parser: .canon/grammars/rust/RustParser.g4
-    start: crate
-    comments:
-      line: "//"
-      blockOpen: "/*"
-      blockClose: "*/"
-      outerDoc: ["///", "/**"]
-      innerDoc: ["//!", "/*!"]
-      strings: ["\""]
-    units:
-      - {rule: function_, kind: function, name: {rule: identifier}, required: false}
-      - {rule: structStruct, kind: struct, name: {rule: identifier}, required: false}
-      - {rule: tupleStruct, kind: struct, name: {rule: identifier}, required: false}
-      - {rule: enumeration, kind: enum, name: {rule: identifier}, required: false}
-      - {rule: union_, kind: union, name: {rule: identifier}, required: false}
-      - {rule: trait_, kind: trait, name: {rule: identifier}, required: false}
-      - {rule: macroRulesDefinition, kind: macro, name: {rule: identifier}, required: false}
-      - {rule: typeAlias, kind: type, name: {rule: identifier}, required: false}
-      - {rule: constantItem, kind: const, name: {rule: identifier}, required: false}
-      - {rule: staticItem, kind: static, name: {rule: identifier}, required: false}
-      - {rule: inherentImpl, kind: impl, name: {rule: type_}, required: false}
-      - {rule: traitImpl, kind: impl, name: {rule: traitImplTarget}, required: false}
-      - {rule: module, kind: module, name: {rule: identifier}, required: false}
-      - {rule: enumItem, kind: variant, name: {rule: identifier}, required: false}
-      - {rule: structField, kind: field, name: {rule: identifier}, required: false}
-      - {rule: tupleField, kind: field, name: {ordinal: true}, required: false}
+  haskell:
+    extensions: [.hs]
+    lexer: .canon/grammars/haskell/canonically_commented/HaskellLexer.g4
+    parser: .canon/grammars/haskell/canonically_commented/HaskellParser.g4
+    start: module
+  javascript:
+    extensions: [.js, .mjs, .cjs]
+    lexer: .canon/grammars/javascript/canonically_commented/JavaScriptLexer.g4
+    parser: .canon/grammars/javascript/canonically_commented/JavaScriptParser.g4
+    start: program

@@ -7,6 +7,9 @@ registry/REQ-attestation-round-trip:
 registry/REQ-attestation-stand-in-run:
   digest: sha256:afa437911237b8ad
   verdict: pending
+registry/REQ-calm-end-to-end:
+  digest: sha256:8d57c92e26b5618b
+  verdict: pending
 registry/REQ-cloud-root-module:
   digest: sha256:8b7115db1fa6a88c
   verdict: pending
@@ -46,17 +49,23 @@ registry/REQ-twin-start-setup:
 registry/aws-appconfig:
   digest: sha256:e305c98303349866
   verdict: pending
-registry/aws-sdk-rust:
-  digest: sha256:fb9e45715975ca2d
+registry/aws-sdk-js-appconfig:
+  digest: sha256:09bf2b68630c3ed6
   verdict: pending
 registry/azure-app-configuration:
   digest: sha256:240287a178eb2492
   verdict: pending
-registry/azure-appconfig-hmac:
-  digest: sha256:66b484332a011b7a
+registry/azure-app-configuration-js:
+  digest: sha256:4470e651d0c0de8c
   verdict: pending
-registry/azure-appconfig-rest:
-  digest: sha256:da718a8f16d8c9d9
+registry/calm-1-2:
+  digest: sha256:9137ecb23669d501
+  verdict: pending
+registry/calm-cli:
+  digest: sha256:00f2f9ccfe9c5129
+  verdict: pending
+registry/calm-decorators:
+  digest: sha256:2812f0386c66caf0
   verdict: pending
 registry/canon:
   digest: sha256:a152c76a874314e1
@@ -85,11 +94,20 @@ registry/gce-container-optimized-os:
 registry/gcp-parameter-manager:
   digest: sha256:89144ad80a837d5d
   verdict: pending
-registry/google-cloud-rust:
-  digest: sha256:23fba4a34f3f48e4
+registry/ghc-wasm-jsffi:
+  digest: sha256:360d8cead34b7b0b
+  verdict: pending
+registry/ghc-wasm-meta:
+  digest: sha256:f404fcd3646307c3
+  verdict: pending
+registry/google-cloud-parametermanager-node:
+  digest: sha256:fa1b915e2141a58a
   verdict: pending
 registry/json-schema-2020-12:
   digest: sha256:3ae3462411001465
+  verdict: pending
+registry/jsonschema-rs:
+  digest: sha256:eb46f80eb56df3e2
   verdict: pending
 registry/kafka-protocol:
   digest: sha256:7fca8c0c1d4c5d14
@@ -100,11 +118,20 @@ registry/keep-a-changelog:
 registry/lawspec:
   digest: sha256:fb38dbf32517f321
   verdict: pending
+registry/lawspec-pre-1-0-path:
+  digest: sha256:a7c4e3e17de1fadc
+  verdict: pending
 registry/lawtwin:
   digest: sha256:b598a104198678b7
   verdict: pending
 registry/lawtwin-control-plane:
   digest: sha256:f55af14e6aac34aa
+  verdict: pending
+registry/node-22:
+  digest: sha256:ddce1e26de388a10
+  verdict: pending
+registry/node-wasi:
+  digest: sha256:125b739a502c2d0a
   verdict: pending
 registry/opentofu:
   digest: sha256:52f9e3fb260480db
@@ -120,4 +147,16 @@ registry/rfc3339:
   verdict: pending
 registry/semver-2:
   digest: sha256:7ef7fa24c6809d32
+  verdict: pending
+registry/semver-cargo:
+  digest: sha256:cbb794362763924f
+  verdict: pending
+registry/serde-yaml:
+  digest: sha256:82fdce516ad93849
+  verdict: pending
+registry/sha-package:
+  digest: sha256:de5f82b07ac75dd2
+  verdict: pending
+registry/unsafe-libyaml:
+  digest: sha256:92eb5e6d74f8822e
   verdict: pending

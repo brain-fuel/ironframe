@@ -1,0 +1,54 @@
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin:
+  digest: sha256:2c32f50777e3b9ff
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/data/TwinRecord:
+  digest: sha256:6c0a904e52fe86ef
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/clearFaults:
+  digest: sha256:1edf1cfdfca40cac
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/cpRequest:
+  digest: sha256:62f1edc20b193a63
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/describe:
+  digest: sha256:9889faec2d1aae4e
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/force:
+  digest: sha256:0cdff4d0ac696455
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/history:
+  digest: sha256:f70c976d7350a56c
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/historyDigest:
+  digest: sha256:7b90bccf284b4ad3
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/observe:
+  digest: sha256:caf147ebda53bd12
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/parseFault:
+  digest: sha256:cdfb52f4f3701683
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/pretty:
+  digest: sha256:1e19c45790674c65
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/raise:
+  digest: sha256:dcf8884d6ba458a9
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/replay:
+  digest: sha256:9bf7fa6dacbcdadc
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/replyOk:
+  digest: sha256:c7e4282d1726c47d
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/setUp:
+  digest: sha256:92c7846715de430a
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/twinExitCode:
+  digest: sha256:71e5c8341040fd14
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/function/waitHealthy:
+  digest: sha256:2bf10872a16f6e05
+  verdict: pending
+decision/haskell/src/Ironframe/Twin.hs/module/Ironframe.Twin/newtype/ControlPlane:
+  digest: sha256:1a3edad714b156ec
+  verdict: pending

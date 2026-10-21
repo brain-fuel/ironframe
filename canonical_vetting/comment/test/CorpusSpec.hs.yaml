@@ -1,0 +1,6 @@
+decision/haskell/test/CorpusSpec.hs/module/CorpusSpec:
+  digest: sha256:c9ee970871afa7bf
+  verdict: pending
+decision/haskell/test/CorpusSpec.hs/module/CorpusSpec/function/fixtures:
+  digest: sha256:e560049426dd2ec1
+  verdict: pending

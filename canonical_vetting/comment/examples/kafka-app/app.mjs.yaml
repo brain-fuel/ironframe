@@ -1,0 +1,51 @@
+decision/javascript/examples/kafka-app/app.mjs/class/Failure:
+  digest: sha256:2bb9d9b3ebd4abc2
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/class/Fields:
+  digest: sha256:37109d37007d6d16
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/class/Reader:
+  digest: sha256:d05f6bd825f039ee
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/apiVersionsRequest:
+  digest: sha256:303c0caee6c0925c
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/bootstrapServers:
+  digest: sha256:09691f653d8a30a2
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/connect:
+  digest: sha256:cb002d9cd6bb6714
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/metadataRequest:
+  digest: sha256:9f77b6c7bf4bcb0f
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/probe:
+  digest: sha256:ab6b20b4e49722de
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/readMetadata:
+  digest: sha256:ffed84eb523db4d9
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/roundTrip:
+  digest: sha256:d8a7ebd26fbec25b
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/function/splitServer:
+  digest: sha256:13302eb62c80575f
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/CLIENT:
+  digest: sha256:721d8c8ba4ca733d
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/ERRNO_TEXT:
+  digest: sha256:1da74023ca708666
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/READ_TIMEOUT_MS:
+  digest: sha256:b5d94a5bcf544937
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/SETTING:
+  digest: sha256:20e3f98209d49985
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/TOPIC:
+  digest: sha256:f03e6189d0d23ba6
+  verdict: pending
+decision/javascript/examples/kafka-app/app.mjs/variable/WS:
+  digest: sha256:cc7ba9829eaeb9e0
+  verdict: pending

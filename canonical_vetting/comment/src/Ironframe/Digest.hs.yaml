@@ -1,0 +1,12 @@
+decision/haskell/src/Ironframe/Digest.hs/module/Ironframe.Digest:
+  digest: sha256:19f092c095811dcf
+  verdict: pending
+decision/haskell/src/Ironframe/Digest.hs/module/Ironframe.Digest/function/digestOf:
+  digest: sha256:9445cf48d046b54d
+  verdict: pending
+decision/haskell/src/Ironframe/Digest.hs/module/Ironframe.Digest/function/sha256Hex:
+  digest: sha256:aff162e1fc993cbd
+  verdict: pending
+decision/haskell/src/Ironframe/Digest.hs/module/Ironframe.Digest/function/versionId:
+  digest: sha256:9d00b4b35def5e5c
+  verdict: pending
