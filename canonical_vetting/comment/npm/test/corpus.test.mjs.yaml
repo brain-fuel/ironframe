@@ -1,3 +1,6 @@
+decision/javascript/npm/test/corpus.test.mjs/function/checkFile:
+  digest: sha256:1275b18a51cdcea0
+  verdict: pending
 decision/javascript/npm/test/corpus.test.mjs/function/fixtures:
   digest: sha256:4795e16648819b2e
   verdict: pending

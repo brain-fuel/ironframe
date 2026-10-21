@@ -76,8 +76,10 @@ function sha256(text) {
   return `sha256:${createHash("sha256").update(text).digest("hex")}`;
 }
 
-// Brings both examples up against LawTwin's images, runs each app, drives a
-// twin and attests. ref:REQ-end-to-end-with-twins ref:REQ-example-reads-config
+/**
+ * Brings both examples up against LawTwin's images, runs each app, drives a
+ * twin and attests. ref:REQ-end-to-end-with-twins ref:REQ-example-reads-config
+ */
 async function upRunsTheAppsAgainstTwins() {
   const kafka = copyExample("kafka-app");
   const petstore = copyExample("petstore-app");

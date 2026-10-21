@@ -190,7 +190,7 @@ function calmOnPath() {
   return spawnSync("sh", ["-c", "command -v calm"], { encoding: "utf8" }).status === 0;
 }
 
-// The whole CALM chain, environment by environment. ref:REQ-calm-end-to-end
+/** The whole CALM chain, environment by environment. ref:REQ-calm-end-to-end */
 async function theChainRunsInEveryBinding() {
   const dir = mkdtempSync(join(tmpdir(), "ironframe-e2e-calm-"));
   copyTree(join(repo, "examples/calm-shop"), dir);

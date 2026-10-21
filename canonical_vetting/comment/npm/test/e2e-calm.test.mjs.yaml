@@ -10,6 +10,9 @@ decision/javascript/npm/test/e2e-calm.test.mjs/function/lawsDigest:
 decision/javascript/npm/test/e2e-calm.test.mjs/function/problems:
   digest: sha256:053aed19a7a7d2b7
   verdict: pending
+decision/javascript/npm/test/e2e-calm.test.mjs/function/theChainRunsInEveryBinding:
+  digest: sha256:5ba6d4b27f1922bc
+  verdict: pending
 decision/javascript/npm/test/e2e-calm.test.mjs/function/waitForHttp:
   digest: sha256:ff656c9087936792
   verdict: pending

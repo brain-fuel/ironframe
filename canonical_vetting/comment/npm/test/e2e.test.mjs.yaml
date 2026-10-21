@@ -10,3 +10,6 @@ decision/javascript/npm/test/e2e.test.mjs/function/ironframe:
 decision/javascript/npm/test/e2e.test.mjs/function/runApp:
   digest: sha256:286dfcb01d6b5e29
   verdict: pending
+decision/javascript/npm/test/e2e.test.mjs/function/upRunsTheAppsAgainstTwins:
+  digest: sha256:1f5b5f7527f958d0
+  verdict: pending
