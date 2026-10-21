@@ -12,16 +12,15 @@
 // lawtwin/http:0.1.0, apache/kafka:4.1.0 and lawtwin/petstore3-native:latest,
 // so it runs only with IRONFRAME_E2E=1, as `make e2e-calm` sets it.
 //
-// The LawSpec assertions match the LawSpec release the example pins
-// (examples/calm-shop/app/package.json: 0.26.0), which reports a law's wiring
-// as plannedAgainst and plannedEnvironmentRun. LawSpec's main branch consumes
-// completed-run attestations and reports against and environmentOutcome
-// instead; when the example's pin moves to that release, the two marked
-// assertions below change with it. ref:REQ-calm-end-to-end
+// IRONFRAME_LAWSPEC_PACKAGE may name a local npm archive when checking the
+// integration against an unpublished LawSpec build. That build must consume
+// completed-run attestations. IRONFRAME_E2E_ARTIFACTS retains the evidence and
+// exports without retaining installed dependencies. ref:REQ-calm-end-to-end
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { connect } from "node:net";
 import { arch, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -30,6 +29,13 @@ import { createIronframe } from "../api.mjs";
 
 const repo = fileURLToPath(new URL("../../", import.meta.url));
 const bin = join(repo, "npm/bin/ironframe.mjs");
+const artifacts = process.env.IRONFRAME_E2E_ARTIFACTS && resolve(process.env.IRONFRAME_E2E_ARTIFACTS);
+/** Keeps reviewable outputs when an artifact directory is requested. */
+function retain(name, value) {
+  if (!artifacts) return;
+  mkdirSync(artifacts, { recursive: true });
+  writeFileSync(join(artifacts, name), typeof value === "string" ? value : JSON.stringify(value, null, 2) + "\n");
+}
 const skip = process.env.IRONFRAME_E2E === "1" ? false : "set IRONFRAME_E2E=1 (make e2e-calm) to run against podman";
 
 /** Copies a directory's files, skipping generated and installed ones. */
@@ -68,10 +74,7 @@ function attestationPath(output) {
 
 /** A digest of the shop's laws, which no binding may change. */
 function lawsDigest(dir) {
-  const bytes = readFileSync(join(dir, "app/spec/shop.lawspec"));
-  let h = 0n;
-  for (const b of bytes) h = (h * 31n + BigInt(b)) & 0xffffffffffffffffn;
-  return h.toString(16);
+  return createHash("sha256").update(readFileSync(join(dir, "app/spec/shop.lawspec"))).digest("hex");
 }
 
 function exportedSettings(dir, environment, app) {
@@ -118,25 +121,48 @@ function runLaws(dir, environment) {
     assert.ok(record.completed.reached);
     assert.equal(record.completed.history_digest !== undefined, kind === "stand-in");
   }
-  // LawSpec 0.26 reads the completed attestation. With the pin moved to a
-  // release that consumes completed runs, plannedAgainst becomes against and
-  // plannedEnvironmentRun becomes environmentRun with environmentOutcome.
-  const evidence = exec("npx", ["--no-install", "lawspec", "evidence", "--attestation", path, "--json"], join(dir, "app"));
-  assert.equal(evidence.status, 0);
-  const obligations = JSON.parse(evidence.stdout);
-  const native = obligations.filter((o) => o.stage === "law" && Array.isArray(o.plannedAgainst) && o.plannedAgainst.length > 0);
-  assert.equal(native.length, 4, "every law relies on a native handler");
-  for (const obligation of native) {
-    assert.equal(obligation.status, "property-tested");
-    assert.equal(obligation.plannedEnvironmentRun.id, attestation.run.id);
-    for (const dependency of obligation.plannedAgainst) {
-      const [, kind] = expectedKinds(environment).find(([ability]) => dependency.dependency === ability);
-      assert.equal(dependency.kind, kind === "real" ? "real" : "stand-in");
+  retain(`${environment}-laws-attestation.json`, attestation);
+  /** Checks execution linkage separately from the native property result. */
+  function checkEvidence(obligations) {
+    const native = obligations.filter((o) => o.stage === "law" && Array.isArray(o.against) && o.against.length > 0);
+    assert.equal(native.length, 4, "every native law has completed-run evidence");
+    for (const obligation of native) {
+      assert.equal(obligation.status, "property-tested");
+      assert.equal(obligation.plannedAgainst, undefined);
+      assert.equal(obligation.environmentRun.id, attestation.run.id);
+      assert.equal(obligation.environmentRun.execution.status, "completed");
+      assert.equal(obligation.environmentRun.execution.exitCode, 0);
+      assert.equal(obligation.environmentOutcome, "passed");
+      for (const dependency of obligation.against) {
+        const [, kind] = expectedKinds(environment).find(([ability]) => dependency.dependency === ability);
+        const record = attestation.dependencies.find((d) => d.name === dependency.dependency);
+        assert.equal(dependency.kind, kind);
+        assert.equal(dependency.ranAgainst.provider, record.implementation.kind);
+        if (kind === "stand-in") {
+          assert.equal(dependency.ranAgainst.historyDigest, record.completed.history_digest);
+          assert.equal(dependency.ranAgainst.historyFrom, "completed");
+        }
+      }
     }
   }
-  // Without the file, LawSpec links each law to the run it last passed in.
-  const linked = JSON.parse(exec("npx", ["--no-install", "lawspec", "evidence", "--json"], join(dir, "app")).stdout);
-  assert.ok(linked.filter((o) => o.stage === "law" && Array.isArray(o.against)).every((o) => o.environmentRun.id === attestation.run.id));
+  const evidence = exec("npx", ["--no-install", "lawspec", "evidence", "--attestation", path, "--json"], join(dir, "app"));
+  assert.equal(evidence.status, 0);
+  retain(`${environment}-evidence.json`, evidence.stdout);
+  checkEvidence(JSON.parse(evidence.stdout));
+  // Without the completed file, the cache still holds the running snapshot
+  // captured by the child. Keep that wiring planned, with no completion claim.
+  const linked = exec("npx", ["--no-install", "lawspec", "evidence", "--json"], join(dir, "app"));
+  assert.equal(linked.status, 0);
+  retain(`${environment}-linked-evidence.json`, linked.stdout);
+  const planned = JSON.parse(linked.stdout).filter((o) => o.stage === "law" && o.plannedAgainst?.length);
+  assert.equal(planned.length, 4, "all native laws retain their running snapshot");
+  for (const obligation of planned) {
+    assert.equal(obligation.status, "property-tested");
+    assert.equal(obligation.against, undefined);
+    assert.equal(obligation.environmentOutcome, undefined);
+    assert.equal(obligation.plannedEnvironmentRun.id, attestation.run.id);
+    assert.equal(obligation.plannedEnvironmentRun.execution.status, "running");
+  }
   return attestation;
 }
 
@@ -171,7 +197,11 @@ function deterministicReplay(dir, environment, twins) {
   for (let round = 0; round < 2; round++) {
     for (const twin of twins) succeeds(dir, ["twin", twin, "-e", environment, "reset"]);
     assert.equal(shop(dir, ["rex", "ada"], { SHOP_PET_ID_BASE: "1000" }).status, 0);
-    digests.push(twins.map((twin) => succeeds(dir, ["twin", twin, "-e", environment, "history"])));
+    digests.push(twins.map((twin) => {
+      const history = succeeds(dir, ["twin", twin, "-e", environment, "history"]);
+      retain(`${environment}-${twin}-replay-${round}.json`, history);
+      return history;
+    }));
     for (const twin of twins) succeeds(dir, ["twin", twin, "-e", environment, "replay"]);
   }
   assert.deepEqual(digests[0], digests[1], "the same seed and requests give the same history");
@@ -195,6 +225,21 @@ async function theChainRunsInEveryBinding() {
   const dir = mkdtempSync(join(tmpdir(), "ironframe-e2e-calm-"));
   copyTree(join(repo, "examples/calm-shop"), dir);
   const laws = lawsDigest(dir);
+  // A separate repository prefix selects locally built fixtures while keeping
+  // their declared release and stands-in-for contract identities intact.
+  const twinPrefix = process.env.IRONFRAME_TWIN_IMAGE_PREFIX;
+  const appImage = process.env.IRONFRAME_APP_IMAGE;
+  if (twinPrefix || appImage) {
+    const file = join(dir, "architecture/shop.decorators.json");
+    const document = JSON.parse(readFileSync(file, "utf8"));
+    for (const decorator of document.decorators) {
+      const twin = decorator.data.twin;
+      if (twin && twinPrefix) twin.image = `${twinPrefix}/${twin.image.split("/").at(-1)}`;
+      const managed = decorator.data.application?.managed?.image;
+      if (managed && appImage) managed.image = appImage;
+    }
+    writeFileSync(file, JSON.stringify(document, null, 2) + "\n");
+  }
   try {
     // Validation and every export work without deploying anything.
     const validated = succeeds(dir, ["validate"]);
@@ -202,16 +247,34 @@ async function theChainRunsInEveryBinding() {
     if (calmOnPath()) {
       assert.match(succeeds(dir, ["validate", "--calm-cli"]), /calm validate: passed/);
       const diagram = succeeds(dir, ["export", "diagram", "-e", "mixed", "--format", "calm-template"]);
+      retain("calm-tool-diagram.md", diagram);
       assert.ok(diagram.includes("```mermaid") && diagram.includes("real apache/kafka 4.1.0"));
     }
     const root = succeeds(dir, ["export", "tofu", "-e", "staging"]);
+    retain("staging.tf.json", root);
     assert.deepEqual((await problems(dir, "staging", { tofu: root })).tofu, []);
+    const changedRoot = JSON.parse(root);
+    const deployment = changedRoot.module.twin_adoptions_log;
+    assert.equal(deployment.image, twinPrefix ? `${twinPrefix}/kafka:0.1.0` : "docker.io/lawtwin/kafka:0.1.0");
+    assert.deepEqual(deployment.ports, [9092]);
+    assert.equal(JSON.parse(deployment.environment.TWIN_CONFIG).seed, 42);
+    assert.deepEqual(changedRoot.output.endpoints.value, { "adoptions-log": "${module.twin_adoptions_log.endpoint}" });
+    assert.deepEqual(Object.keys(changedRoot.module), ["twin_adoptions_log"]);
+    delete changedRoot.module.twin_adoptions_log;
+    assert.ok((await problems(dir, "staging", { tofu: JSON.stringify(changedRoot) })).tofu.length > 0);
     for (const environment of ["twin", "real", "mixed"]) {
       const diagram = succeeds(dir, ["export", "diagram", "-e", environment]);
+      retain(`${environment}-diagram.mmd`, diagram);
       assert.deepEqual((await problems(dir, environment, { mermaid: diagram })).mermaid, []);
+      const missingEdges = diagram.split("\n").filter((line) => !line.includes(" -->|")).join("\n");
+      assert.ok((await problems(dir, environment, { mermaid: missingEdges })).mermaid.length > 0);
       for (const app of ["adoptions-service", "adoptions-audit"]) {
         const settings = JSON.stringify(exportedSettings(dir, environment, app));
+        retain(`${environment}-${app}-settings.json`, settings);
         assert.deepEqual((await problems(dir, environment, { app, settings })).settings, []);
+        const missingSetting = JSON.parse(settings);
+        delete missingSetting.KAFKA_BOOTSTRAP_SERVERS;
+        assert.ok((await problems(dir, environment, { app, settings: JSON.stringify(missingSetting) })).settings.length > 0);
       }
     }
 
@@ -232,6 +295,11 @@ async function theChainRunsInEveryBinding() {
 
     // The shop's generated code and executable.
     assert.equal(exec("npm", ["ci", "--no-audit", "--no-fund"], join(dir, "app")).status, 0);
+    if (process.env.IRONFRAME_LAWSPEC_PACKAGE) {
+      const archive = resolve(process.env.IRONFRAME_LAWSPEC_PACKAGE);
+      assert.equal(exec("npm", ["install", "--no-save", "--package-lock=false", "--no-audit", "--no-fund", archive], join(dir, "app")).status, 0);
+    }
+    retain("lawspec-build.json", readFileSync(join(dir, "app/node_modules/lawspec/build.json"), "utf8"));
     assert.equal(exec("npx", ["--no-install", "lawspec", "generate"], join(dir, "app")).status, 0);
     assert.equal(exec("go", ["build", "-o", "shop-bin", "./cmd/shop"], join(dir, "app")).status, 0);
     // The static Linux executable the managed image holds, for podman's own architecture.
@@ -259,6 +327,9 @@ async function theChainRunsInEveryBinding() {
         const audit = ironframe(dir, ["app", "adoptions-audit", "-e", environment]);
         assert.equal(audit.status, 0, `the audit failed in ${environment}`);
         const auditAttestation = JSON.parse(readFileSync(attestationPath(audit), "utf8"));
+        retain(`${environment}-managed-attestation.json`, auditAttestation);
+        assert.equal(auditAttestation.execution.status, "completed");
+        assert.equal(auditAttestation.execution.exit_code, 0);
         assert.equal(auditAttestation.dependencies.length, 1);
         assert.equal(auditAttestation.dependencies[0].node, "adoptions-log");
         if (environment === "real") {
@@ -271,7 +342,10 @@ async function theChainRunsInEveryBinding() {
         const file = begun.trim().slice(begun.trim().lastIndexOf("attestation: ") + "attestation: ".length);
         assert.equal(shop(dir, ["rex", "ada"]).status, 0);
         succeeds(dir, ["attest", environment, "--complete", file, "--exit-code", "0"]);
-        assert.equal(JSON.parse(readFileSync(resolve(dir, "architecture", file), "utf8")).execution.status, "completed");
+        const external = JSON.parse(readFileSync(resolve(dir, "architecture", file), "utf8"));
+        assert.equal(external.execution.status, "completed");
+        assert.equal(external.execution.exit_code, 0);
+        retain(`${environment}-external-attestation.json`, external);
 
         // Faults, resets and deterministic replay through the twins' control planes.
         if (environment === "twin") {
@@ -280,7 +354,12 @@ async function theChainRunsInEveryBinding() {
           deterministicReplay(dir, environment, ["adoptions-log", "pet-registry"]);
           // A reset empties the twin's log, so the audit has nothing to read until the service publishes again.
           succeeds(dir, ["twin", "adoptions-log", "-e", environment, "reset"]);
-          assert.notEqual(ironframe(dir, ["app", "adoptions-audit", "-e", environment]).status, 0);
+          const emptyAudit = ironframe(dir, ["app", "adoptions-audit", "-e", environment]);
+          assert.notEqual(emptyAudit.status, 0);
+          const failed = JSON.parse(readFileSync(attestationPath(emptyAudit), "utf8"));
+          assert.equal(failed.execution.status, "completed");
+          assert.notEqual(failed.execution.exit_code, 0);
+          retain("twin-empty-audit-attestation.json", failed);
           assert.equal(shop(dir, ["rex", "ada"]).status, 0);
           assert.equal(ironframe(dir, ["app", "adoptions-audit", "-e", environment]).status, 0);
         }
@@ -290,10 +369,17 @@ async function theChainRunsInEveryBinding() {
           assert.notEqual(ironframe(dir, ["twin", "adoptions-log", "-e", environment, "reset"]).status, 0, "a real dependency has no control plane");
         }
       } finally {
-        ironframe(dir, ["down", environment]);
+        assert.equal(ironframe(dir, ["down", environment]).status, 0, `teardown ${environment}`);
       }
     }
   } finally {
+    if (artifacts) {
+      for (const name of ["architecture", "app/.lawspec", "app/spec", "app/.env"]) {
+        const from = join(dir, name);
+        if (existsSync(from)) cpSync(from, join(artifacts, "run", name), { recursive: true });
+      }
+      retain("laws-sha256.txt", `${lawsDigest(dir)}\n`);
+    }
     rmSync(dir, { recursive: true, force: true });
   }
 }

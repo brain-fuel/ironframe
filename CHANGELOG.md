@@ -8,6 +8,12 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The CALM acceptance test checks completed LawSpec evidence separately from
+  cached startup wiring, retains attestations and exports on request, and can
+  select local compiler archives and fresh fixture/application image builds.
+  Missing diagram edges, infrastructure modules and injected settings are
+  exercised as negative correspondence controls.
+
 - CALM 1.2 architectures as the source of wiring (`--architecture`): the
   architecture is checked against the embedded CALM 1.2 meta schemas (and by
   `calm validate` with `validate --calm-cli`); `ironframe-contract`,

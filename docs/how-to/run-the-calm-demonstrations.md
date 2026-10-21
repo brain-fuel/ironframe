@@ -28,21 +28,49 @@ with npm, and these images:
 repository with `make image image-http`), `apache/kafka:4.1.0`, and
 `localhost/lawtwin/petstore3-native:latest` (the Swagger Petstore built for
 the machine's architecture, `podman build -t lawtwin/petstore3-native
-examples/http/petstore3` in the lawtwin repository). The CALM CLI is optional.
+examples/http/petstore3` in the lawtwin repository). The CALM CLI is optional
+for normal use. Set `IRONFRAME_CALM` to its
+executable when accepting the CALM validation and diagram tooling path.
 
 ## Run it all
 
+The demonstration requires a LawSpec build that consumes completed-run
+attestations. The example's registry pin, 0.26.0, predates that behavior. Until
+that compiler is published and the pin advances, pack the merged LawSpec
+checkout (`npm pack` in its `npm/` directory), then provide the archive:
+
 ```sh
+IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.26.0.tgz \
+IRONFRAME_E2E_ARTIFACTS=/absolute/path/acceptance-outputs \
+IRONFRAME_CALM=/absolute/path/calm \
 make e2e-calm
 ```
 
 The test copies the example to a scratch directory and does every step below,
-asserting each.
+asserting each. The archive is installed only in the scratch application;
+its laws stay byte-identical across all bindings. The retained outputs include
+completed service, managed and external attestations, explicit and cached
+LawSpec evidence, diagram and infrastructure exports, settings and replay
+histories. Containers are torn down on success and failure.
+
+To select fresh fixture builds without replacing the example's image tags,
+tag them under a separate repository prefix at version `0.1.0`, and set
+`IRONFRAME_TWIN_IMAGE_PREFIX` to that prefix. For example,
+`localhost/ironframe-acceptance` selects `localhost/ironframe-acceptance/kafka:0.1.0`
+and `localhost/ironframe-acceptance/http:0.1.0`. Their actual image digests are
+recorded in attestations. `IRONFRAME_APP_IMAGE` can similarly select a fresh
+tag for the managed audit image, built from the scratch application's current
+Linux executable when absent.
 
 ## Step by step
 
 ```sh
-cd examples/calm-shop/app && npm ci && npx lawspec generate && go build -o shop-bin ./cmd/shop && cd ..
+cd examples/calm-shop/app
+npm ci
+npm install --no-save --package-lock=false "$IRONFRAME_LAWSPEC_PACKAGE"
+npx lawspec generate
+go build -o shop-bin ./cmd/shop
+cd ..
 cd architecture
 I=ironframe    # or, from a checkout: I="node ../../../npm/bin/ironframe.mjs"
 $I -a shop.calm.json validate
@@ -62,9 +90,14 @@ cd ../app && npx lawspec evidence --attestation ../architecture/.ironframe/twin/
 Each law that ran under the native `Adoptions` and `Pets` handlers is
 reported property tested, against `stand-in lawtwin/kafka 0.1.0 (conformance
 answers)` and `stand-in lawtwin/http 0.1.0 (conformance conformant)`.
-`lawspec evidence` with no attestation shows the run each law last passed in.
-Keep attestations outside the application's directory: LawSpec digests the
-project's files into the inputs its results are keyed by. ref:DEC-calm-run
+The explicit completed file yields `against`, `environmentRun.execution.status:
+"completed"` and `environmentOutcome: "passed"` for all four native law
+instances, with real-provider or fixture identity and completed fixture history
+digests. Without that file, `lawspec evidence` reads the startup snapshot cached
+by the child: its wiring stays `plannedAgainst` while native test results remain
+visible. LawSpec does not infer environment completion from a passing child.
+Attestation documents are excluded from application input digests.
+ref:DEC-calm-run
 
 The shared log and the managed audit:
 
@@ -99,3 +132,29 @@ image, built from `app/Containerfile` once
 `GOOS=linux CGO_ENABLED=0 go build -o shop-linux ./cmd/shop` has run) and
 `mixed` (real Kafka, Petstore twin) the same way. The laws and the
 application do not change; only the settings and the attestation do.
+
+## Haskell/WASM port acceptance, 2026-10-21
+
+The `b178230` core passed this chain with LawSpec `03218926` (including the cached-run
+evidence correction) and
+fresh fixtures from LawTwin `8c592d7`. All 46 recorded core source/artifact
+fingerprints remained unchanged. The two authored laws produced four native
+law instances in each binding (12 executed instances), all property tested and
+linked to their completed service run. This establishes the local integration;
+provider conformance remains a separate LawTwin check.
+
+| Check | Result |
+| --- | --- |
+| Real, twin and mixed bindings; unchanged laws | Passed with both original and freshly rebuilt fixture images |
+| Managed process, freshly built managed image, external application | Completed attestations in every binding; shared Kafka exercised |
+| Kafka/HTTP faults, recovery, resets and deterministic replay | Passed, including a completed failed audit after Kafka reset |
+| CALM CLI 1.65.0 validation and diagram rendering | Passed |
+| Diagram, settings and OpenTofu correspondence | Passed, including missing-edge/key/module negative controls |
+| Exported staging root | Initialized and validated against the repository modules |
+| Native and shipped WASM regression suites | 2,231 native examples and 1,417 Node tests passed; two opt-in tests run separately |
+| Configuration service and original examples in Podman | Passed with a freshly built WASM-host configuration-service image |
+| Cloud modules | All four validated; 14 mocked provider tests passed |
+
+No cloud resources were deployed. All demonstration containers were removed.
+The compiler and images were exercised locally; these checks do not publish an
+npm release or establish the remaining 1.0 gates. ref:REQ-calm-end-to-end
