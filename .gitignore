@@ -28,3 +28,12 @@
 .idea/
 .vscode/
 *.swp
+
+# Haskell build output: stack's, and the WASM build's cabal
+.stack-work/
+dist-newstyle/
+
+# npm: installed packages, and the documents prepack copies in
+npm/node_modules/
+/npm/README.md
+/npm/CHANGELOG.md
