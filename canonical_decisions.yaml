@@ -264,10 +264,10 @@ DEC-attestation-architecture:
   refs: [lawspec]
 
 DEC-canon-haskell-field-haddock:
-  status: open
+  status: decided
   question: canon 0.2.2 reports that a doc comment is not attached to any unit at src/Ironframe/Manifest/Types.hs line 114, a record field's Haddock written after the separating comma (a line holding a comma and then the Haddock opener, before the line declaring twinReport), the layout ormolu and fourmolu write and GHC and Haddock accept. How is the file checked meanwhile?
   answer: |
-    Proposed for 0.1.0, until canon attaches a Haddock comment that follows a record's comma to the field after it. The code is not reshaped for canon: canon.yaml ignores src/Ironframe/Manifest/Types.hs alone, so its other comments go unchecked until then. The bug is to be reported to canon with this construct; when a canon release attaches the comment, the ignore is removed and this decision closed.
+    Until canon attached a Haddock comment that follows a record's comma to the field after it, canon.yaml ignored src/Ironframe/Manifest/Types.hs alone, and the code was not reshaped for canon. canon 0.2.3 binds a record field's Haddock to its field wherever Haddock reads it (canon's DEC-haskell-field-haddock), so canon.yaml names canon 0.2.3, the ignore is removed, and the file is checked as written, unchanged; twinReport is a unit of kind field whose Why is the comment.
   opened: 0.1.0
-  revisit: 0.2.0
+  decided: 0.1.0
   refs: [canon]

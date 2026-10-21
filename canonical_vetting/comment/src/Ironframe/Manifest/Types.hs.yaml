@@ -1,0 +1,27 @@
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types:
+  digest: sha256:36c16f71e1a4a8a0
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Cloud:
+  digest: sha256:b4037c6b08a3b3e8
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/DependencyDecl:
+  digest: sha256:b3f8d9d708d7f68b
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Environment:
+  digest: sha256:370df3bf0a48a059
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Fault:
+  digest: sha256:207b0cce9d768c28
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Manifest:
+  digest: sha256:d4434f86383a1e10
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Protocol:
+  digest: sha256:134e968a6803daac
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Runtime:
+  digest: sha256:65d9363ebce3864e
+  verdict: pending
+decision/haskell/src/Ironframe/Manifest/Types.hs/module/Ironframe.Manifest.Types/data/Twin/field/twinReport:
+  digest: sha256:df32a7fabeadaa8d
+  verdict: pending
