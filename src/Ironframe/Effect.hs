@@ -18,6 +18,7 @@ module Ironframe.Effect
   , writeAtomically
   , writeFileE
   , removeFileE
+  , removeTree
   , createDirE
   , canonicalize
   , cwd
@@ -138,6 +139,12 @@ writeFileE path text = do
 removeFileE :: Text -> Eff (Either IoError ())
 removeFileE path = do
   r <- perform (effect "removeFile" ["path" .= String path])
+  pure (() <$ ioResult r)
+
+-- | Removes a directory and everything in it, as Rust's remove_dir_all.
+removeTree :: Text -> Eff (Either IoError ())
+removeTree path = do
+  r <- perform (effect "removeTree" ["path" .= String path])
   pure (() <$ ioResult r)
 
 createDirE :: Text -> Eff (Either IoError ())

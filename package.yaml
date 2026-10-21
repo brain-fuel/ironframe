@@ -18,4 +18,4 @@ tests:
   ironframe-test:
     main: Main.hs
     source-dirs: test
-    dependencies: [ironframe, hspec, directory, filepath, process, temporary]
+    dependencies: [ironframe, hspec, directory, filepath, process, temporary, time]

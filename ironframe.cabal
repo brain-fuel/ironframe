@@ -16,8 +16,42 @@ extra-source-files:
 
 library
   exposed-modules:
+      Ironframe.Api
+      Ironframe.Attest
+      Ironframe.Attestation
+      Ironframe.Calm.Export
+      Ironframe.Calm.Model
+      Ironframe.Calm.Resolve
+      Ironframe.Calm.Run
+      Ironframe.Cli
+      Ironframe.Compose
+      Ironframe.ConfigService
+      Ironframe.Corpus
+      Ironframe.Digest
       Ironframe.Effect
+      Ironframe.Embedded
       Ironframe.Json
+      Ironframe.Json.FromStr
+      Ironframe.Json.Schema
+      Ironframe.Json.Serde
+      Ironframe.Library
+      Ironframe.Manifest
+      Ironframe.Manifest.Serde
+      Ironframe.Manifest.Types
+      Ironframe.Ops
+      Ironframe.Path
+      Ironframe.Podman
+      Ironframe.Process
+      Ironframe.Regex
+      Ironframe.Rust
+      Ironframe.Semver
+      Ironframe.Settings
+      Ironframe.Sync
+      Ironframe.Time
+      Ironframe.Tofu
+      Ironframe.Twin
+      Ironframe.Workdir
+      Ironframe.Yaml
   other-modules:
       Paths_ironframe
   hs-source-dirs:
@@ -62,6 +96,17 @@ test-suite ironframe-test
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
+      CliCorpusSpec
+      CorpusSpec
+      Ironframe.DigestSpec
+      Ironframe.JsonSpec
+      Ironframe.RustSpec
+      Ironframe.SchemaSpec
+      Ironframe.SemverSpec
+      Ironframe.SerdeSpec
+      Ironframe.TimeSpec
+      Ironframe.YamlSpec
+      NativeHost
       Paths_ironframe
   hs-source-dirs:
       test
@@ -80,4 +125,5 @@ test-suite ironframe-test
     , process
     , temporary
     , text
+    , time
   default-language: Haskell2010
