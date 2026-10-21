@@ -108,13 +108,19 @@ walks through both, and `make e2e` runs them as a test.
 make build        # the core natively and to WASM
 make test         # stack test, then the npm package's tests over the WASM core
 make e2e          # both examples against LawTwin's images in podman
-make e2e-calm     # the CALM example against real, twin and mixed bindings
+make e2e-calm     # real/twin/mixed CALM acceptance; set IRONFRAME_LAWSPEC_PACKAGE
 make lint         # -Werror build and node --check
 make integrity    # npm/build.json matches the sources and the WASM core
 make tofu-check   # tofu validate and tofu test for every module
 make canon        # canon check, with CANON_HOME pointing at a canon checkout
 make check        # lint, test, integrity, tofu-check and canon
 ```
+
+For completed-run CALM acceptance, set `IRONFRAME_LAWSPEC_PACKAGE` to a packed
+build of the merged LawSpec checkout. The example's published 0.26.0 pin predates
+completed-run evidence. The [CALM demonstration guide](docs/how-to/run-the-calm-demonstrations.md)
+shows the archive, CALM tooling and retained-evidence options.
+
 
 There is no hosted CI; every check runs locally. You need stack, ghc-wasm-meta
 (`wasm32-wasi-ghc` and `wasm32-wasi-cabal`, GHC 9.14) for the WASM core, Node 22

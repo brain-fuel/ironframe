@@ -65,6 +65,7 @@ Linux executable when absent.
 ## Step by step
 
 ```sh
+export IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.26.0.tgz
 cd examples/calm-shop/app
 npm ci
 npm install --no-save --package-lock=false "$IRONFRAME_LAWSPEC_PACKAGE"
