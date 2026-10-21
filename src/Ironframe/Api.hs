@@ -79,7 +79,7 @@ dispatch method p = case method of
     code <- cli (texts (keyOr "argv" p)) (text' "cwd" p)
     pure (Object ["exitCode" .= Number (I code)])
   "configService.handle" -> Just (encodeResponse <$> handle (text' "settingsPath" p) (fromMaybe "GET" (textAt "method" p)) (text' "path" p))
-  "corpus.check" -> Just (pure (Corpus.check dispatch (keyOr "case" p) (keyOr "fixtures" p)))
+  "corpus.check" -> Just (pure (Corpus.check dispatch (corpusCase p) (keyOr "fixtures" p)))
   "calm.problems" -> Just $ do
     resolution <- loadAndResolve (text' "architecture" p) (textAt "decorators" p) (text' "environment" p) >>= either (failWith . renderCalmError) pure
     let topology = resTopology resolution
@@ -168,6 +168,16 @@ dispatch method p = case method of
     withManifest k = case parseManifest (text' "text" p) of
       Left e -> Object ["error" .= String (renderManifestError e)]
       Right m -> k m
+
+-- | The case to check: given as a value, or as the text of a corpus file and
+-- an index, which keeps its keys in their written order whatever the host's
+-- JSON does with them.
+corpusCase :: Value -> Value
+corpusCase p = case (keyOr "corpusText" p, keyOr "index" p) of
+  (String text, Number (I i)) -> case decode text of
+    Right (Array cases) | i >= 0 && fromInteger i < length cases -> cases !! fromInteger i
+    _ -> Null
+  _ -> keyOr "case" p
 
 manifestResult :: Either ManifestError Manifest -> Value
 manifestResult = \case

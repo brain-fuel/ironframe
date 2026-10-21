@@ -29,13 +29,16 @@ function fixtures() {
 const given = fixtures();
 
 for (const file of files) {
-  const cases = JSON.parse(readFileSync(new URL(file, corpus), "utf8"));
+  // The core reads each case from the file's own text: JSON.parse would put
+  // integer-like keys first and change what a case says.
+  const corpusText = readFileSync(new URL(file, corpus), "utf8");
+  const cases = JSON.parse(corpusText);
   test(file, { skip: missing }, async (t) => {
     for (const [index, item] of cases.entries()) {
       await t.test(item.name ?? `${item.method} #${index}`, async () => {
         let result;
         try {
-          result = await run(core, "corpus.check", { case: item, fixtures: given }, host);
+          result = await run(core, "corpus.check", { corpusText, index, fixtures: given }, host);
         } catch (error) {
           if (isMissingMethod(error)) return t.skip("no corpus.check");
           throw error;

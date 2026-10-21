@@ -1,4 +1,7 @@
-target/
 .git/
 .ironframe/
 **/.terraform/
+.stack-work/
+wasm/dist-newstyle/
+npm/node_modules/
+examples/calm-shop/app/node_modules/
