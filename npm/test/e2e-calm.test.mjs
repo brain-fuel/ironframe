@@ -190,7 +190,8 @@ function calmOnPath() {
   return spawnSync("sh", ["-c", "command -v calm"], { encoding: "utf8" }).status === 0;
 }
 
-test("the same application runs against real, twin and mixed bindings", { skip, timeout: 3_600_000 }, async () => {
+// The whole CALM chain, environment by environment. ref:REQ-calm-end-to-end
+async function theChainRunsInEveryBinding() {
   const dir = mkdtempSync(join(tmpdir(), "ironframe-e2e-calm-"));
   copyTree(join(repo, "examples/calm-shop"), dir);
   const laws = lawsDigest(dir);
@@ -295,4 +296,6 @@ test("the same application runs against real, twin and mixed bindings", { skip, 
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
-});
+}
+
+test("the same application runs against real, twin and mixed bindings", { skip, timeout: 3_600_000 }, theChainRunsInEveryBinding);

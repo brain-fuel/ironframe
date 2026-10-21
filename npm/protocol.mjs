@@ -31,5 +31,5 @@ export async function run(core, method, params, host) {
 
 /** Whether an error is the core's answer to an unknown method. */
 export function isMissingMethod(error) {
-  return error instanceof ProtocolError && /: no such method$/.test(error.message);
+  return error instanceof ProtocolError && /: no such method( "[^"]*")?$/.test(error.message);
 }

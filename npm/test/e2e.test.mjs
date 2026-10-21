@@ -76,7 +76,9 @@ function sha256(text) {
   return `sha256:${createHash("sha256").update(text).digest("hex")}`;
 }
 
-test("up runs the apps against real twins and attest lists each stand-in with its level", { skip }, async () => {
+// Brings both examples up against LawTwin's images, runs each app, drives a
+// twin and attests. ref:REQ-end-to-end-with-twins ref:REQ-example-reads-config
+async function upRunsTheAppsAgainstTwins() {
   const kafka = copyExample("kafka-app");
   const petstore = copyExample("petstore-app");
   try {
@@ -131,4 +133,6 @@ test("up runs the apps against real twins and attest lists each stand-in with it
     rmSync(kafka, { recursive: true, force: true });
     rmSync(petstore, { recursive: true, force: true });
   }
-});
+}
+
+test("up runs the apps against real twins and attest lists each stand-in with its level", { skip }, upRunsTheAppsAgainstTwins);

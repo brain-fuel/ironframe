@@ -28,7 +28,15 @@ function fixtures() {
 }
 const given = fixtures();
 
-for (const file of files) {
+// Checks every case of one corpus file through the WASM core. The cases are
+// the recorded behaviour of every requirement the Rust tests checked.
+// ref:REQ-manifest-validation ref:REQ-settings-resolution
+// ref:REQ-compose-generation ref:REQ-cloud-root-module
+// ref:REQ-config-sync-idempotent ref:REQ-conformance-matches-report
+// ref:REQ-twin-start-setup ref:REQ-attestation-round-trip
+// ref:REQ-attestation-stand-in-run ref:REQ-missing-image-fails-clearly
+// ref:REQ-config-service-serves-settings
+function checkFile(file) {
   // The core reads each case from the file's own text: JSON.parse would put
   // integer-like keys first and change what a case says.
   const corpusText = readFileSync(new URL(file, corpus), "utf8");
@@ -49,3 +57,5 @@ for (const file of files) {
     }
   });
 }
+
+for (const file of files) checkFile(file);
