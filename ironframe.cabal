@@ -1,0 +1,83 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ironframe
+version:        0.1.0
+synopsis:       Wire applications to their dependencies, real or twin, per environment
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+library
+  exposed-modules:
+      Ironframe.Effect
+      Ironframe.Json
+  other-modules:
+      Paths_ironframe
+  hs-source-dirs:
+      src
+  default-extensions:
+      OverloadedStrings
+      LambdaCase
+  ghc-options: -Wall
+  build-depends:
+      HsYAML
+    , SHA
+    , base >=4.18 && <5
+    , bytestring
+    , containers
+    , mtl
+    , text
+  default-language: Haskell2010
+
+executable ironframe-dev
+  main-is: Main.hs
+  other-modules:
+      Paths_ironframe
+  hs-source-dirs:
+      dev
+  default-extensions:
+      OverloadedStrings
+      LambdaCase
+  ghc-options: -Wall
+  build-depends:
+      base >=4.18 && <5
+    , bytestring
+    , containers
+    , cryptohash-sha256
+    , directory
+    , filepath
+    , ironframe
+    , process
+    , text
+  default-language: Haskell2010
+
+test-suite ironframe-test
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_ironframe
+  hs-source-dirs:
+      test
+  default-extensions:
+      OverloadedStrings
+      LambdaCase
+  ghc-options: -Wall
+  build-depends:
+      base >=4.18 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hspec
+    , ironframe
+    , process
+    , temporary
+    , text
+  default-language: Haskell2010

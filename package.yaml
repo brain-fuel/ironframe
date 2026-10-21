@@ -1,0 +1,21 @@
+name: ironframe
+version: 0.1.0
+license: MIT
+synopsis: Wire applications to their dependencies, real or twin, per environment
+extra-source-files: [README.md, CHANGELOG.md]
+dependencies: [base >= 4.18 && < 5, text, containers, bytestring]
+default-extensions: [OverloadedStrings, LambdaCase]
+ghc-options: [-Wall]
+library:
+  source-dirs: src
+  dependencies: [HsYAML, SHA, mtl]
+executables:
+  ironframe-dev:
+    main: Main.hs
+    source-dirs: dev
+    dependencies: [ironframe, directory, filepath, cryptohash-sha256, process]
+tests:
+  ironframe-test:
+    main: Main.hs
+    source-dirs: test
+    dependencies: [ironframe, hspec, directory, filepath, process, temporary]
