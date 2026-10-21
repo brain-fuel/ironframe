@@ -1,0 +1,14 @@
+# The configuration service: the npm package's WASM core and its Node host,
+# serving the settings document named by IRONFRAME_SETTINGS. The service uses
+# no cloud SDK, so no dependency is installed. Build from the repository root:
+#   podman build -f config-service/Containerfile -t localhost/ironframe-config-service:0.1.0 .
+# ref:DEC-config-service ref:DEC-haskell-wasm-core
+FROM docker.io/library/node:22-alpine
+WORKDIR /opt/ironframe
+COPY npm/package.json npm/*.mjs npm/core.wasm npm/core_jsffi.js npm/LICENSE ./
+COPY npm/clouds ./clouds
+USER node
+ENV NODE_ENV=production IRONFRAME_SETTINGS=/etc/ironframe/settings.json IRONFRAME_LISTEN=0.0.0.0:8700
+EXPOSE 8700
+STOPSIGNAL SIGTERM
+ENTRYPOINT ["node", "/opt/ironframe/config-service.mjs"]

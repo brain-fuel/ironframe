@@ -1,2 +1,5 @@
+-- The WASM core: this package over the library in the repository root, built
+-- with wasm32-wasi-cabal (ghc-wasm-meta). Its pins are cabal.project.freeze,
+-- written by wasm32-wasi-cabal freeze. ref:DEC-haskell-wasm-core
 packages: . ..
 active-repositories: hackage.haskell.org:merge

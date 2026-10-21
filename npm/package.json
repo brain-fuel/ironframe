@@ -1,0 +1,45 @@
+{
+  "name": "ironframe",
+  "version": "0.1.0",
+  "description": "Wire applications to their dependencies, real or twin, per environment",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brain-fuel/ironframe.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "ironframe": "bin/ironframe.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./api.mjs"
+    }
+  },
+  "types": "index.d.ts",
+  "files": [
+             "*.mjs",
+             "build.json",
+             "index.d.ts",
+             "bin",
+             "clouds",
+             "core.wasm",
+             "core_jsffi.js",
+             "README.md",
+             "CHANGELOG.md",
+             "LICENSE"
+           ],
+  "scripts": {
+    "prepack": "for f in README.md CHANGELOG.md; do cmp -s ../$f $f || { cp ../$f .$f.$$ && mv -f .$f.$$ $f; }; done",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-appconfig": "^3.1154.0",
+    "@azure/app-configuration": "^1.13.0",
+    "@google-cloud/parametermanager": "^0.9.0"
+  }
+}
