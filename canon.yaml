@@ -1,5 +1,5 @@
 version: 0.1.0
-canon: 0.2.2
+canon: 0.2.3
 registry: canonical_refs.yaml
 decisions: canonical_decisions.yaml
 exemptions: canonical_exemptions.yaml
@@ -20,10 +20,6 @@ ignore:
   - src/Ironframe/Embedded.hs
   # Recorded data: the parity corpus captured from the Rust implementation.
   - corpus/
-  # canon 0.2.2 leaves a field's Haddock written after the comma, `, -- | doc`
-  # before the field, attached to no unit (DEC-canon-haskell-field-haddock).
-  # The code is valid Haskell and stays as written. Revisit by 0.2.0.
-  - src/Ironframe/Manifest/Types.hs
   - "**/.terraform/"
   - "**/.terraform.lock.hcl"
   - "*.md"
