@@ -1749,7 +1749,7 @@ fn ops_flows(corpus: &mut Corpus, runtime: &tokio::runtime::Runtime) {
         "ops.upThenAttest",
         json!({"text": normal(&text), "environment": "local", "manifestDir": "/work", "sync": true, "waitSeconds": 2, "env": env_tools, "probes": {"localhost:9092": probe("localhost:9092")}}),
         json!({
-            "up": {"progress": steps, "processes": runner.log(&dirs), "http": http_up, "files": files_up, "unreached": report.unreached},
+            "up": {"progress": steps.iter().map(|s| normal(s)).collect::<Vec<_>>(), "processes": runner.log(&dirs), "http": http_up, "files": files_up, "unreached": report.unreached},
             "attest": {"http": http_all.as_array().unwrap()[http_up.as_array().unwrap().len()..].to_vec(), "files": files_attest, "attestation": normal(&attestation.to_json().unwrap())},
         }),
     );

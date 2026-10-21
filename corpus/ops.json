@@ -1487,7 +1487,7 @@
         "progress": [
           "checking images",
           "starting containers",
-          "waiting for the control plane of kafka at http://127.0.0.1:49487",
+          "waiting for the control plane of kafka at http://twin.test",
           "setting up kafka",
           "waiting for kafka at localhost:9092",
           "syncing settings"
