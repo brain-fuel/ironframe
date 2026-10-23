@@ -258,7 +258,7 @@ DEC-attestation-architecture:
   status: open
   question: Does the attestation change version to carry architecture, contract, implementation and run identities?
   answer: |
-    Proposed for gate 2, until the owner decides. No: version 1 gains optional fields, which LawSpec 0.26 and every version 1 reader ignore, so the same document is evidence for them unchanged: architecture (documents, digests, topology digest, elements), application (node, contract, implementation), execution (DEC-calm-planned-vs-completed), and per dependency node, edge, contract, implementation (real-provider or fixture, product, version, image digest), completed, and stand_in.stands_in_for. A version 2 would be needed only by a change that misleads a version 1 reader.
+    Proposed for gate 2, until the owner decides. No: version 1 gains optional fields, which LawSpec 0.26 and every version 1 reader ignore, so the same document is evidence for them unchanged (LawSpec 0.27 onward reads execution and the identities to link a completed run): architecture (documents, digests, topology digest, elements), application (node, contract, implementation), execution (DEC-calm-planned-vs-completed), and per dependency node, edge, contract, implementation (real-provider or fixture, product, version, image digest), completed, and stand_in.stands_in_for. A version 2 would be needed only by a change that misleads a version 1 reader.
   opened: 0.1.0
   revisit: 1.0.0
   refs: [lawspec]

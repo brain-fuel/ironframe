@@ -6,6 +6,12 @@ works with LawSpec 0.26.0 as it is, and these are the gaps it found. Each item
 says what was observed, why it matters to the 1.0 path's evidence rule
 ("distinguish planned wiring from completed execution"), and a minimal change.
 
+Status: LawSpec 0.27.0 consumes completed-run attestations (a completed run
+reports `against`, `environmentRun` and `environmentOutcome`; a wired or
+running one stays planned). Ironframe's calm-shop example pins LawSpec 0.29.2,
+and `make e2e-calm` asserts that shape. The text below is the proposal as made
+against 0.26.0.
+
 ## What works today with 0.26.0
 
 - `lawspec test --attestation <file>` and `lawspec evidence --attestation

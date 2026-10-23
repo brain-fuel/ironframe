@@ -6,6 +6,16 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The calm-shop example pins LawSpec 0.29.2 instead of 0.26.0. Its laws and
+  adapter use `Maybe`'s renamed constructors, `Present` and `Absent`
+  (`LawSpecPresent` and `LawSpecAbsent` in Go); the laws are otherwise
+  unchanged, and LawSpec's law-set analysis reports nothing for them. LawSpec
+  0.27 onward consumes completed-run attestations, so `make e2e-calm` checks
+  completed evidence against the published pin and `IRONFRAME_LAWSPEC_PACKAGE`
+  is needed only for an unpublished build.
+
 ## [0.1.0] - 2026-10-21
 
 ### Added

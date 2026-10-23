@@ -34,21 +34,21 @@ executable when accepting the CALM validation and diagram tooling path.
 
 ## Run it all
 
-The demonstration requires a LawSpec build that consumes completed-run
-attestations. The example's registry pin, 0.26.0, predates that behavior. Until
-that compiler is published and the pin advances, pack the merged LawSpec
-checkout (`npm pack` in its `npm/` directory), then provide the archive:
+The example pins LawSpec 0.29.2 (`app/package.json`), which consumes
+completed-run attestations; LawSpec 0.26.0 reported every run as planned.
 
 ```sh
-IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.26.0.tgz \
 IRONFRAME_E2E_ARTIFACTS=/absolute/path/acceptance-outputs \
 IRONFRAME_CALM=/absolute/path/calm \
 make e2e-calm
 ```
 
-The test copies the example to a scratch directory and does every step below,
-asserting each. The archive is installed only in the scratch application;
-its laws stay byte-identical across all bindings. The retained outputs include
+Both variables are optional. To check the integration against an unpublished
+LawSpec build instead of the pin, pack it (`npm pack` in its `npm/` directory)
+and name the archive in `IRONFRAME_LAWSPEC_PACKAGE`; it is installed over the
+pin in the scratch application only. The test copies the example to a scratch
+directory and does every step below, asserting each. Its laws stay
+byte-identical across all bindings. The retained outputs include
 completed service, managed and external attestations, explicit and cached
 LawSpec evidence, diagram and infrastructure exports, settings and replay
 histories. Containers are torn down on success and failure.
@@ -65,10 +65,8 @@ Linux executable when absent.
 ## Step by step
 
 ```sh
-export IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.26.0.tgz
 cd examples/calm-shop/app
 npm ci
-npm install --no-save --package-lock=false "$IRONFRAME_LAWSPEC_PACKAGE"
 npx lawspec generate
 go build -o shop-bin ./cmd/shop
 cd ..
