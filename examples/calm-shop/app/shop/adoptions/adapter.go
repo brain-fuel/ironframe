@@ -120,7 +120,7 @@ func (handler *PetsHandler) NameOf(value0 int64) LawSpecMaybe[string] {
 	}
 	defer response.Body.Close()
 	if response.StatusCode == http.StatusNotFound {
-		return LawSpecNothing[string]()
+		return LawSpecAbsent[string]()
 	}
 	if response.StatusCode/100 != 2 {
 		panic(fmt.Sprintf("nameOf %d: the Petstore answered %s", value0, response.Status))
@@ -129,7 +129,7 @@ func (handler *PetsHandler) NameOf(value0 int64) LawSpecMaybe[string] {
 	if err := json.NewDecoder(response.Body).Decode(&found); err != nil {
 		panic(fmt.Sprintf("nameOf %d: %v", value0, err))
 	}
-	return LawSpecJust(found.Name)
+	return LawSpecPresent(found.Name)
 }
 
 // The Kafka client is shared by every handler in the process, made on first use, and the topic is
@@ -214,7 +214,7 @@ func (handler *AdoptionsHandler) Lookup(value0 int64) LawSpecMaybe[Adoption] {
 		panic(fmt.Sprintf("lookup pet %d: %v", value0, end.Err))
 	}
 	if from >= end.Offset {
-		return LawSpecNothing[Adoption]()
+		return LawSpecAbsent[Adoption]()
 	}
 	reader, err := kgo.NewClient(
 		kgo.SeedBrokers(strings.Split(setting("KAFKA_BOOTSTRAP_SERVERS"), ",")...),
@@ -243,9 +243,9 @@ func (handler *AdoptionsHandler) Lookup(value0 int64) LawSpecMaybe[Adoption] {
 		})
 	}
 	if found == nil {
-		return LawSpecNothing[Adoption]()
+		return LawSpecAbsent[Adoption]()
 	}
-	return LawSpecJust(Adoption(*found))
+	return LawSpecPresent(Adoption(*found))
 }
 
 // Audit reads every adoption on the topic and returns how many there are, failing on a record that

@@ -24,8 +24,8 @@ end ability
 
 function find (pet :: Int64) (adoptions :: List Adoption) -> Maybe Adoption is
   first matching case of adoptions :
-    when Nil then Nothing
-    when Cons first rest then if first.pet = pet then Just first else find pet rest end if
+    when Nil then Absent
+    when Cons first rest then if first.pet = pet then Present first else find pet rest end if
   end case
 end function
 
@@ -44,7 +44,7 @@ end procedure
 law "|an adoption is published under its pet| is
   definition :
     for all (name :: PetName) (customer :: Customer) =>
-      (let adoption = adopt name customer in lookup (adoption.pet) = Just adoption end let)
+      (let adoption = adopt name customer in lookup (adoption.pet) = Present adoption end let)
     end for all
   end definition
 end law
@@ -52,7 +52,7 @@ end law
 law "|an adopted pet keeps its name| is
   definition :
     for all (name :: PetName) (customer :: Customer) =>
-      (let adoption = adopt name customer in nameOf (adoption.pet) = Just name end let)
+      (let adoption = adopt name customer in nameOf (adoption.pet) = Present name end let)
     end for all
   end definition
 end law
