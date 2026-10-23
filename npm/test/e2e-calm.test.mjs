@@ -1,5 +1,5 @@
 // End to end, the CALM chain with podman, LawTwin's images, the real products
-// and LawSpec 0.26: the calm-shop architecture is validated and exported
+// and LawSpec 0.29.2: the calm-shop architecture is validated and exported
 // without deploying anything; then in each of the twin, real and mixed
 // environments Ironframe brings the dependencies up, the shop's unchanged
 // LawSpec laws run against them under `ironframe run`, the audit runs as a
@@ -12,9 +12,9 @@
 // lawtwin/http:0.1.0, apache/kafka:4.1.0 and lawtwin/petstore3-native:latest,
 // so it runs only with IRONFRAME_E2E=1, as `make e2e-calm` sets it.
 //
+// The example's pinned LawSpec consumes completed-run attestations;
 // IRONFRAME_LAWSPEC_PACKAGE may name a local npm archive when checking the
-// integration against an unpublished LawSpec build. That build must consume
-// completed-run attestations. IRONFRAME_E2E_ARTIFACTS retains the evidence and
+// integration against an unpublished LawSpec build, which must too. IRONFRAME_E2E_ARTIFACTS retains the evidence and
 // exports without retaining installed dependencies. ref:REQ-calm-end-to-end
 import { test } from "node:test";
 import assert from "node:assert/strict";
