@@ -3,6 +3,6 @@
   "private": true,
   "description": "Pins the LawSpec compiler that generates and tests the shop's laws (spec/shop.lawspec).",
   "devDependencies": {
-    "lawspec": "0.29.2"
+    "lawspec": "0.31.0"
   }
 }
