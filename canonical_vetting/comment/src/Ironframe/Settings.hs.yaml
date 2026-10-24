@@ -22,9 +22,6 @@ decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/re
 decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/rustLines:
   digest: sha256:785006dd2ad922e7
   verdict: pending
-decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/splitEndpoint:
-  digest: sha256:bb34a76a41ba2d9e
-  verdict: pending
 decision/haskell/src/Ironframe/Settings.hs/module/Ironframe.Settings/function/stackName:
   digest: sha256:7b10114e20bf846d
   verdict: pending

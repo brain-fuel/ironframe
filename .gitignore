@@ -34,3 +34,6 @@ dist-newstyle/
 npm/node_modules/
 /npm/README.md
 /npm/CHANGELOG.md
+
+# Local release archives and test evidence
+/.artifacts/
