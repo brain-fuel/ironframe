@@ -207,7 +207,7 @@ begin resolution node command appDir = do
     _ -> pure Nothing
   let attestation =
         (newAttestation name (Run (recordId run) (recordStartedAt run) (recordStartedAt run)))
-          { attProducer = Just (Producer "ironframe" "0.2.0")
+          { attProducer = Just (Producer "ironframe" "0.2.1")
           , attDependencies = dependencies
           , attArchitecture =
               Just

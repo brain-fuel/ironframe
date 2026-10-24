@@ -114,7 +114,7 @@ export function replaceTimes(text) {
 }
 
 function normalise(text, root) {
-  return replaceTimes(replaceUuids(text.split(root).join("/work").replaceAll("ironframe 0.2.0", "ironframe 0.1.0").replaceAll('"name": "ironframe",\n    "version": "0.2.0"', '"name": "ironframe",\n    "version": "0.1.0"')));
+  return replaceTimes(replaceUuids(text.split(root).join("/work").replaceAll("ironframe 0.2.1", "ironframe 0.1.0").replaceAll('"name": "ironframe",\n    "version": "0.2.1"', '"name": "ironframe",\n    "version": "0.1.0"')));
 }
 
 const utf8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });

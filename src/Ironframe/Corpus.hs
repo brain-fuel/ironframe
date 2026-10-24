@@ -191,8 +191,8 @@ normalise = times . uuids . producerVersion
 
 -- | Historical parity ignores only the release producer version, not provider versions.
 producerVersion :: Text -> Text
-producerVersion = T.replace "ironframe 0.2.0" "ironframe 0.1.0"
-  . T.replace "\"name\": \"ironframe\",\n    \"version\": \"0.2.0\"" "\"name\": \"ironframe\",\n    \"version\": \"0.1.0\""
+producerVersion = T.replace "ironframe 0.2.1" "ironframe 0.1.0"
+  . T.replace "\"name\": \"ironframe\",\n    \"version\": \"0.2.1\"" "\"name\": \"ironframe\",\n    \"version\": \"0.1.0\""
 
 releaseVersions :: Value -> Value
 releaseVersions (String value) = String (producerVersion value)

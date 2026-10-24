@@ -6,6 +6,13 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-24
+
+### Fixed
+
+- Pin the CALM demonstration to the final LawSpec 0.31.0 archive after its
+  compact EDN and concurrent Git cache fixes. The 0.2.0 tag is retained.
+
 ## [0.2.0] - 2026-10-24
 
 ### Added

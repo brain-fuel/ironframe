@@ -99,7 +99,7 @@ parseArgs argv = do
         Nothing -> Nothing
       globals = Globals (fromMaybe defaultManifest (one "manifest")) (one "architecture") (one "decorators")
   when ("help" `elem` flags parsed) $ Left (ParseHelp helpText)
-  when ("version" `elem` flags parsed) $ Left (ParseHelp "ironframe 0.2.0\n")
+  when ("version" `elem` flags parsed) $ Left (ParseHelp "ironframe 0.2.1\n")
   case positionals parsed of
     [] -> Left (ParseHelp helpText)
     (word : args) -> (,) globals <$> parseCommand word args parsed one

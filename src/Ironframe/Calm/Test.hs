@@ -38,7 +38,7 @@ testComponents resolution selected arguments = do
   let topology = resTopology resolution
       architecture = rtArchitecture topology
       running = (newAttestation (rtEnvironment topology) (Run (recordId record) (recordStartedAt record) (recordStartedAt record)))
-        { attProducer = Just (Producer "ironframe" "0.2.0")
+        { attProducer = Just (Producer "ironframe" "0.2.1")
         , attArchitecture = Just (ArchitectureRef (aiDocument architecture) (aiDigest architecture) (aiUniqueId architecture)
             (Just (aiDecorators architecture)) (Just (aiDecoratorsDigest architecture)) (Just (topologyDigest topology))
             (Map.keys (rtComponents topology)))
