@@ -15,6 +15,7 @@ import Ironframe.Calm.Export
 import Ironframe.Calm.Model
 import Ironframe.Calm.Resolve
 import Ironframe.Calm.Run
+import Ironframe.Calm.Test (testComponents)
 import Ironframe.Compose (composeFile)
 import Ironframe.Effect
 import qualified Ironframe.Embedded as Embedded
@@ -36,6 +37,7 @@ data Command
   | Export ExportKind Text (Maybe Text) (Maybe Text) (Maybe Text)
   | Run Text Text (Maybe Text) (Maybe Text) [Text]
   | App Text Text (Maybe Text) [Text]
+  | Test Text (Maybe Text) [Text]
   | Schema SchemaKind
   | Settings Text SettingsFormat (Maybe Text)
   | Compose Text
@@ -97,7 +99,7 @@ parseArgs argv = do
         Nothing -> Nothing
       globals = Globals (fromMaybe defaultManifest (one "manifest")) (one "architecture") (one "decorators")
   when ("help" `elem` flags parsed) $ Left (ParseHelp helpText)
-  when ("version" `elem` flags parsed) $ Left (ParseHelp "ironframe 0.1.0\n")
+  when ("version" `elem` flags parsed) $ Left (ParseHelp "ironframe 0.2.0\n")
   case positionals parsed of
     [] -> Left (ParseHelp helpText)
     (word : args) -> (,) globals <$> parseCommand word args parsed one
@@ -134,6 +136,10 @@ parseArgs argv = do
               when (null (rest parsed)) $ Left (ParseError "the following required arguments were not provided:\n  <COMMAND>...")
               extra 0
               Right (Run e app (one "dir") (one "attestation") (rest parsed))
+            "test" -> do
+              e <- envRequired
+              extra 0
+              Right (Test e (one "app") (rest parsed))
             "app" -> do
               node <- positional 0 "NODE"
               e <- envRequired
@@ -282,6 +288,7 @@ helpText =
     , ""
     , "Commands:"
     , "  validate  Check the manifest, or the architecture, its decorators and every environment they declare"
+    , "  test      Run selected CALM components with fresh LawSpec tests; bracket owned services and record completed evidence"
     , "  resolve   Resolve an environment of a CALM architecture and print the resolved topology, or refuse it"
     , "  export    Export what an environment's resolved topology generates, without deploying anything"
     , "  run       Run a command as an application of a CALM environment and attest the run"
@@ -315,6 +322,7 @@ environmentOfCommand = \case
   Export _ e _ _ _ -> Just e
   Run e _ _ _ _ -> Just e
   App _ e _ _ -> Just e
+  Test e _ _ -> Just e
   Settings e _ _ -> Just e
   Compose e -> Just e
   Up e _ _ -> Just e
@@ -327,6 +335,7 @@ environmentOfCommand = \case
 
 needsArchitecture :: Command -> Bool
 needsArchitecture = \case
+  Test {} -> True
   Resolve {} -> True
   Export {} -> True
   Run {} -> True
@@ -403,6 +412,7 @@ verb globals manifest dir calm resolution = \case
     report <- runManaged r node args attestation
     printErr ("ironframe: run " <> A.runId (A.attRun (runAttestation report)) <> " of " <> node <> " exited " <> tshow (runExitCode report) <> "; attestation " <> runPathWritten report <> "\n")
     pure (exitCodeOf (runExitCode report))
+  Test _ app args -> calm >>= \resolved -> testComponents resolved app args
   Attest _ output (Just app) _ _ -> do
     r <- calm
     running <- begin r app [] Nothing

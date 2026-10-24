@@ -6,7 +6,8 @@ import * as nodeFs from "node:fs/promises";
 import { spawn as nodeSpawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { lookup as dnsLookup } from "node:dns/promises";
-import { connect as netConnect } from "node:net";
+import { connect as netConnect, createServer as netServer } from "node:net";
+import {once} from "node:events";
 import { dirname, basename } from "node:path";
 import { errorText, rootCause } from "./errors.mjs";
 
@@ -49,6 +50,47 @@ export function createHost(options = {}) {
   const fetchImpl = options.fetch ?? globalThis.fetch;
   const clock = options.clock ?? defaultClock;
   const clouds = options.clouds ?? defaultClouds();
+  const services = new Map();
+  const commands = new Set();
+  const signal = options.signal;
+
+  async function freeEndpoint(endpoint) {
+    if (!endpoint) return;
+    const address = new URL(endpoint.includes('://') ? endpoint : 'tcp://' + endpoint);
+    const port = Number(address.port || (address.protocol === 'https:' ? 443 : 80));
+    const server = (options.createServer ?? netServer)();
+    try {
+      await new Promise((resolve, reject) => {
+        server.once('error', reject);
+        server.listen(port, address.hostname.replace(/^\[|\]$/g, ''), resolve);
+      });
+    } finally {
+      if (server.listening) await new Promise(resolve => server.close(resolve));
+    }
+  }
+
+  function stopped(child) {
+    return child.exitCode !== null || child.signalCode !== null;
+  }
+
+  async function stopOwned(record) {
+    const {child, finished, grouped} = record;
+    if (stopped(child)) return;
+    const send = name => {
+      try {
+        if (grouped && process.platform !== 'win32') process.kill(-child.pid, name);
+        else child.kill(name);
+      } catch (error) {if (error.code !== 'ESRCH') throw error;}
+    };
+    send('SIGTERM');
+    let timer;
+    const timedOut = await Promise.race([finished.then(() => false), new Promise(resolve => {timer = setTimeout(() => resolve(true), 5000);})]);
+    clearTimeout(timer);
+    if (timedOut) {
+      send('SIGKILL');
+      await finished;
+    }
+  }
 
   async function isFile(path) {
     try {
@@ -151,8 +193,38 @@ export function createHost(options = {}) {
       return ok(null);
     },
 
-    async run({ program, args, stream, cwd, env, inheritStdin }) {
-      return runProcess({ program, args, stream, cwd, env, inheritStdin });
+    async run(fields) {
+      return runProcess(fields);
+    },
+
+    async startService({command, cwd, env, log, endpoint}) {
+      signal?.throwIfAborted();
+      await freeEndpoint(endpoint);
+      await fs.mkdir(dirname(log), {recursive: true});
+      const output = await fs.open(log, 'w');
+      let child;
+      try {
+        child = spawn(command[0], command.slice(1), {cwd, env: {...proc.env, ...env}, detached: process.platform !== 'win32', stdio: ['ignore', output.fd, output.fd]});
+        const finished = new Promise(resolve => child.once('exit', resolve));
+        await once(child, 'spawn');
+        const id = clock.uuid();
+        services.set(id, {child, finished, grouped: true});
+        return ok({id, pid: child.pid, log});
+      } finally {await output.close();}
+    },
+
+    async serviceStatus({id}) {
+      const service = services.get(id);
+      if (!service) throw new Error('Unknown owned service handle');
+      return ok({running: !stopped(service.child), code: service.child.exitCode});
+    },
+
+    async stopService({id}) {
+      const service = services.get(id);
+      if (!service) throw new Error('Unknown owned service handle');
+      await stopOwned(service);
+      services.delete(id);
+      return ok(null);
     },
 
     async http({ method, url, headers, body, timeoutMs }) {
@@ -202,7 +274,7 @@ export function createHost(options = {}) {
     },
   };
 
-  function runProcess({ program, args, stream, cwd, env, inheritStdin }) {
+  function runProcess({ program, args, stream, cwd, env, inheritStdin, ownedGroup }) {
     return new Promise((resolve) => {
       const stdio = [inheritStdin ? "inherit" : "ignore", stream ? "inherit" : "pipe", stream ? "inherit" : "pipe"];
       let child;
@@ -211,6 +283,8 @@ export function createHost(options = {}) {
           cwd: cwd ?? undefined,
           env: env ? { ...proc.env, ...env } : proc.env,
           stdio,
+          ...(ownedGroup ? {detached: process.platform !== 'win32'} : {}),
+          ...(signal ? {signal} : {}),
         });
       } catch (error) {
         resolve(failure(error));
@@ -218,6 +292,8 @@ export function createHost(options = {}) {
       }
       const stdout = [];
       const stderr = [];
+      const record = ownedGroup ? {child, grouped: true, finished: new Promise(resolve => child.once('exit', resolve))} : null;
+      if (record) commands.add(record);
       child.stdout?.on("data", (chunk) => stdout.push(chunk));
       child.stderr?.on("data", (chunk) => stderr.push(chunk));
       let settled = false;
@@ -227,6 +303,7 @@ export function createHost(options = {}) {
         resolve(failure(error));
       });
       child.on("close", (code) => {
+        if (record) commands.delete(record);
         if (settled) return;
         settled = true;
         resolve(
@@ -260,7 +337,14 @@ export function createHost(options = {}) {
     }
   }
 
-  return { perform };
+  async function close() {
+    const results = await Promise.allSettled([...services.values(), ...commands].map(stopOwned));
+    services.clear();
+    commands.clear();
+    const errors = results.filter(result => result.status === 'rejected').map(result => result.reason);
+    if (errors.length) throw new AggregateError(errors, 'Owned process cleanup failed');
+  }
+  return { perform, close, signal };
 }
 
 /** Writes text and waits until the stream has taken it, so output keeps its order. */

@@ -6,6 +6,24 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-24
+
+### Added
+
+- CALM nodes refer to checked LawSpec component descriptors and can both provide
+  and consume contracts. Connections select named requirements and reject
+  missing or incompatible contract identities, content and settings.
+- `ironframe test --env ENV [--app NODE] [-- LAWSpec-ARGS]` generates and freshly
+  tests selected native components, builds and brackets owned services, waits
+  for readiness and consumes completed LawSpec evidence. Owned process groups
+  are cleaned up on failure or cancellation; occupied ports are refused.
+- Component bindings support native builds, local processes, readiness checks
+  and `${componentRoot}` in their own environment settings. Local credential
+  references are resolved only for owned execution. Exported settings retain
+  references.
+- Integration attestations finish after cleanup; each native run links to its
+  integration and records its selected contract and component identity.
+
 ### Changed
 
 - The calm-shop example pins LawSpec 0.29.2 instead of 0.26.0. Its laws and

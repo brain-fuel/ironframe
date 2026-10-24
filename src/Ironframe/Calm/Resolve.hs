@@ -43,12 +43,13 @@ import qualified Data.Text as T
 import Ironframe.Calm.Model
 import Ironframe.Effect
 import Ironframe.Json
-import Ironframe.Json.Serde
+import Ironframe.Json.Serde hiding (value)
 import Ironframe.Manifest
 import Ironframe.Manifest.Serde (decodeCloud, decodeConfigService, decodeReal, decodeRuntime, decodeSyncTarget, decodeTwin)
 import qualified Ironframe.Path as Path
 import Ironframe.Rust (debugStr)
 import qualified Ironframe.Semver as Semver
+import qualified Ironframe.Component as Component
 
 topologyFormat :: Text
 topologyFormat = "ironframe-resolved-topology"
@@ -122,6 +123,7 @@ data ResolvedEdge = ResolvedEdge
   , reConsumes :: [Text]
   , reSettings :: Map Text Text
   , reKind :: BoundKind
+  , reRequirement :: Maybe Text
   }
   deriving (Show, Eq)
 
@@ -133,6 +135,8 @@ data ResolvedTopology = ResolvedTopology
   , rtApplications :: [ResolvedApplication]
   , rtDependencies :: [ResolvedDependencyNode]
   , rtEdges :: [ResolvedEdge]
+  , rtComponents :: Map Text Component.Component
+  , rtComponentSettings :: Map Text [Text]
   }
   deriving (Show, Eq)
 
@@ -143,6 +147,7 @@ data Resolution = Resolution
   , resManifest :: Manifest
   , resDir :: Text
   , resArchitecture :: Architecture
+  , resComponentBindings :: Map Text Value
   }
 
 -- Writing.
@@ -169,7 +174,7 @@ encodeTopology :: ResolvedTopology -> Value
 encodeTopology t =
   Object
     [ "format" .= String topologyFormat
-    , "version" .= Number (I 1)
+    , "version" .= Number (I (if Map.null (rtComponents t) then 1 else 2))
     , "architecture" .= encodeArchitectureIdentity (rtArchitecture t)
     , "environment" .= String (rtEnvironment t)
     , "project" .= String (rtProject t)
@@ -178,25 +183,32 @@ encodeTopology t =
     , "dependencies" .= Array (map dependency (rtDependencies t))
     , "edges" .= Array (map edge (rtEdges t))
     ]
+      `withComponents` rtComponents t
   where
+    withComponents (Object fields) components
+      | Map.null components = Object fields
+      | otherwise = Object (fields ++ ["components" .= Object [(node, insert "settings" (Array (map String (Map.findWithDefault [] node (rtComponentSettings t)))) (Component.componentView component)) | (node,component) <- Map.toAscList components]])
+    withComponents value _ = value
     application a =
       Object $
         [ "node" .= String (raNode a)
         , "name" .= String (raName a)
-        , "contract" .= encodeContractIdentity (raContract a)
         , "deployment" .= encodeDeployment (raDeployment a)
         , "version" .= String (raVersion a)
         ]
+          ++ ["contract" .= encodeContractIdentity (raContract a) | Map.notMember (raNode a) (rtComponents t)]
           ++ maybe [] (\c -> ["commit" .= String c]) (raCommit a)
           ++ ["edges" .= Array (map String (raEdges a))]
     dependency d =
       Object $
         [ "node" .= String (rnNode d)
         , "name" .= String (rnName d)
-        , "contract" .= encodeContractIdentity (rnContract d)
         , "binding" .= String (rnBinding d)
         , "kind" .= String (boundWord (rnKind d))
         ]
+          ++ (case Map.lookup (rnNode d) (rtComponents t) of
+            Nothing -> ["contract" .= encodeContractIdentity (rnContract d)]
+            Just component -> ["provides" .= Array (map Component.contractView (Component.componentProvides component))])
           ++ maybe [] (\p -> ["provider" .= Object ["name" .= String (providerName p), "version" .= String (providerVersion p)]]) (rnProvider d)
           ++ maybe [] (\ti -> ["twin" .= twin ti]) (rnTwin d)
           ++ ["consumers" .= Number (I (toInteger (rnConsumers d)))]
@@ -217,6 +229,7 @@ encodeTopology t =
              , "settings" .= fromTextMap (reSettings e)
              , "kind" .= String (boundWord (reKind e))
              ]
+          ++ maybe [] (\name -> ["requirement" .= String name]) (reRequirement e)
 
 encodeArchitectureIdentity :: ArchitectureIdentity -> Value
 encodeArchitectureIdentity a =
@@ -247,13 +260,16 @@ edgesOf t n = filter ((== n) . reSource) (rtEdges t)
 data ContractData
   = ApplicationContract Text Text
   | DependencyContract Text Text [Text] (Maybe [Text])
-  | ConnectionContract [Text] (Map Text Text)
+  | ConnectionContract [Text] (Map Text Text) (Maybe Text)
+  | ComponentContract
 
 contractData :: Decorator -> Either CalmProblem ContractData
 contractData d =
   let dat = decData d
       parse k decoder = either (Left . calmProblem ("decorator " <> debugStr (decId d))) Right (decodeWith decoder (keyOr k dat))
-   in if isJust (key "application" dat)
+   in if isJust (key "component" dat)
+        then Right ComponentContract
+        else if isJust (key "application" dat)
         then parse "application" (struct "ContractData::Application" False (ApplicationContract <$> required "package" string <*> required "version" string))
         else
           if isJust (key "dependency" dat)
@@ -267,7 +283,7 @@ contractData d =
                       <*> required "abilities" (vec string)
                       <*> optional "conformance" (struct "Accept" False (required "accept" (vec string)))
                 )
-            else parse "connection" (struct "ContractData::Connection" False (ConnectionContract <$> required "consumes" (vec string) <*> required "settings" (textMap string)))
+            else parse "connection" (struct "ContractData::Connection" False (ConnectionContract <$> defaulted "consumes" [] (vec string) <*> required "settings" (textMap string) <*> optional "requirement" string))
 
 data EnvironmentData = EnvironmentData
   { edProject :: Text
@@ -318,14 +334,17 @@ abilityUnit identity = case T.breakOn "::ability::" identity of
 unitInPackage :: Text -> Text -> Bool
 unitInPackage unit package = unit == package || maybe False ("." `T.isPrefixOf`) (T.stripPrefix package unit)
 
-data Edge = Edge {edgeRelationship :: Relationship, edgeSource :: Text, edgeDestination :: Text, edgeConsumes :: [Text], edgeSettings :: Map Text Text}
+data Edge = Edge {edgeRelationship :: Relationship, edgeSource :: Text, edgeDestination :: Text, edgeConsumes :: [Text], edgeSettings :: Map Text Text, edgeRequirement :: Maybe Text}
 
 -- | Resolves an environment of an architecture and its decorators, or
 -- refuses with every problem found. Relative paths in bindings, such as
 -- conformance reports, are read against @dir@.
 resolveCalm :: Architecture -> Decorators -> Text -> Text -> Eff (Either CalmError Resolution)
 resolveCalm architecture decorators environment dir = do
-  let found0 = targetProblems architecture decorators
+  loadedComponents <- mapM loadComponent [d | d <- ofType decorators contractType, isJust (key "component" (decData d))]
+  let componentProblems = concat [problems | (problems, _) <- loadedComponents]
+      components = Map.fromList (concat [entries | (_, entries) <- loadedComponents])
+      found0 = targetProblems architecture decorators ++ componentProblems
       -- The environment.
       environments = ofType decorators environmentType
       declared = Set.fromList [e | d <- environments, Just e <- [textAt "environment" (decData d)]]
@@ -409,7 +428,16 @@ resolveCalm architecture decorators environment dir = do
                           | not (isName element)
                           ]
                      in (ps ++ abilityProblems ++ nameProblem, apps, Map.insert element (package, version, abilities, accept) deps)
-              ConnectionContract _ _
+              ComponentContract -> case Map.lookup element components of
+                Nothing -> (ps, apps, deps)
+                Just component ->
+                  let apps' = Map.insert element (Component.componentName component, Component.componentVersion component) apps
+                      deps' = case Component.componentProvides component of
+                        [] -> deps
+                        provided : _ -> Map.insert element
+                          (Component.contractPackage provided, Component.contractVersion provided, Component.contractAbilities provided, Nothing) deps
+                   in (ps ++ [calmProblem at "a component applies to a CALM node" | not isNode], apps', deps')
+              ConnectionContract _ _ _
                 | isNothing (relationshipOf architecture element) ->
                     (ps ++ [calmProblem at ("a connection contract applies to a relationship, and " <> debugStr element <> " is not one")], apps, deps)
                 | otherwise -> (ps, apps, deps)
@@ -418,19 +446,32 @@ resolveCalm architecture decorators environment dir = do
       edgeStep (ps, es, consumed, appSettings) relationship =
         let at = "relationship " <> debugStr (relId relationship)
             connection = case Map.lookup (relId relationship) contracts of
-              Just (decorator, ConnectionContract consumes settings) -> Just (decorator, consumes, settings)
+              Just (decorator, ConnectionContract consumes settings requirement) ->
+                let selected = do
+                      component <- Map.lookup sourceNode components
+                      name <- requirement
+                      Map.lookup name (Component.componentRequires component)
+                    sourceNode = case relKind relationship of Connects source _ -> source; _ -> ""
+                    selectedDeclarations = case selected of
+                      Nothing -> consumes
+                      Just asked -> Component.contractAbilities (Component.requirementContract asked) ++ Component.requirementDeclarations asked
+                 in Just (decorator, selectedDeclarations, settings, requirement, selected)
               _ -> Nothing
          in case relKind relationship of
               Connects source destination ->
                 let sourceIsApp = Map.member source applications
                     destinationIsDependency = Map.member destination dependencies
                  in case (sourceIsApp, destinationIsDependency, connection) of
-                      (True, True, Just (_, consumes, settings)) ->
+                      (True, True, Just (_, consumes, settings, requirement, selected)) ->
                         let (package, _) = applications Map.! source
                             (abilityPs, consumed') =
                               foldl
                                 ( \(aps, c) ability ->
                                     let identityPs
+                                          | Map.member source components =
+                                              case Map.lookup source components of
+                                                Just component | ability `elem` Component.componentDeclarations component -> []
+                                                _ -> [calmProblem at ("consumes unknown component declaration " <> ability)]
                                           | not (isAbilityIdentity ability) =
                                               [calmProblem at ("consumes " <> debugStr ability <> ", which is not an ability identity, unit::ability::Name")]
                                           | not (unitInPackage (abilityUnit ability) package) =
@@ -462,7 +503,20 @@ resolveCalm architecture decorators environment dir = do
                                 )
                                 ([], appSettings)
                                 (Map.keys settings)
-                         in (ps ++ abilityPs ++ settingPs, es ++ [Edge relationship source destination consumes settings], consumed', appSettings')
+                            contractPs = case (Map.lookup source components, selected) of
+                              (Just _, Nothing) -> [calmProblem at "a component connection must select a declared requirement"]
+                              (_, Just asked) ->
+                                let needed = Component.requirementContract asked
+                                    provided = maybe [] Component.componentProvides (Map.lookup destination components)
+                                    agrees contract = Component.contractPackage contract == Component.contractPackage needed
+                                      && Component.contractVersion contract == Component.contractVersion needed
+                                      && Component.contractDigest contract == Component.contractDigest needed
+                                      && all (`elem` Component.contractAbilities contract) (Component.contractAbilities needed)
+                                 in [calmProblem at "the destination needs a checked component descriptor for this requirement" | Map.notMember destination components] ++
+                                    [calmProblem at "the destination does not provide the resolved contract required by this component" | Map.member destination components, not (any agrees provided)] ++
+                                    [calmProblem at ("setting " <> name <> " is not declared by the selected requirement") | name <- Map.keys settings, name `notElem` Component.requirementSettings asked]
+                              _ -> []
+                         in (ps ++ abilityPs ++ settingPs ++ contractPs, es ++ [Edge relationship source destination consumes settings requirement], consumed', appSettings')
                       (True, True, Nothing) ->
                         ( ps
                             ++ [ calmProblem
@@ -513,13 +567,14 @@ resolveCalm architecture decorators environment dir = do
                           let isApplication = Map.member e applications
                               isDependency = Map.member e dependencies
                               saysApplication = isJust (key "application" (decData d))
+                              saysComponent = isJust (key "component" (decData d)) && Map.member e components
                            in if not isApplication && not isDependency
                                 then (ps' ++ [calmProblem at ("binds " <> debugStr e <> ", which has no application or dependency contract")], bs')
                                 else
-                                  if isApplication && not saysApplication
+                                  if isApplication && not saysApplication && not saysComponent && not (Map.member e components && isDependency)
                                     then (ps' ++ [calmProblem at ("binds application " <> debugStr e <> " as a dependency, real or twin")], bs')
                                     else
-                                      if isDependency && saysApplication
+                                      if isDependency && saysApplication && not saysComponent
                                         then (ps' ++ [calmProblem at ("binds dependency " <> debugStr e <> " as an application")], bs')
                                         else case Map.lookup e bs' of
                                           Just other ->
@@ -539,14 +594,17 @@ resolveCalm architecture decorators environment dir = do
                       )
                       (ps, bs)
                       (decAppliesTo d)
-      before = found0 ++ environmentProblems ++ nameProblems ++ contractProblems ++ classProblems ++ edgeProblems ++ bindingProblems
+      unwiredProblems = [calmProblem ("node " <> node) ("requirement " <> name <> " has no connection binding")
+        | (node,component) <- Map.toAscList components, name <- Map.keys (Component.componentRequires component),
+          not (any (\edge -> edgeSource edge == node && edgeRequirement edge == Just name) edges)]
+      before = found0 ++ environmentProblems ++ nameProblems ++ contractProblems ++ classProblems ++ edgeProblems ++ bindingProblems ++ unwiredProblems
   -- Resolve each dependency's binding against its contract.
   (dependencyProblems, resolvedDependencies, manifestBindings) <-
     foldM
       ( \(ps, rds, mbs) (node, (package, requirement, abilities, accept)) -> do
           let at = "node " <> debugStr node
               consumers = length (filter ((== node) . edgeDestination) edges)
-              consumerPs = [calmProblem at "has a dependency contract, but no application's connects relationship reaches it" | consumers == 0]
+              consumerPs = [calmProblem at "has a dependency contract, but no application's connects relationship reaches it" | consumers == 0, Map.notMember node components]
               displayName = maybe "" Ironframe.Calm.Model.nodeName (nodeOf architecture node)
           case Map.lookup node bindings of
             Nothing -> pure (ps ++ consumerPs ++ [calmProblem at ("has no binding in environment " <> debugStr environment <> "; it is unresolved")], rds, mbs)
@@ -554,7 +612,9 @@ resolveCalm architecture decorators environment dir = do
               let contract = ContractIdentity package requirement abilities
                   bindingAt = "decorator " <> debugStr (decId decorator)
                   ps1 = ps ++ consumerPs
-              case key "real" (decData decorator) of
+              case case key "component" (decData decorator) of
+                     Just component -> Just (Object [(name,value) | (name,value) <- toPairs component, name `elem` ["endpoint", "provider", "credentials"]])
+                     Nothing -> key "real" (decData decorator) of
                 Just real -> do
                   let provider = key "provider" real >>= either (const Nothing) Just . decodeWith providerDecoder
                   pure $ case decodeWith decodeReal (delete "provider" real) of
@@ -608,7 +668,7 @@ resolveCalm architecture decorators environment dir = do
          in case Map.lookup node bindings of
               Nothing -> base
               Just decorator ->
-                let dat = keyOr "application" (decData decorator)
+                let dat = fromMaybe (keyOr "application" (decData decorator)) (key "component" (decData decorator))
                     deployment = case key "managed" dat of
                       Just managed
                         | Just process <- key "process" managed ->
@@ -635,6 +695,7 @@ resolveCalm architecture decorators environment dir = do
             (edgeConsumes e)
             (edgeSettings e)
             (maybe BoundReal rnKind (lookupNode (edgeDestination e) resolvedDependencies))
+            (edgeRequirement e)
         | e <- edges
         ]
       lookupNode n ds = case filter ((== n) . rnNode) ds of
@@ -703,9 +764,21 @@ resolveCalm architecture decorators environment dir = do
                       , rtApplications = resolvedApplications
                       , rtDependencies = resolvedDependencies
                       , rtEdges = resolvedEdges
+                      , rtComponents = components
+                      , rtComponentSettings = Map.map (\decorator -> [name | Object fields <- [keyOr "env" (keyOr "component" (decData decorator))], (name,_) <- fields]) (Map.filterWithKey (\node _ -> Map.member node components) bindings)
                       }
-               in Right (Resolution topology manifest dir architecture)
+                  componentBindings = Map.mapMaybe (key "component" . decData) bindings
+               in Right (Resolution topology manifest dir architecture componentBindings)
   where
+    toPairs (Object pairs) = pairs
+    toPairs _ = []
+    loadComponent decorator = case textAt "manifest" (keyOr "component" (decData decorator)) of
+      Nothing -> pure ([calmProblem ("decorator " <> decId decorator) "component.manifest is required"], [])
+      Just relative -> do
+        loaded <- Component.loadComponent (Path.join dir relative)
+        pure $ case loaded of
+          Left problem -> ([calmProblem ("decorator " <> decId decorator) problem], [])
+          Right component -> ([], [(node,component) | node <- decAppliesTo decorator])
     translate resolved at message =
       let prefix = "environments." <> environment <> ".dependencies."
        in case T.stripPrefix prefix at of

@@ -349,7 +349,6 @@ attestationSchema =
   \      \"type\": \"object\",\n\
   \      \"required\": [\n\
   \        \"node\",\n\
-  \        \"contract\",\n\
   \        \"implementation\"\n\
   \      ],\n\
   \      \"properties\": {\n\
@@ -361,8 +360,42 @@ attestationSchema =
   \        },\n\
   \        \"implementation\": {\n\
   \          \"$ref\": \"#/$defs/implementation\"\n\
+  \        },\n\
+  \        \"component\": {\n\
+  \          \"type\": \"object\",\n\
+  \          \"required\": [\n\
+  \            \"name\",\n\
+  \            \"version\",\n\
+  \            \"fingerprint\"\n\
+  \          ],\n\
+  \          \"properties\": {\n\
+  \            \"name\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
+  \            },\n\
+  \            \"version\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
+  \            },\n\
+  \            \"fingerprint\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"pattern\": \"^[a-f0-9]{64}$\"\n\
+  \            }\n\
+  \          }\n\
   \        }\n\
-  \      }\n\
+  \      },\n\
+  \      \"anyOf\": [\n\
+  \        {\n\
+  \          \"required\": [\n\
+  \            \"contract\"\n\
+  \          ]\n\
+  \        },\n\
+  \        {\n\
+  \          \"required\": [\n\
+  \            \"component\"\n\
+  \          ]\n\
+  \        }\n\
+  \      ]\n\
   \    },\n\
   \    \"execution\": {\n\
   \      \"description\": \"What the document records: wiring alone (wired), a run under way (running) or a completed run (completed), with its outcome. exit_code and finished_at are present exactly when completed.\",\n\
@@ -677,7 +710,6 @@ contractDecoratorSchema =
   \          \"type\": \"object\",\n\
   \          \"additionalProperties\": false,\n\
   \          \"required\": [\n\
-  \            \"consumes\",\n\
   \            \"settings\"\n\
   \          ],\n\
   \          \"properties\": {\n\
@@ -698,6 +730,35 @@ contractDecoratorSchema =
   \                \"type\": \"string\"\n\
   \              },\n\
   \              \"description\": \"Setting name to template over the bound endpoint: ${endpoint}, ${host}, ${port}, ${credentials}, ${kind}, ${name}.\"\n\
+  \            },\n\
+  \            \"requirement\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
+  \            }\n\
+  \          },\n\
+  \          \"oneOf\": [\n\
+  \            {\n\
+  \              \"required\": [\n\
+  \                \"consumes\"\n\
+  \              ]\n\
+  \            },\n\
+  \            {\n\
+  \              \"required\": [\n\
+  \                \"requirement\"\n\
+  \              ]\n\
+  \            }\n\
+  \          ]\n\
+  \        },\n\
+  \        \"component\": {\n\
+  \          \"type\": \"object\",\n\
+  \          \"additionalProperties\": false,\n\
+  \          \"required\": [\n\
+  \            \"manifest\"\n\
+  \          ],\n\
+  \          \"properties\": {\n\
+  \            \"manifest\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
   \            }\n\
   \          }\n\
   \        }\n\
@@ -716,6 +777,11 @@ contractDecoratorSchema =
   \        {\n\
   \          \"required\": [\n\
   \            \"connection\"\n\
+  \          ]\n\
+  \        },\n\
+  \        {\n\
+  \          \"required\": [\n\
+  \            \"component\"\n\
   \          ]\n\
   \        }\n\
   \      ]\n\
@@ -955,6 +1021,169 @@ bindingDecoratorSchema =
   \            }\n\
   \          },\n\
   \          \"description\": \"How the application node is deployed: by its own tooling (external), or by Ironframe as a process or an image (managed).\"\n\
+  \        },\n\
+  \        \"component\": {\n\
+  \          \"type\": \"object\",\n\
+  \          \"additionalProperties\": false,\n\
+  \          \"properties\": {\n\
+  \            \"external\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"properties\": {\n\
+  \                \"description\": {\n\
+  \                  \"type\": \"string\"\n\
+  \                }\n\
+  \              }\n\
+  \            },\n\
+  \            \"managed\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"properties\": {\n\
+  \                \"process\": {\n\
+  \                  \"type\": \"object\",\n\
+  \                  \"additionalProperties\": false,\n\
+  \                  \"required\": [\n\
+  \                    \"command\"\n\
+  \                  ],\n\
+  \                  \"properties\": {\n\
+  \                    \"command\": {\n\
+  \                      \"type\": \"array\",\n\
+  \                      \"minItems\": 1,\n\
+  \                      \"items\": {\n\
+  \                        \"type\": \"string\"\n\
+  \                      }\n\
+  \                    },\n\
+  \                    \"dir\": {\n\
+  \                      \"type\": \"string\"\n\
+  \                    }\n\
+  \                  }\n\
+  \                },\n\
+  \                \"image\": {\n\
+  \                  \"type\": \"object\",\n\
+  \                  \"additionalProperties\": false,\n\
+  \                  \"required\": [\n\
+  \                    \"image\"\n\
+  \                  ],\n\
+  \                  \"properties\": {\n\
+  \                    \"image\": {\n\
+  \                      \"type\": \"string\",\n\
+  \                      \"minLength\": 1\n\
+  \                    },\n\
+  \                    \"args\": {\n\
+  \                      \"type\": \"array\",\n\
+  \                      \"items\": {\n\
+  \                        \"type\": \"string\"\n\
+  \                      }\n\
+  \                    },\n\
+  \                    \"build\": {\n\
+  \                      \"type\": \"object\",\n\
+  \                      \"additionalProperties\": false,\n\
+  \                      \"required\": [\n\
+  \                        \"context\"\n\
+  \                      ],\n\
+  \                      \"properties\": {\n\
+  \                        \"context\": {\n\
+  \                          \"type\": \"string\"\n\
+  \                        },\n\
+  \                        \"containerfile\": {\n\
+  \                          \"type\": \"string\"\n\
+  \                        }\n\
+  \                      }\n\
+  \                    }\n\
+  \                  }\n\
+  \                }\n\
+  \              },\n\
+  \              \"minProperties\": 1,\n\
+  \              \"maxProperties\": 1\n\
+  \            },\n\
+  \            \"implementation\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"properties\": {\n\
+  \                \"version\": {\n\
+  \                  \"type\": \"string\"\n\
+  \                },\n\
+  \                \"commit\": {\n\
+  \                  \"type\": \"string\"\n\
+  \                }\n\
+  \              }\n\
+  \            },\n\
+  \            \"endpoint\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
+  \            },\n\
+  \            \"provider\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"required\": [\n\
+  \                \"name\",\n\
+  \                \"version\"\n\
+  \              ],\n\
+  \              \"properties\": {\n\
+  \                \"name\": {\n\
+  \                  \"type\": \"string\",\n\
+  \                  \"minLength\": 1\n\
+  \                },\n\
+  \                \"version\": {\n\
+  \                  \"type\": \"string\",\n\
+  \                  \"minLength\": 1\n\
+  \                }\n\
+  \              }\n\
+  \            },\n\
+  \            \"credentials\": {\n\
+  \              \"type\": \"string\"\n\
+  \            },\n\
+  \            \"env\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": {\n\
+  \                \"type\": \"string\"\n\
+  \              }\n\
+  \            },\n\
+  \            \"build\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"required\": [\n\
+  \                \"command\"\n\
+  \              ],\n\
+  \              \"properties\": {\n\
+  \                \"command\": {\n\
+  \                  \"type\": \"array\",\n\
+  \                  \"minItems\": 1,\n\
+  \                  \"items\": {\n\
+  \                    \"type\": \"string\"\n\
+  \                  }\n\
+  \                },\n\
+  \                \"dir\": {\n\
+  \                  \"type\": \"string\"\n\
+  \                }\n\
+  \              }\n\
+  \            },\n\
+  \            \"ready\": {\n\
+  \              \"type\": \"object\",\n\
+  \              \"additionalProperties\": false,\n\
+  \              \"required\": [\n\
+  \                \"url\"\n\
+  \              ],\n\
+  \              \"properties\": {\n\
+  \                \"url\": {\n\
+  \                  \"type\": \"string\"\n\
+  \                },\n\
+  \                \"accept\": {\n\
+  \                  \"type\": \"array\",\n\
+  \                  \"items\": {\n\
+  \                    \"type\": \"integer\",\n\
+  \                    \"minimum\": 100,\n\
+  \                    \"maximum\": 599\n\
+  \                  }\n\
+  \                },\n\
+  \                \"timeoutSeconds\": {\n\
+  \                  \"type\": \"integer\",\n\
+  \                  \"minimum\": 1\n\
+  \                }\n\
+  \              }\n\
+  \            }\n\
+  \          },\n\
+  \          \"description\": \"How the application node is deployed: by its own tooling (external), or by Ironframe as a process or an image (managed).\"\n\
   \        }\n\
   \      },\n\
   \      \"oneOf\": [\n\
@@ -971,6 +1200,11 @@ bindingDecoratorSchema =
   \        {\n\
   \          \"required\": [\n\
   \            \"application\"\n\
+  \          ]\n\
+  \        },\n\
+  \        {\n\
+  \          \"required\": [\n\
+  \            \"component\"\n\
   \          ]\n\
   \        }\n\
   \      ]\n\

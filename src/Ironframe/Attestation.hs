@@ -108,7 +108,7 @@ data ArchitectureRef = ArchitectureRef
   }
   deriving (Show, Eq)
 
-data ContractRef = ContractRef {contractPackage :: Text, contractVersion :: Text, contractAbilities :: [Text]}
+data ContractRef = ContractRef {contractPackage :: Text, contractVersion :: Text, contractAbilities :: [Text], contractDigest :: Maybe Text}
   deriving (Show, Eq)
 
 data Implementation = Implementation
@@ -120,7 +120,7 @@ data Implementation = Implementation
   }
   deriving (Show, Eq)
 
-data ApplicationRef = ApplicationRef {appNode :: Text, appContract :: ContractRef, appImplementation :: Implementation}
+data ApplicationRef = ApplicationRef {appNode :: Text, appContract :: Maybe ContractRef, appImplementation :: Implementation, appComponent :: Maybe Value}
   deriving (Show, Eq)
 
 data ExecutionStatus = Wired | Running | CompletedRun
@@ -162,6 +162,13 @@ validate a
   | T.null (runId (attRun a)) = Left "run.id must not be empty"
   | compareInstant (runRecordedAt (attRun a)) (runStartedAt (attRun a)) == LT = Left "run.recorded_at is before run.started_at"
   | otherwise = do
+      case attApplication a of
+        Just application | appContract application == Nothing && appComponent application == Nothing -> Left "application needs contract or component"
+        Just application | Just component <- appComponent application ->
+          case (textAt "name" component, textAt "version" component, textAt "fingerprint" component) of
+            (Just name, Just version, Just fingerprint) | not (T.null name || T.null version), T.length fingerprint == 64, T.all (`elem` ("0123456789abcdef" :: String)) fingerprint -> Right ()
+            _ -> Left "application component needs name, version and SHA-256 fingerprint"
+        _ -> Right ()
       dependencies Set.empty (attDependencies a)
       case attExecution a of
         Just e -> do
@@ -273,6 +280,7 @@ encodeContractRef c =
   Object $
     ["package" .= String (contractPackage c), "version" .= String (contractVersion c)]
       ++ ["abilities" .= Array (map String (contractAbilities c)) | not (null (contractAbilities c))]
+      ++ opt "digest" String (contractDigest c)
 
 encodeImplementation :: Implementation -> Value
 encodeImplementation i =
@@ -293,11 +301,10 @@ encodeArchitecture r =
 
 encodeApplication :: ApplicationRef -> Value
 encodeApplication r =
-  Object
+  Object $
     [ "node" .= String (appNode r)
-    , "contract" .= encodeContractRef (appContract r)
     , "implementation" .= encodeImplementation (appImplementation r)
-    ]
+    ] ++ opt "contract" encodeContractRef (appContract r) ++ opt "component" id (appComponent r)
 
 encodeExecution :: Execution -> Value
 encodeExecution e =
@@ -379,7 +386,7 @@ standInD =
 decodeContractRef :: Decoder ContractRef
 decodeContractRef =
   struct "ContractRef" False $
-    ContractRef <$> required "package" string <*> required "version" string <*> defaulted "abilities" [] (vec string)
+    ContractRef <$> required "package" string <*> required "version" string <*> defaulted "abilities" [] (vec string) <*> optional "digest" string
 
 implementationD :: Decoder Implementation
 implementationD =
@@ -406,7 +413,7 @@ architectureD =
 applicationD :: Decoder ApplicationRef
 applicationD =
   struct "ApplicationRef" False $
-    ApplicationRef <$> required "node" string <*> required "contract" decodeContractRef <*> required "implementation" implementationD
+    ApplicationRef <$> required "node" string <*> optional "contract" decodeContractRef <*> required "implementation" implementationD <*> optional "component" value
 
 executionD :: Decoder Execution
 executionD =

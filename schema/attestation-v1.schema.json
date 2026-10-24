@@ -107,7 +107,6 @@
       "type": "object",
       "required": [
         "node",
-        "contract",
         "implementation"
       ],
       "properties": {
@@ -119,8 +118,42 @@
         },
         "implementation": {
           "$ref": "#/$defs/implementation"
+        },
+        "component": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "fingerprint"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fingerprint": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
-      }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "contract"
+          ]
+        },
+        {
+          "required": [
+            "component"
+          ]
+        }
+      ]
     },
     "execution": {
       "description": "What the document records: wiring alone (wired), a run under way (running) or a completed run (completed), with its outcome. exit_code and finished_at are present exactly when completed.",

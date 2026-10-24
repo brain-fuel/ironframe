@@ -51,7 +51,7 @@ decodeRunRecord =
 attest :: ResolvedEnvironment -> RunRecord -> Timestamp -> (Text -> Bool) -> Map Text Observation -> Map Text TwinRecord -> Attestation
 attest environment run recorded reached observed records =
   (newAttestation (reEnvironment environment) (Run (recordId run) (recordStartedAt run) (maxInstant recorded (recordStartedAt run))))
-    { attProducer = Just (Producer "ironframe" "0.1.0")
+    { attProducer = Just (Producer "ironframe" "0.2.0")
     , attDependencies = map record (reDependencies environment)
     , attExecution = Just (Execution Wired [] Nothing Nothing Nothing)
     }

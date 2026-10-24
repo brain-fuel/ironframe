@@ -116,7 +116,7 @@ make canon        # canon check, with CANON_HOME pointing at a canon checkout
 make check        # lint, test, integrity, tofu-check and canon
 ```
 
-The calm-shop example pins LawSpec 0.29.2, which reads completed-run
+The calm-shop example pins LawSpec 0.31.0, which reads completed-run
 attestations. To check against an unpublished LawSpec build, set
 `IRONFRAME_LAWSPEC_PACKAGE` to its packed archive; the [CALM demonstration guide](docs/how-to/run-the-calm-demonstrations.md)
 shows the archive, CALM tooling and retained-evidence options.
@@ -135,3 +135,35 @@ every decision, and `canonical_exemptions.yaml`, which defers vetting to 1.0.
 ## License
 
 MIT; see `LICENSE`.
+
+A CALM node can also name a checked `lawspec.edn` component manifest through
+an `ironframe-contract` decorator's `data.component.manifest`. Give each Rust,
+F# or other independently built component its own manifest. Connection decorators
+select its named LawSpec `requirement`; resolution checks the selected provider's
+contract version, digest and abilities and the consumer's declaration identities.
+Ironframe reads `lawspec describe --json`, rather than parsing EDN.
+
+Run the native integration with:
+
+```sh
+ironframe -a architecture.calm.json test --env local
+ironframe -a architecture.calm.json test --env local --app client -- --seed 123
+```
+
+Component bindings may be external, or declare a build command, managed process,
+and HTTP readiness check. Their `env` entries join the generated connection
+settings; duplicate setting names are refused. `${componentRoot}` makes a file
+setting independent of the test framework's working directory. For owned local
+execution, `env:` and `file:` credential references are resolved at launch;
+exports retain those references. Cloud-secret references need an application's
+normal configuration mechanism.
+
+The command generates selected targets, builds required components, starts its
+owned services and runs `lawspec test --fresh`. It then consumes each completed
+attestation with `lawspec evidence`, stops owned processes and writes the final
+integration outcome. Component runs link to the integration through
+`execution.environment_run`. A failed build or readiness check fails the
+integration without claiming tests ran. Cancellation cleans up owned process
+groups; an interrupted attestation remains unfinished. Service logs and
+attestations remain under `.ironframe/ENV/`. Existing external services are never
+stopped, and occupied managed-service ports are refused.

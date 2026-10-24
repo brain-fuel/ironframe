@@ -1,0 +1,21 @@
+{
+  :manifest-version 1
+  :component {
+    :name "app"
+    :version "0.1.0"
+  }
+  :language-profile "1.0-rc.2"
+  :verification {
+    :layers [
+      :property
+      :examples
+    ]
+  }
+  :sources ["spec"]
+  :targets [
+    {
+      :language :go
+      :root "."
+    }
+  ]
+}

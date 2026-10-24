@@ -34,7 +34,7 @@ executable when accepting the CALM validation and diagram tooling path.
 
 ## Run it all
 
-The example pins LawSpec 0.29.2 (`app/package.json`), which consumes
+The example pins LawSpec 0.31.0 (`app/package.json`), which consumes
 completed-run attestations; LawSpec 0.26.0 reported every run as planned.
 
 ```sh

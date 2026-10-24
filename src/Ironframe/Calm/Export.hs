@@ -15,12 +15,14 @@ module Ironframe.Calm.Export
   , settingsProblems
   ) where
 
+import Control.Monad (forM)
 import qualified Data.Map.Strict as Map
 import Data.Map.Strict (Map)
 import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
 import Ironframe.Calm.Resolve
+import qualified Ironframe.Component as Component
 import Ironframe.Json
 import Ironframe.Settings
 
@@ -29,19 +31,28 @@ applicationSettings :: Resolution -> Map Text Text -> Either ResolveError (Map T
 applicationSettings resolution deployed = do
   let topology = resTopology resolution
   environment <- resolve (resManifest resolution) (rtEnvironment topology) deployed
-  pure $
-    Map.fromList
-      [ ( raNode application
-        , Map.fromList
+  fmap Map.fromList $ forM (rtApplications topology) $ \application -> do
+    let wiring = Map.fromList
             [ (k, v)
             | edge <- edgesOf topology (raNode application)
             , dependency <- take 1 (filter ((== reDestination edge) . rdName) (reDependencies environment))
             , k <- Map.keys (reSettings edge)
             , Just v <- [Map.lookup k (rdSettings dependency)]
             ]
-        )
-      | application <- rtApplications topology
-      ]
+        ownTemplates = [(name, text) | Object fields <- [keyOr "env" (Map.findWithDefault Null (raNode application) (resComponentBindings resolution))], (name,String text) <- fields]
+    ownSettings <- fmap Map.fromList $ forM ownTemplates $ \(name,template) -> do
+      let located = case Map.lookup (raNode application) (rtComponents topology) of
+            Just component -> T.replace "${componentRoot}" (Component.componentRoot component) template
+            Nothing -> template
+      rendered <- case filter ((== raNode application) . rdName) (reDependencies environment) of
+        dependency : _ -> renderSetting (raNode application) name located dependency
+        [] -> Right located
+      pure (name,rendered)
+    let
+        conflicts = Map.keys (Map.intersection ownSettings wiring)
+    case conflicts of
+      name : _ -> Left (SettingConflict (raNode application) name)
+      [] -> Right (raNode application, Map.union wiring ownSettings)
 
 -- | What a dependency is bound to, in a few words.
 bindingLabel :: ResolvedDependencyNode -> Text
@@ -63,7 +74,7 @@ mermaid t =
     [ "%% " <> rtProject t <> " environment " <> rtEnvironment t <> " of " <> aiDocument (rtArchitecture t) <> " (" <> aiDigest (rtArchitecture t) <> ")\nflowchart LR\n"
     ]
       ++ [ "  " <> mermaidId (raNode a) <> "([\"" <> raName a <> "<br/>" <> ciPackage (raContract a) <> " " <> raVersion a <> "\"])\n"
-         | a <- rtApplications t
+         | a <- rtApplications t, all ((/= raNode a) . rnNode) (rtDependencies t)
          ]
       ++ [ "  " <> mermaidId (rnNode d) <> "[(\"" <> rnName d <> "<br/>" <> bindingLabel d <> "\")]:::" <> boundWord (rnKind d) <> "\n"
          | d <- rtDependencies t
@@ -87,7 +98,7 @@ dot t =
     , "digraph \"" <> rtProject t <> "-" <> rtEnvironment t <> "\" {\n  rankdir=LR;\n"
     ]
       ++ [ "  \"" <> raNode a <> "\" [shape=box, style=rounded, label=\"" <> raName a <> "\\n" <> ciPackage (raContract a) <> " " <> raVersion a <> "\"];\n"
-         | a <- rtApplications t
+         | a <- rtApplications t, all ((/= raNode a) . rnNode) (rtDependencies t)
          ]
       ++ [ "  \"" <> rnNode d <> "\" [shape=cylinder, " <> style (rnKind d) <> ", class=\"" <> boundWord (rnKind d) <> "\", label=\"" <> rnName d <> "\\n" <> bindingLabel d <> "\"];\n"
          | d <- rtDependencies t
@@ -205,5 +216,5 @@ settingsProblems t application settings =
   [application <> " is not handed " <> k | k <- Set.toAscList (Set.difference expected given)]
     ++ [application <> " is handed " <> k <> ", which none of its edges reads" | k <- Set.toAscList (Set.difference given expected)]
   where
-    expected = Set.fromList (concatMap (Map.keys . reSettings) (edgesOf t application))
+    expected = Set.fromList (concatMap (Map.keys . reSettings) (edgesOf t application) ++ Map.findWithDefault [] application (rtComponentSettings t))
     given = Map.keysSet settings

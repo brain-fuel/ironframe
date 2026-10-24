@@ -28,6 +28,10 @@ module Ironframe.Effect
   , ProcessOutput (..)
   , runProcess
   , runInherited
+  , runOwnedInherited
+  , startService
+  , serviceRunning
+  , stopService
   , readStdin
   , tempDir
   , processId
@@ -218,7 +222,13 @@ runProcess program args stream = do
 -- | Runs a program with the terminal's standard streams, extra environment
 -- and an optional working directory, as a run's command is run.
 runInherited :: Text -> [Text] -> [(Text, Text)] -> Maybe Text -> Eff (Either IoError ProcessOutput)
-runInherited program args env dir = do
+runInherited = runInheritedWith False
+
+runOwnedInherited :: Text -> [Text] -> [(Text, Text)] -> Maybe Text -> Eff (Either IoError ProcessOutput)
+runOwnedInherited = runInheritedWith True
+
+runInheritedWith :: Bool -> Text -> [Text] -> [(Text, Text)] -> Maybe Text -> Eff (Either IoError ProcessOutput)
+runInheritedWith owned program args env dir = do
   r <-
     perform
       ( effect
@@ -230,9 +240,33 @@ runInherited program args env dir = do
             , "env" .= Object [(k, String v) | (k, v) <- env]
             ]
               ++ maybe [] (\d -> ["cwd" .= String d]) dir
+              ++ ["ownedGroup" .= Bool True | owned]
           )
       )
   pure (processOutput <$> ioResult r)
+
+startService :: [Text] -> Text -> [(Text,Text)] -> Text -> Maybe Text -> Eff (Either IoError Text)
+startService command dir env logPath endpoint = do
+  answer <- perform (effect "startService"
+    (["command" .= Array (map String command), "cwd" .= String dir, "env" .= Object [(name,String text) | (name,text) <- env], "log" .= String logPath] ++
+     maybe [] (\address -> ["endpoint" .= String address]) endpoint))
+  pure $ case ioResult answer of
+    Left problem -> Left problem
+    Right result -> maybe (Left (IoError "host did not return an owned service handle" False)) Right (textAt "id" result)
+
+serviceRunning :: Text -> Eff (Either IoError Bool)
+serviceRunning identifier = do
+  answer <- perform (effect "serviceStatus" ["id" .= String identifier])
+  pure $ case ioResult answer of
+    Left problem -> Left problem
+    Right result -> case key "running" result of
+      Just (Bool running) -> Right running
+      _ -> Left (IoError "host did not return a service status" False)
+
+stopService :: Text -> Eff (Either IoError ())
+stopService identifier = do
+  answer <- perform (effect "stopService" ["id" .= String identifier])
+  pure (() <$ ioResult answer)
 
 processOutput :: Value -> ProcessOutput
 processOutput v =

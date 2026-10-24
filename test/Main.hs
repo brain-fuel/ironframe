@@ -3,6 +3,7 @@ module Main (main) where
 import qualified CliCorpusSpec
 import qualified CorpusSpec
 import qualified Ironframe.DigestSpec
+import qualified Ironframe.ComponentSpec
 import qualified Ironframe.JsonSpec
 import qualified Ironframe.RustSpec
 import qualified Ironframe.SchemaSpec
@@ -14,6 +15,7 @@ import Test.Hspec
 
 main :: IO ()
 main = hspec $ do
+  Ironframe.ComponentSpec.spec
   Ironframe.JsonSpec.spec
   Ironframe.RustSpec.spec
   Ironframe.SerdeSpec.spec

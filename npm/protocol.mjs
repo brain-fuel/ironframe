@@ -14,7 +14,8 @@ export class ProtocolError extends Error {
 /** Runs a method to its end: {done: value} or {failed: message}. */
 export async function run(core, method, params, host) {
   const effects = [];
-  for (;;) {
+  try { for (;;) {
+    host.signal?.throwIfAborted();
     const response = await core({ method, params, effects });
     if ("done" in response) return { done: response.done };
     if ("failed" in response) return { failed: response.failed };
@@ -26,7 +27,7 @@ export async function run(core, method, params, host) {
     }
     if ("error" in response) throw new ProtocolError(`${method}: ${response.error}`);
     throw new ProtocolError(`${method}: unexpected response ${JSON.stringify(response)}`);
-  }
+  } } finally {await host.close?.();}
 }
 
 /** Whether an error is the core's answer to an unknown method. */

@@ -22,6 +22,7 @@ module Ironframe.Settings
   , decodeDocument
   , renderDotenv
   , parseDotenv
+  , renderSetting
   ) where
 
 import Data.Char (isAlphaNum, isAscii, isDigit)
@@ -79,6 +80,7 @@ data ResolveError
   = ResolveManifest ManifestError
   | NotDeployed Text Text
   | MissingPart Text Text Text Text
+  | SettingConflict Text Text
   deriving (Show, Eq)
 
 renderResolveError :: ResolveError -> Text
@@ -91,6 +93,7 @@ renderResolveError = \case
       <> "` first, or pin it with twin.endpoint"
   MissingPart dependency k placeholder endpoint ->
     "setting " <> k <> " of " <> debugStr dependency <> " uses ${" <> placeholder <> "}, but endpoint " <> debugStr endpoint <> " has none"
+  SettingConflict node name -> "setting " <> name <> " of " <> node <> " is declared both by a connection and the component binding"
 
 -- | Resolves an environment of a checked manifest. @deployed@ holds the
 -- endpoints a cloud deployment reported.

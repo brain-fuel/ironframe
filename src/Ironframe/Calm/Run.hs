@@ -10,12 +10,15 @@ module Ironframe.Calm.Run
   , loadAndResolve
   , applicationIn
   , settingsOf
+  , executionSettings
   , begin
   , complete
   , runAttestationPath
   , writeRun
   , RunReport (..)
   , runCommand
+  , runOwnedCommand
+  , runOwnedCommandIn
   , runManaged
   , writeTopology
   ) where
@@ -30,6 +33,7 @@ import Ironframe.Attest
 import Ironframe.Attestation
 import Ironframe.Calm.Export (applicationSettings)
 import Ironframe.Calm.Model
+import qualified Ironframe.Component as Component
 import Ironframe.Calm.Resolve
 import Ironframe.Effect
 import Ironframe.Json.FromStr (Expect (..), fromStr)
@@ -94,6 +98,18 @@ settingsOf resolution node = do
   all' <- either (failWith . renderResolveError) pure (applicationSettings resolution deployed)
   pure (Map.findWithDefault Map.empty node all')
 
+-- | Resolve local credential references only while launching owned commands.
+-- Exported settings and attestations keep references, never credential values.
+executionSettings :: Resolution -> Text -> Eff (Map Text Text)
+executionSettings resolution node = settingsOf resolution node >>= traverse resolveReference
+  where
+    resolveReference value
+      | Just name <- T.stripPrefix "env:" value =
+          getEnv name >>= maybe (failWith ("required credential environment variable is missing: " <> name)) pure
+      | Just file <- T.stripPrefix "file:" value =
+          readFileE (Path.join (resDir resolution) file) >>= either (failWith . ioMessage) (pure . T.stripEnd)
+      | otherwise = pure value
+
 -- | The commit of the git checkout holding a directory, with @-dirty@ when
 -- it has changes there.
 commitOf :: Text -> Eff (Maybe Text)
@@ -109,7 +125,15 @@ commitOf dir = do
     _ -> pure Nothing
 
 contractRef :: ContractIdentity -> ContractRef
-contractRef c = ContractRef (ciPackage c) (ciVersion c) (ciAbilities c)
+contractRef c = ContractRef (ciPackage c) (ciVersion c) (ciAbilities c) Nothing
+
+edgeContract :: ResolvedTopology -> ResolvedEdge -> ResolvedDependencyNode -> ContractRef
+edgeContract topology edge dependency = case do
+  component <- Map.lookup (reSource edge) (rtComponents topology)
+  name <- reRequirement edge
+  Component.requirementContract <$> Map.lookup name (Component.componentRequires component) of
+    Just contract -> ContractRef (Component.contractPackage contract) (Component.contractVersion contract) (Component.contractAbilities contract) (Just (Component.contractDigest contract))
+    Nothing -> contractRef (rnContract dependency)
 
 -- | The attestation of an application as its run begins.
 begin :: Resolution -> Text -> [Text] -> Maybe Text -> Eff Attestation
@@ -153,7 +177,7 @@ begin resolution node command appDir = do
                       , depStandIn = standIn
                       , depNode = Just (rnNode dependency)
                       , depEdge = Just (reRelationship edge)
-                      , depContract = Just (contractRef (rnContract dependency))
+                      , depContract = Just (edgeContract topology edge dependency)
                       , depImplementation = Just implementation
                       }
                   | ability <- reConsumes edge
@@ -170,7 +194,7 @@ begin resolution node command appDir = do
     _ -> pure Nothing
   let attestation =
         (newAttestation name (Run (recordId run) (recordStartedAt run) (recordStartedAt run)))
-          { attProducer = Just (Producer "ironframe" "0.1.0")
+          { attProducer = Just (Producer "ironframe" "0.2.0")
           , attDependencies = dependencies
           , attArchitecture =
               Just
@@ -187,7 +211,8 @@ begin resolution node command appDir = do
               Just
                 ApplicationRef
                   { appNode = raNode app
-                  , appContract = contractRef (raContract app)
+                  , appContract = if Map.member node (rtComponents topology) then Nothing else Just (contractRef (raContract app))
+                  , appComponent = Component.componentView <$> Map.lookup node (rtComponents topology)
                   , appImplementation = Implementation "application" (ciPackage (raContract app)) (raVersion app) commit appDigest
                   }
           , attExecution = Just (Execution Running command Nothing Nothing (recordId <$> environmentRun))
@@ -253,15 +278,27 @@ data RunReport = RunReport {runExitCode :: Integer, runAttestation :: Attestatio
 -- attestation's path in its environment, the attestation written before it
 -- starts and completed after it exits.
 runCommand :: Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
-runCommand resolution node command dir output = do
+runCommand = runCommandWith False Nothing
+
+runOwnedCommand :: Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
+runOwnedCommand = runCommandWith True Nothing
+
+runOwnedCommandIn :: Text -> Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
+runOwnedCommandIn parent = runCommandWith True (Just parent)
+
+runCommandWith :: Bool -> Maybe Text -> Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
+runCommandWith owned parent resolution node command dir output = do
   (program, args) <- case command of
     (p : as) -> pure (p, as)
     [] -> failWith "give the command to run after --"
-  settings <- settingsOf resolution node
-  running <- begin resolution node command dir
+  settings <- if owned then executionSettings resolution node else settingsOf resolution node
+  begun <- begin resolution node command dir
+  let running = case parent of
+        Nothing -> begun
+        Just identity -> begun {attExecution = fmap (\execution -> execution {execEnvironmentRun = Just identity}) (attExecution begun)}
   path <- writeRun resolution running output
   result <-
-    runInherited
+    (if owned then runOwnedInherited else runInherited)
       program
       args
       (Map.toAscList settings ++ [(attestationVariable, path), (runVariable, runId (attRun running))])
