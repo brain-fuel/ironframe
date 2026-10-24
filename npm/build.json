@@ -67,7 +67,7 @@
     "src/Ironframe/Corpus.hs": "e8760289dcab36698787dfcc2d1127defdaacfd027953efb18d8f1074e916e90",
     "src/Ironframe/Digest.hs": "2841140e8fac35c62d901a5a518a36e67252c73e81af97e10fcb5e3bf479de2d",
     "src/Ironframe/Effect.hs": "3adcf38ef94d73e85be71414d51e71c1a8c254f5341942d4810fe4cebf7cb67f",
-    "src/Ironframe/Embedded.hs": "d53c20563d6241d34d1b64c9ffe42e1e6d1853ce58a0be46f03ac47e51bb60c7",
+    "src/Ironframe/Embedded.hs": "a3e633006c077a86cdcd61e21b7d0579a0c0e254871260f1931d5fe5c1130382",
     "src/Ironframe/Endpoint.hs": "cb7d7a50ba05a91664dbad16f571fad3089febe51ec5981ec011f3af16f3207c",
     "src/Ironframe/Json.hs": "341ca39efa4256839b59974fbb77ef4f18bc15c4e2c7d8795a961ed05b7dd587",
     "src/Ironframe/Json/FromStr.hs": "29a8d34ad39375b93268ff6ea1c6b397587f18afdc86f28f5fed7a81f3a1c888",
@@ -97,7 +97,7 @@
     "wasm/cabal.project": "26c19e8bdc1cae4f581cb18ff82dee049f965e08e73e968e4036e50b749e6d0a",
     "wasm/cabal.project.freeze": "004ef51c0e98d6e115762cd64262576a948d41c786b93e608c995d01525fdfa2",
     "wasm/ironframe-wasm.cabal": "dc62afdd92e28e207eda9153487abb6895b46e015cb1eeb9595c900f2f391895",
-    "npm/core.wasm": "5329b90a041d9a45536cab5882b57a94c448da9d777a4d65d546b62dc0781816",
+    "npm/core.wasm": "11663b66347c037c04a056edf30647f0774a5e26640dabebb40cf3fa3df114a3",
     "npm/core_jsffi.js": "8edce57adcb32530e75ad32263b735bd1d2fc07a4c59c0d0458113b3a82d6c5a"
   }
 }

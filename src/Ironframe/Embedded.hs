@@ -641,7 +641,7 @@ contractDecoratorSchema =
   \            \"package\": {\n\
   \              \"type\": \"string\",\n\
   \              \"pattern\": \"^[a-z][a-z0-9_]*(\\\\.[a-z][a-z0-9_]*)*$\",\n\
-  \              \"description\": \"A LawSpec package name, as its lawspec-package.json gives it.\"\n\
+  \              \"description\": \"A LawSpec package name, as its lawspec.edn gives it.\"\n\
   \            },\n\
   \            \"version\": {\n\
   \              \"type\": \"string\",\n\
@@ -666,7 +666,7 @@ contractDecoratorSchema =
   \            \"package\": {\n\
   \              \"type\": \"string\",\n\
   \              \"pattern\": \"^[a-z][a-z0-9_]*(\\\\.[a-z][a-z0-9_]*)*$\",\n\
-  \              \"description\": \"A LawSpec package name, as its lawspec-package.json gives it.\"\n\
+  \              \"description\": \"A LawSpec package name, as its lawspec.edn gives it.\"\n\
   \            },\n\
   \            \"version\": {\n\
   \              \"type\": \"string\",\n\
@@ -912,7 +912,7 @@ bindingDecoratorSchema =
   \                \"package\": {\n\
   \                  \"type\": \"string\",\n\
   \                  \"pattern\": \"^[a-z][a-z0-9_]*(\\\\.[a-z][a-z0-9_]*)*$\",\n\
-  \                  \"description\": \"A LawSpec package name, as its lawspec-package.json gives it.\"\n\
+  \                  \"description\": \"A LawSpec package name, as its lawspec.edn gives it.\"\n\
   \                },\n\
   \                \"version\": {\n\
   \                  \"type\": \"string\",\n\

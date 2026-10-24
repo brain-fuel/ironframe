@@ -240,7 +240,7 @@ async function theChainRunsInEveryBinding() {
     const file = join(dir, "architecture/shop.decorators.json");
     const document = JSON.parse(readFileSync(file, "utf8"));
     for (const decorator of document.decorators) {
-      if (decorator.data.project) decorator.data.project += '-' + basename(dir);
+      if (decorator.data.project) decorator.data.project += '-' + basename(dir).toLowerCase();
       const twin = decorator.data.twin;
       if (twin && twinPrefix) twin.image = `${twinPrefix}/${twin.image.split("/").at(-1)}`;
       if (httpPort) for (const binding of [decorator.data.real, twin]) {

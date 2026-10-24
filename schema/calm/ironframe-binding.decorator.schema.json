@@ -76,7 +76,7 @@
                 "package": {
                   "type": "string",
                   "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
-                  "description": "A LawSpec package name, as its lawspec-package.json gives it."
+                  "description": "A LawSpec package name, as its lawspec.edn gives it."
                 },
                 "version": {
                   "type": "string",

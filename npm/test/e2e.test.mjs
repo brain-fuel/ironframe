@@ -27,7 +27,7 @@ function copyExample(name) {
   const directory = mkdtempSync(join(tmpdir(), `ironframe-e2e-${name}-`));
   const from = join(repo, "examples", name);
   const manifest = readFileSync(join(from, "ironframe.yaml"), "utf8")
-    .replace(/^project: (.+)$/m, (_, project) => 'project: ' + project + '-' + basename(directory));
+    .replace(/^project: (.+)$/m, (_, project) => 'project: ' + project + '-' + basename(directory).slice(-6).toLowerCase());
   const httpPort = process.env.IRONFRAME_E2E_HTTP_PORT ?? '8080';
   writeFileSync(join(directory, "ironframe.yaml"), manifest.replaceAll('localhost:8080', 'localhost:' + httpPort));
   mkdirSync(join(directory, "conformance"));

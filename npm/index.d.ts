@@ -28,10 +28,14 @@ export type Core = (request: CoreRequest) => Promise<CoreResponse>;
 
 export interface Host {
   perform(effect: Effect): Promise<EffectResult>;
+  close?(): Promise<void>;
+  signal?: AbortSignal;
 }
 
 /** Replaces any of the host's dependencies, as tests do. */
 export interface HostOptions {
+  signal?: AbortSignal;
+  createServer?: unknown;
   fs?: unknown;
   process?: unknown;
   spawn?: unknown;
