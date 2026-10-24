@@ -156,7 +156,7 @@ answer s e = case text' "effect" e of
 -- | Replaces UUIDs with @<uuid>@ and RFC 3339 times with @<time>@, as the
 -- capture did.
 normalise :: Text -> Text
-normalise = times . uuids
+normalise = times . uuids . producerVersion
   where
     uuids t = T.pack (goU (T.unpack t) ' ')
     goU [] _ = []
@@ -188,6 +188,17 @@ normalise = times . uuids
                   (sign : x : y : ':' : z : w : r) | sign `elem` ("+-" :: String) && digit x && digit y -> const r (z, w)
                   _ -> more1
       _ -> Nothing
+
+-- | Historical parity ignores only the release producer version, not provider versions.
+producerVersion :: Text -> Text
+producerVersion = T.replace "ironframe 0.2.0" "ironframe 0.1.0"
+  . T.replace "\"name\": \"ironframe\",\n    \"version\": \"0.2.0\"" "\"name\": \"ironframe\",\n    \"version\": \"0.1.0\""
+
+releaseVersions :: Value -> Value
+releaseVersions (String value) = String (producerVersion value)
+releaseVersions (Array values) = Array (map releaseVersions values)
+releaseVersions (Object values) = Object [(name,releaseVersions value) | (name,value) <- values]
+releaseVersions value = value
 
 normaliseValue :: Value -> Value
 normaliseValue = \case
@@ -255,13 +266,13 @@ pass = Object ["pass" .= Bool True]
 
 verdict :: Text -> Value -> Value -> Value
 verdict method expected got
-  | expected == got = pass
+  | releaseVersions expected == releaseVersions got = pass
   | Just reason <- lookup method deliberateDifferences = Object ["pass" .= Bool True, "deliberate" .= String reason]
   | otherwise = failure ("expected " <> encode expected <> "\n     got " <> encode got)
 
 -- | Compares named parts; the first that differs is reported.
 parts :: [(Text, Value, Value)] -> Value
-parts xs = case [(n, e, g) | (n, e, g) <- xs, e /= g] of
+parts xs = case [(n, e, g) | (n, e, g) <- xs, releaseVersions e /= releaseVersions g] of
   [] -> pass
   ((n, e, g) : _) -> failure (n <> ": expected " <> encode e <> "\n     got " <> encode g)
 

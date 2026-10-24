@@ -193,22 +193,20 @@ encodeTopology t =
       Object $
         [ "node" .= String (raNode a)
         , "name" .= String (raName a)
-        , "deployment" .= encodeDeployment (raDeployment a)
-        , "version" .= String (raVersion a)
         ]
           ++ ["contract" .= encodeContractIdentity (raContract a) | Map.notMember (raNode a) (rtComponents t)]
+          ++ ["deployment" .= encodeDeployment (raDeployment a), "version" .= String (raVersion a)]
           ++ maybe [] (\c -> ["commit" .= String c]) (raCommit a)
           ++ ["edges" .= Array (map String (raEdges a))]
     dependency d =
       Object $
         [ "node" .= String (rnNode d)
         , "name" .= String (rnName d)
-        , "binding" .= String (rnBinding d)
-        , "kind" .= String (boundWord (rnKind d))
         ]
           ++ (case Map.lookup (rnNode d) (rtComponents t) of
             Nothing -> ["contract" .= encodeContractIdentity (rnContract d)]
             Just component -> ["provides" .= Array (map Component.contractView (Component.componentProvides component))])
+          ++ ["binding" .= String (rnBinding d), "kind" .= String (boundWord (rnKind d))]
           ++ maybe [] (\p -> ["provider" .= Object ["name" .= String (providerName p), "version" .= String (providerVersion p)]]) (rnProvider d)
           ++ maybe [] (\ti -> ["twin" .= twin ti]) (rnTwin d)
           ++ ["consumers" .= Number (I (toInteger (rnConsumers d)))]
@@ -514,7 +512,8 @@ resolveCalm architecture decorators environment dir = do
                                       && all (`elem` Component.contractAbilities contract) (Component.contractAbilities needed)
                                  in [calmProblem at "the destination needs a checked component descriptor for this requirement" | Map.notMember destination components] ++
                                     [calmProblem at "the destination does not provide the resolved contract required by this component" | Map.member destination components, not (any agrees provided)] ++
-                                    [calmProblem at ("setting " <> name <> " is not declared by the selected requirement") | name <- Map.keys settings, name `notElem` Component.requirementSettings asked]
+                                    [calmProblem at ("setting " <> name <> " is not declared by the selected requirement") | name <- Map.keys settings, name `notElem` Component.requirementSettings asked] ++
+                                    [calmProblem at ("required setting " <> name <> " has no connection binding") | name <- Component.requirementSettings asked, Map.notMember name settings]
                               _ -> []
                          in (ps ++ abilityPs ++ settingPs ++ contractPs, es ++ [Edge relationship source destination consumes settings requirement], consumed', appSettings')
                       (True, True, Nothing) ->

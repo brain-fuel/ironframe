@@ -10,6 +10,9 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Local endpoint ports can publish a service’s first container port at a
+  distinct host port. Compose, validation and injected settings agree, and
+  container tests use private project names and configurable HTTP host ports.
 - CALM nodes refer to checked LawSpec component descriptors and can both provide
   and consume contracts. Connections select named requirements and reject
   missing or incompatible contract identities, content and settings.

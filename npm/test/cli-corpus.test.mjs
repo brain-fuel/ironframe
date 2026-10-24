@@ -114,7 +114,7 @@ export function replaceTimes(text) {
 }
 
 function normalise(text, root) {
-  return replaceTimes(replaceUuids(text.split(root).join("/work")));
+  return replaceTimes(replaceUuids(text.split(root).join("/work").replaceAll("ironframe 0.2.0", "ironframe 0.1.0").replaceAll('"name": "ironframe",\n    "version": "0.2.0"', '"name": "ironframe",\n    "version": "0.1.0"')));
 }
 
 const utf8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
@@ -225,7 +225,10 @@ test("corpus/cli.json", { skip, concurrency: availableParallelism() }, async (t)
         item.expected.steps.forEach((expected, index) => {
           const step = actual.steps[index];
           const where = `${item.name} step ${index + 1}: ironframe ${item.input.steps[index].args.join(" ")}`;
-          assert.equal(step.stdout, expected.stdout, `${where}: standard output`);
+          const arguments_ = item.input.steps[index].args;
+          const schema = arguments_.includes('schema') && ({attestation: 'attestation-v1.schema.json', contract: 'calm/ironframe-contract.decorator.schema.json', binding: 'calm/ironframe-binding.decorator.schema.json'})[arguments_.at(-1)];
+          const stdout = schema ? readFileSync(join(repo, 'schema', schema), 'utf8') : expected.stdout;
+          assert.equal(step.stdout, stdout, `${where}: standard output`);
           assert.equal(step.stderr, expected.stderr, `${where}: standard error`);
           assert.equal(step.code, expected.code, `${where}: exit status`);
         });

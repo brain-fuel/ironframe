@@ -25,7 +25,7 @@ module Ironframe.Settings
   , renderSetting
   ) where
 
-import Data.Char (isAlphaNum, isAscii, isDigit)
+import Data.Char (isAlphaNum, isAscii)
 import qualified Data.Map.Strict as Map
 import Data.Map.Strict (Map)
 import Data.Maybe (isNothing)
@@ -33,6 +33,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Ironframe.Attestation (StandIn (..), emptyStandIn)
 import Ironframe.Json
+import Ironframe.Endpoint (splitEndpoint)
 import Ironframe.Json.Serde
 import Ironframe.Manifest
 import Ironframe.Rust (debugStr)
@@ -192,32 +193,6 @@ firstPort :: [Integer] -> Maybe Integer
 firstPort = \case
   (p : _) -> Just p
   [] -> Nothing
-
--- | The host and port of an endpoint, @host:port@ or a URL; a URL without a
--- port takes its scheme's.
-splitEndpoint :: Text -> (Text, Maybe Integer)
-splitEndpoint endpoint =
-  let (scheme, rest) = case T.breakOn "://" endpoint of
-        (s, r) | not (T.null r) -> (Just s, T.drop 3 r)
-        _ -> (Nothing, endpoint)
-      authority0 = T.takeWhile (`notElem` ("/?#" :: String)) rest
-      authority = last (T.splitOn "@" authority0)
-      fallback = case scheme of
-        Just "https" -> Just 443
-        Just "http" -> Just 80
-        _ -> Nothing
-   in case T.breakOnEnd ":" authority of
-        ("", _) -> (authority, fallback)
-        (before, port)
-          | Just p <- parseU16 port -> (T.dropEnd 1 before, Just p)
-          | otherwise -> (authority, fallback)
-  where
-    parseU16 t
-      | not (T.null t) && T.all isDigit t && T.length t <= 5 =
-          let n = read (T.unpack t) :: Integer in if n <= 65535 then Just n else Nothing
-      | T.length t > 1 && T.head t == '+' && T.all isDigit (T.tail t) && T.length t <= 6 =
-          let n = read (T.unpack (T.tail t)) :: Integer in if n <= 65535 then Just n else Nothing
-      | otherwise = Nothing
 
 -- | An image reference with its registry spelled out; a short name is a
 -- Docker Hub name.

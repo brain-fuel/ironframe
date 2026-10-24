@@ -82,10 +82,15 @@ spec = do
             env = Map.union extra env0
             argv = [a | String a <- arrayOf (keyOr "args" step)]
         captured <- runNative "cli" (Object ["argv" .= Array (map String argv), "cwd" .= String (T.pack (root </> T.unpack (textOf "cwd" step)))]) (root </> T.unpack (textOf "cwd" step)) env
+        expectedOutput <- case dropWhile (/= "schema") argv of
+          ["schema", "attestation"] -> TIO.readFile "schema/attestation-v1.schema.json"
+          ["schema", "contract"] -> TIO.readFile "schema/calm/ironframe-contract.decorator.schema.json"
+          ["schema", "binding"] -> TIO.readFile "schema/calm/ironframe-binding.decorator.schema.json"
+          _ -> pure (textOf "stdout" expected)
         let norm t = normalise (T.replace (T.pack root) "/work" t)
             code = keyOr "exitCode" (capturedResult captured)
         (norm (capturedStdout captured), norm (capturedStderr captured), code)
-          `shouldBe` (textOf "stdout" expected, textOf "stderr" expected, keyOr "code" expected)
+          `shouldBe` (expectedOutput, textOf "stderr" expected, keyOr "code" expected)
       final <- filesUnder root
       let changed =
             Map.fromList

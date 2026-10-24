@@ -51,6 +51,7 @@ import Data.Maybe (fromMaybe, isJust, isNothing)
 import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
+import Ironframe.Endpoint (publishedPorts)
 import Ironframe.Effect
 import qualified Ironframe.Embedded as Embedded
 import Ironframe.Json
@@ -440,13 +441,13 @@ environmentProblems m name environment =
             Just declaration ->
               let usesCredentials = any (T.isInfixOf "${credentials}") (Map.elems (declSettings declaration))
                   (own, ports, runsImage) = case binding of
-                    BindReal real -> (realProblems (here <> ".real") real usesCredentials, realPorts real, isJust (realImage real))
+                    BindReal real -> (realProblems (here <> ".real") real usesCredentials, publishedPorts (realEndpoint real) (realPorts real), isJust (realImage real))
                     BindTwin twin ->
                       let twinAt = here <> ".twin"
                           extra = case twinAdmin twin of
                             Just admin | runtime == Podman && isNothing (adminUrl admin) -> [adminHostPort admin]
                             _ -> []
-                       in (twinBindingProblems twinAt twin usesCredentials, twinPorts twin ++ extra, True)
+                       in (twinBindingProblems twinAt twin usesCredentials, maybe (twinPorts twin) (\endpoint -> publishedPorts endpoint (twinPorts twin)) (twinEndpoint twin) ++ extra, True)
                   (portProblems, published') = publish here dependency runsImage published ports
                in own ++ portProblems ++ bindingProblems published' rest
     publish _ _ _ published [] = ([], published)

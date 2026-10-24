@@ -23,7 +23,7 @@ import { cpSync, existsSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, 
 import { createHash } from "node:crypto";
 import { connect } from "node:net";
 import { arch, tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createIronframe } from "../api.mjs";
 
@@ -234,12 +234,18 @@ async function theChainRunsInEveryBinding() {
   // their declared release and stands-in-for contract identities intact.
   const twinPrefix = process.env.IRONFRAME_TWIN_IMAGE_PREFIX;
   const appImage = process.env.IRONFRAME_APP_IMAGE;
-  if (twinPrefix || appImage) {
+  const httpPort = process.env.IRONFRAME_E2E_HTTP_PORT ? Number(process.env.IRONFRAME_E2E_HTTP_PORT) : null;
+  if (httpPort) assert.ok(Number.isInteger(httpPort) && httpPort > 0 && httpPort <= 65535);
+  {
     const file = join(dir, "architecture/shop.decorators.json");
     const document = JSON.parse(readFileSync(file, "utf8"));
     for (const decorator of document.decorators) {
+      if (decorator.data.project) decorator.data.project += '-' + basename(dir);
       const twin = decorator.data.twin;
       if (twin && twinPrefix) twin.image = `${twinPrefix}/${twin.image.split("/").at(-1)}`;
+      if (httpPort) for (const binding of [decorator.data.real, twin]) {
+        if (binding?.endpoint?.includes('localhost:8080')) binding.endpoint = binding.endpoint.replace('localhost:8080', 'localhost:' + httpPort);
+      }
       const managed = decorator.data.application?.managed?.image;
       if (managed && appImage) managed.image = appImage;
     }
@@ -299,10 +305,11 @@ async function theChainRunsInEveryBinding() {
     writeFileSync(decoratorsPath, original);
 
     // The shop's generated code and executable.
-    assert.equal(exec("npm", ["ci", "--no-audit", "--no-fund"], join(dir, "app")).status, 0);
     if (process.env.IRONFRAME_LAWSPEC_PACKAGE) {
       const archive = resolve(process.env.IRONFRAME_LAWSPEC_PACKAGE);
       assert.equal(exec("npm", ["install", "--no-save", "--package-lock=false", "--no-audit", "--no-fund", archive], join(dir, "app")).status, 0);
+    } else {
+      assert.equal(exec("npm", ["ci", "--no-audit", "--no-fund"], join(dir, "app")).status, 0);
     }
     retain("lawspec-build.json", readFileSync(join(dir, "app/node_modules/lawspec/build.json"), "utf8"));
     assert.equal(exec("npx", ["--no-install", "lawspec", "generate"], join(dir, "app")).status, 0);

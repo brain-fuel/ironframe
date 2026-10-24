@@ -15,7 +15,7 @@ import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { connect } from "node:net";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repo = fileURLToPath(new URL("../../", import.meta.url));
@@ -26,7 +26,10 @@ const skip = process.env.IRONFRAME_E2E === "1" ? false : "set IRONFRAME_E2E=1 (m
 function copyExample(name) {
   const directory = mkdtempSync(join(tmpdir(), `ironframe-e2e-${name}-`));
   const from = join(repo, "examples", name);
-  copyFileSync(join(from, "ironframe.yaml"), join(directory, "ironframe.yaml"));
+  const manifest = readFileSync(join(from, "ironframe.yaml"), "utf8")
+    .replace(/^project: (.+)$/m, (_, project) => 'project: ' + project + '-' + basename(directory));
+  const httpPort = process.env.IRONFRAME_E2E_HTTP_PORT ?? '8080';
+  writeFileSync(join(directory, "ironframe.yaml"), manifest.replaceAll('localhost:8080', 'localhost:' + httpPort));
   mkdirSync(join(directory, "conformance"));
   for (const entry of readdirSync(join(from, "conformance")))
     copyFileSync(join(from, "conformance", entry), join(directory, "conformance", entry));
@@ -90,7 +93,7 @@ async function upRunsTheAppsAgainstTwins() {
 
     // The settings reached the applications through env files and the configuration service.
     assert.match(readFileSync(join(kafka, ".env"), "utf8"), /KAFKA_BOOTSTRAP_SERVERS=localhost:9092/);
-    assert.match(readFileSync(join(petstore, ".env"), "utf8"), /PETSTORE_URL=http:\/\/localhost:8080/);
+    assert.ok(readFileSync(join(petstore, ".env"), "utf8").includes('PETSTORE_URL=http://localhost:' + (process.env.IRONFRAME_E2E_HTTP_PORT ?? '8080')));
     assert.match(await httpGet("127.0.0.1", 8700, "/v1/environments/local"), /"KAFKA_BOOTSTRAP_SERVERS":"localhost:9092"/);
 
     // The twins were set up at start: the seed, and the Petstore's latency fault.
@@ -131,7 +134,10 @@ async function upRunsTheAppsAgainstTwins() {
     ironframe(kafka, ["down", "local"]);
     const podman = process.env.IRONFRAME_PODMAN || "podman";
     const left = spawnSync(podman, ["ps", "-a", "--filter", "label=io.ironframe.environment=local", "--format", "{{.Names}}"], { encoding: "utf8" });
-    assert.ok(!/ironframe-kafka-app-local|ironframe-petstore-app-local/.test(left.stdout), left.stdout);
+    for (const directory of [kafka, petstore]) {
+      const project = readFileSync(join(directory, 'ironframe.yaml'), 'utf8').match(/^project: (.+)$/m)[1];
+      assert.ok(!left.stdout.includes('ironframe-' + project + '-local'), left.stdout);
+    }
     rmSync(kafka, { recursive: true, force: true });
     rmSync(petstore, { recursive: true, force: true });
   }

@@ -132,7 +132,7 @@ Inside a YAML flow mapping, `{...}`, quote a template: `{URL: '${endpoint}'}`.
 | `credentials` | no | A credentials reference, as for `real`. |
 
 A twin's endpoint is the pinned one; otherwise, on podman, `localhost` and its
-first port, since published ports keep their numbers; otherwise, in a cloud,
+first port; an explicit local endpoint port publishes the first container port at that host port. Other published ports keep their numbers. Otherwise, in a cloud,
 the endpoint the deployment reports, known after `ironframe up`.
 
 `seed` and `contract` may also be written inside `config`, but not both ways

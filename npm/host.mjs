@@ -73,23 +73,41 @@ export function createHost(options = {}) {
     return child.exitCode !== null || child.signalCode !== null;
   }
 
-  async function stopOwned(record) {
+  function stopOwned(record) {
+    record.stopping ??= stopGroup(record);
+    return record.stopping;
+  }
+
+  async function stopGroup(record) {
     const {child, finished, grouped} = record;
-    if (stopped(child)) return;
+    if (!child.pid) return;
+    const group = grouped && process.platform !== 'win32';
+    const alive = () => {
+      if (!group) return !stopped(child);
+      try {process.kill(-child.pid, 0); return true;}
+      catch (error) {
+        if (error.code === 'ESRCH') return false;
+        if (error.code === 'EPERM') return true;
+        throw error;
+      }
+    };
+    if (!alive()) return;
     const send = name => {
       try {
-        if (grouped && process.platform !== 'win32') process.kill(-child.pid, name);
+        if (group) process.kill(-child.pid, name);
         else child.kill(name);
-      } catch (error) {if (error.code !== 'ESRCH') throw error;}
+      } catch (error) {if (!['ESRCH', 'EPERM'].includes(error.code)) throw error;}
     };
     send('SIGTERM');
-    let timer;
-    const timedOut = await Promise.race([finished.then(() => false), new Promise(resolve => {timer = setTimeout(() => resolve(true), 5000);})]);
-    clearTimeout(timer);
-    if (timedOut) {
+    const waitUntil = async deadline => {
+      while (alive() && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
+      return !alive();
+    };
+    if (!(await waitUntil(Date.now() + 5000))) {
       send('SIGKILL');
-      await finished;
+      if (!(await waitUntil(Date.now() + 5000))) throw new Error('Owned process group did not stop');
     }
+    if (!stopped(child)) await finished;
   }
 
   async function isFile(path) {
@@ -199,6 +217,7 @@ export function createHost(options = {}) {
 
     async startService({command, cwd, env, log, endpoint}) {
       signal?.throwIfAborted();
+      if (process.platform === 'win32') throw new Error('Owned process groups are not supported on Windows');
       await freeEndpoint(endpoint);
       await fs.mkdir(dirname(log), {recursive: true});
       const output = await fs.open(log, 'w');
@@ -276,6 +295,7 @@ export function createHost(options = {}) {
 
   function runProcess({ program, args, stream, cwd, env, inheritStdin, ownedGroup }) {
     return new Promise((resolve) => {
+      if (ownedGroup && process.platform === 'win32') {resolve(failure(new Error('Owned process groups are not supported on Windows'))); return;}
       const stdio = [inheritStdin ? "inherit" : "ignore", stream ? "inherit" : "pipe", stream ? "inherit" : "pipe"];
       let child;
       try {
@@ -293,7 +313,10 @@ export function createHost(options = {}) {
       const stdout = [];
       const stderr = [];
       const record = ownedGroup ? {child, grouped: true, finished: new Promise(resolve => child.once('exit', resolve))} : null;
-      if (record) commands.add(record);
+      if (record) {
+        commands.add(record);
+        child.once('exit', () => {stopOwned(record).catch(() => {});});
+      }
       child.stdout?.on("data", (chunk) => stdout.push(chunk));
       child.stderr?.on("data", (chunk) => stderr.push(chunk));
       let settled = false;
@@ -302,8 +325,12 @@ export function createHost(options = {}) {
         settled = true;
         resolve(failure(error));
       });
-      child.on("close", (code) => {
-        if (record) commands.delete(record);
+      child.on("close", async (code) => {
+        if (record) {
+          try {await stopOwned(record);}
+          catch (error) {if (!settled) {settled = true; resolve(failure(error));} return;}
+          finally {commands.delete(record);}
+        }
         if (settled) return;
         settled = true;
         resolve(

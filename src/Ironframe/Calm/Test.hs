@@ -15,7 +15,7 @@ import Ironframe.Calm.Run
 import qualified Ironframe.Component as Component
 import Ironframe.Effect
 import Ironframe.Json
-import Ironframe.Manifest (runtimeIsCloud)
+import Ironframe.Manifest (runtimeIsCloud, Manifest (..), Environment (..))
 import Ironframe.Ops
 import qualified Ironframe.Path as Path
 import Ironframe.Podman (locatePodman, podmanProgram, renderPodmanError)
@@ -46,12 +46,14 @@ testComponents resolution selected arguments = do
         }
   _ <- writeRun resolution running Nothing
   result <- catchError (Right <$> runComponents (recordId record) resolution selected arguments) (pure . Left)
+  latest <- readFileE (runAttestationPath resolution (recordId record)) >>= either (failWith . ioMessage) pure
+  updated <- either failWith pure (fromJson latest)
   recorded <- nowTimestamp
   let finished = maxInstant recorded (recordStartedAt record)
       code = either (const 1) id result
-      completed = running
-        { attRun = (attRun running) {runRecordedAt = finished}
-        , attExecution = fmap (\execution -> execution {execStatus = CompletedRun, execExitCode = Just code, execFinishedAt = Just finished}) (attExecution running)
+      completed = updated
+        { attRun = (attRun updated) {runRecordedAt = finished}
+        , attExecution = fmap (\execution -> execution {execStatus = CompletedRun, execExitCode = Just code, execFinishedAt = Just finished}) (attExecution updated)
         }
   _ <- writeRun resolution completed Nothing
   printOut ("integration: exit " <> T.pack (show code) <> "; attestation " <> runAttestationPath resolution (recordId record) <> "\n")
@@ -59,6 +61,8 @@ testComponents resolution selected arguments = do
 
 runComponents :: Text -> Resolution -> Maybe Text -> [Text] -> Eff Integer
 runComponents integration resolution selected arguments = do
+  when (any (\argument -> any (\name -> argument == name || (name <> "=") `T.isPrefixOf` argument) ["--config", "--project", "--attestation"]) arguments)
+    (failWith "component config, project and attestation come from the resolved topology")
   let topology = resTopology resolution
       components = rtComponents topology
       targets = [(node, component) | (node,component) <- Map.toAscList components,
@@ -68,6 +72,7 @@ runComponents integration resolution selected arguments = do
   let reachable seen [] = seen
       reachable seen (node:rest)
         | node `elem` seen = reachable seen rest
+        | maybe False ((== BoundTwin) . rnKind) (dependencyOf topology node) = reachable (node:seen) rest
         | otherwise = reachable (node:seen) ([reDestination edge | edge <- rtEdges topology, reSource edge == node] ++ rest)
       needed = reachable [] (map fst targets)
       selectedComponents = [(node, component) | (node,component) <- Map.toAscList components, node `elem` needed]
@@ -79,7 +84,11 @@ runComponents integration resolution selected arguments = do
   _ <- writeTopology resolution
   forM_ targets $ \(_,component) -> do
     native tool ["generate", "--config", Component.componentManifest component] [] (Just (Component.componentRoot component))
-  deployed <- resolveIn (resManifest resolution) (resDir resolution) (rtEnvironment topology) >>= either (failWith . renderResolveError) pure
+  let scopedManifest = (resManifest resolution)
+        { manifestDependencies = Map.filterWithKey (\node _ -> node `elem` needed) (manifestDependencies (resManifest resolution))
+        , manifestEnvironments = fmap (\environment -> environment {envDependencies = Map.filterWithKey (\node _ -> node `elem` needed) (envDependencies environment)}) (manifestEnvironments (resManifest resolution))
+        }
+  deployed <- resolveIn scopedManifest (resDir resolution) (rtEnvironment topology) >>= either (failWith . renderResolveError) pure
   let localImages = not (runtimeIsCloud (rtRuntime topology)) && any (maybe False (const True) . rdImage) (reDependencies deployed)
       buildComponents = forM_ selectedComponents $ \(node,component) -> do
         let binding = Map.findWithDefault Null node (resComponentBindings resolution)
@@ -90,17 +99,37 @@ runComponents integration resolution selected arguments = do
             settings <- executionSettings resolution node
             execute command (Map.toAscList settings) (Just directory)
           _ -> pure ()
-      action = buildComponents >> withServices resolution folder services [] (\running -> do
-        forM_ running $ \(service,handle) -> awaitReady resolution service handle
-        codes <- forM targets $ \(node,component) -> do
-          report <- runOwnedCommandIn integration resolution node
-            ([tool, "test", "--fresh", "--config", Component.componentManifest component] ++ arguments)
-            (Just (Component.componentRoot component)) Nothing
-          printOut ("component " <> node <> ": exit " <> T.pack (show (runExitCode report)) <> "; attestation " <> runPathWritten report <> "\n")
-          native tool ["evidence", "--config", Component.componentManifest component, "--attestation", runPathWritten report]
-            [] (Just (Component.componentRoot component))
-          pure (runExitCode report)
-        pure (if all (== 0) codes then 0 else 1))
+      action = do
+        buildComponents
+        prepared <- refreshComponents resolution (map fst selectedComponents)
+        _ <- writeTopology prepared
+        rootText <- readFileE (runAttestationPath resolution integration) >>= either (failWith . ioMessage) pure
+        rootRun <- either failWith pure (fromJson rootText)
+        _ <- writeRun prepared (rootRun {attArchitecture = fmap (\architecture -> architecture {refTopologyDigest = Just (topologyDigest (resTopology prepared))}) (attArchitecture rootRun)}) Nothing
+        withServices prepared folder services [] (\running -> do
+          forM_ running $ \(service,handle) -> awaitReady prepared service handle
+          codes <- forM targets $ \(node,component) -> do
+            report <- runLawSpecTestIn integration prepared node
+              ([tool, "test", "--fresh", "--config", Component.componentManifest component] ++ arguments)
+              (Just (Component.componentRoot component)) Nothing
+            printOut ("component " <> node <> ": exit " <> T.pack (show (runExitCode report)) <> "; attestation " <> runPathWritten report <> "\n")
+            evidence <- runProcess tool (["evidence", "--json", "--config", Component.componentManifest component, "--attestation", runPathWritten report] ++ evidenceArguments arguments) False >>= either (failWith . ioMessage) pure
+            unless (procSuccess evidence) (failWith (node <> ": completed evidence could not be read: " <> procStderr evidence))
+            let evidencePath = Path.join folder (node <> "-evidence.json")
+            writeFileE evidencePath (procStdout evidence) >>= either (failWith . ioMessage) pure
+            checked <- either failWith pure (decode (procStdout evidence))
+            let rows = case checked of Array values -> values; _ -> []
+                nativeRows = [row | row <- rows, key "nativeEvidence" row /= Nothing]
+                currentRows = [(row, [observation | Just (Array observations) <- [key "observations" (keyOr "nativeEvidence" row)], observation <- observations,
+                  textAt "executionRun" (keyOr "attempt" observation) == Just (runId (attRun (runAttestation report)))]) | row <- nativeRows]
+                observed = [observation | (_,observations) <- currentRows, observation <- observations,
+                  textAt "freshness" observation == Just "matching-inputs"]
+                stale = [observation | (_,observations) <- currentRows, observation <- observations,
+                  textAt "freshness" observation /= Just "matching-inputs"]
+                unlinked = [row | (row,observations) <- currentRows, not (null observations), Just (Array dependencies) <- [key "plannedAgainst" row], not (null dependencies)]
+            unless (not (null observed) && null stale && null unlinked) (failWith (node <> ": completed native evidence is missing, stale or unlinked; see " <> evidencePath))
+            pure (runExitCode report)
+          pure (if all (== 0) codes then 0 else 1))
   if localImages
     then do
       podman <- locatePodman >>= either (failWith . renderPodmanError) pure
@@ -109,24 +138,46 @@ runComponents integration resolution selected arguments = do
         unless (procSuccess existing && T.null (T.strip (procStdout existing)))
           (failWith "the integration environment already has containers; use external bindings or take it down first")
       result <- catchError
-        (do _ <- up realClouds (resManifest resolution) (resDir resolution) (rtEnvironment topology) (UpOptions True 90) progress
+        (do _ <- up realClouds scopedManifest (resDir resolution) (rtEnvironment topology) (UpOptions True 90) progress
             Right <$> action)
         (pure . Left)
-      cleanup <- catchError (down (resManifest resolution) (resDir resolution) (rtEnvironment topology) >> pure Nothing) (pure . Just)
+      cleanup <- catchError (down scopedManifest (resDir resolution) (rtEnvironment topology) >> pure Nothing) (pure . Just)
       finish result cleanup
     else action
   where
     mapMaybeIdentity = mapMaybe id
     native program args environment directory = do
       result <- runOwnedInherited program args environment directory >>= either (failWith . ioMessage) pure
-      unless (procSuccess result) (failWith (program <> " failed before law execution"))
+      unless (procSuccess result) (failWith (program <> " failed"))
     execute (program:args) = native program args
     execute [] = \_ _ -> failWith "empty component build command"
+
+-- | Evidence uses the same target and machine selection as the test invocation.
+evidenceArguments :: [Text] -> [Text]
+evidenceArguments [] = []
+evidenceArguments (flag:value:rest) | flag `elem` ["--target", "--machine-bits"] = flag:value:evidenceArguments rest
+evidenceArguments (flag:rest)
+  | any (`T.isPrefixOf` flag) ["--target=", "--machine-bits="] || flag `elem` ["--offline", "--locked", "--no-cache"] = flag:evidenceArguments rest
+  | otherwise = evidenceArguments rest
+
+-- | Native preparation may create adapters; freeze checked identities afterward.
+refreshComponents :: Resolution -> [Text] -> Eff Resolution
+refreshComponents resolution nodes = do
+  let topology = resTopology resolution
+  refreshed <- forM (Map.toAscList (rtComponents topology)) $ \(node,component) ->
+    if node `notElem` nodes then pure (node,component) else do
+      current <- Component.loadComponent (Component.componentManifest component) >>= either failWith pure
+      unless (current {Component.componentFingerprint = Component.componentFingerprint component} == component)
+        (failWith (node <> ": preparation changed component contracts, targets or declaration identities; resolve again"))
+      pure (node,current)
+  pure (resolution {resTopology = topology {rtComponents = Map.fromList refreshed}})
 
 serviceDefinition :: Resolution -> Text -> Component.Component -> Eff (Maybe Service)
 serviceDefinition resolution node component = do
   let binding = Map.findWithDefault Null node (resComponentBindings resolution)
       process = keyOr "process" (keyOr "managed" binding)
+  when (key "image" (keyOr "managed" binding) /= Nothing)
+    (failWith (node <> ": test brackets managed processes and dependency fixtures; deploy this image with ironframe app or your deployment tools and select an external binding for the native test"))
   case key "command" process of
     Just (Array values) -> do
       url <- maybe (failWith (node <> ": a managed process needs ready.url")) pure (textAt "url" (keyOr "ready" binding))

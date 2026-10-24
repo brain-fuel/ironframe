@@ -15,6 +15,7 @@ module Ironframe.Compose
 import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
+import Ironframe.Endpoint (publishedPorts)
 import Ironframe.Json
 import Ironframe.Manifest (ConfigService (..))
 import Ironframe.Settings
@@ -64,7 +65,7 @@ composeFile environment configService =
           , service
               image
               (stack <> "-" <> rdName d)
-              ([tshow p <> ":" <> tshow p | p <- rdPorts d] ++ [tshow h <> ":" <> tshow c | Just (h, c) <- [rdAdminPort d]])
+              ([tshow host <> ":" <> tshow container | (host,container) <- zip (publishedPorts (rdEndpoint d) (rdPorts d)) (rdPorts d)] ++ [tshow h <> ":" <> tshow c | Just (h, c) <- [rdAdminPort d]])
               (rdContainerEnv d)
               []
               (labels (rdName d) (kindWord (rdKind d)))

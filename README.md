@@ -167,3 +167,9 @@ integration without claiming tests ran. Cancellation cleans up owned process
 groups; an interrupted attestation remains unfinished. Service logs and
 attestations remain under `.ironframe/ENV/`. Existing external services are never
 stopped, and occupied managed-service ports are refused.
+
+The native `test` lifecycle currently brackets managed processes and dependency
+fixture containers. Deploy image applications with `ironframe app` or your
+normal deployment tools and use an external component binding for their native
+checks. A managed image in `test` is explicitly refused. Owned process groups
+require POSIX; Windows callers can use external deployments.

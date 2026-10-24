@@ -18,7 +18,7 @@ module Ironframe.Calm.Run
   , RunReport (..)
   , runCommand
   , runOwnedCommand
-  , runOwnedCommandIn
+  , runLawSpecTestIn
   , runManaged
   , writeTopology
   ) where
@@ -31,7 +31,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Ironframe.Attest
 import Ironframe.Attestation
-import Ironframe.Calm.Export (applicationSettings)
+import Ironframe.Calm.Export (applicationSettings, applicationSettingsWithCredentials)
 import Ironframe.Calm.Model
 import qualified Ironframe.Component as Component
 import Ironframe.Calm.Resolve
@@ -101,7 +101,20 @@ settingsOf resolution node = do
 -- | Resolve local credential references only while launching owned commands.
 -- Exported settings and attestations keep references, never credential values.
 executionSettings :: Resolution -> Text -> Eff (Map Text Text)
-executionSettings resolution node = settingsOf resolution node >>= traverse resolveReference
+executionSettings resolution node = do
+  _ <- applicationIn resolution node
+  let topology = resTopology resolution
+      environmentName = rtEnvironment topology
+      w = workDir (resDir resolution) environmentName
+      required = node : map reDestination (edgesOf topology node)
+  environment <- resolveIn (resManifest resolution) (resDir resolution) environmentName >>= either (failWith . renderResolveError) pure
+  credentials <- fmap Map.fromList $ forM [(rdName dependency, reference) | dependency <- reDependencies environment,
+      rdName dependency `elem` required, Just reference <- [rdCredentials dependency]] $ \(name,reference) -> do
+    value <- resolveReference reference
+    pure (name,value)
+  deployed <- readEndpoints w >>= either (failWith . ((Path.display (endpointsPath w) <> ": ") <>)) pure
+  allSettings <- either (failWith . renderResolveError) pure (applicationSettingsWithCredentials resolution deployed credentials)
+  pure (Map.findWithDefault Map.empty node allSettings)
   where
     resolveReference value
       | Just name <- T.stripPrefix "env:" value =
@@ -283,8 +296,8 @@ runCommand = runCommandWith False Nothing
 runOwnedCommand :: Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
 runOwnedCommand = runCommandWith True Nothing
 
-runOwnedCommandIn :: Text -> Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
-runOwnedCommandIn parent = runCommandWith True (Just parent)
+runLawSpecTestIn :: Text -> Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
+runLawSpecTestIn parent = runCommandWith True (Just parent)
 
 runCommandWith :: Bool -> Maybe Text -> Resolution -> Text -> [Text] -> Maybe Text -> Maybe Text -> Eff RunReport
 runCommandWith owned parent resolution node command dir output = do
@@ -293,14 +306,17 @@ runCommandWith owned parent resolution node command dir output = do
     [] -> failWith "give the command to run after --"
   settings <- if owned then executionSettings resolution node else settingsOf resolution node
   begun <- begin resolution node command dir
-  let running = case parent of
+  let invocation = case parent of
+        Nothing -> command
+        Just _ -> command ++ ["--attestation", runAttestationPath resolution (runId (attRun begun))]
+      running = case parent of
         Nothing -> begun
-        Just identity -> begun {attExecution = fmap (\execution -> execution {execEnvironmentRun = Just identity}) (attExecution begun)}
+        Just identity -> begun {attExecution = fmap (\execution -> execution {execEnvironmentRun = Just identity, execCommand = invocation}) (attExecution begun)}
   path <- writeRun resolution running output
   result <-
     (if owned then runOwnedInherited else runInherited)
       program
-      args
+      (if parent == Nothing then args else drop 1 invocation)
       (Map.toAscList settings ++ [(attestationVariable, path), (runVariable, runId (attRun running))])
       dir
   out <- either (failWith . ((program <> ": ") <>) . ioMessage) pure result

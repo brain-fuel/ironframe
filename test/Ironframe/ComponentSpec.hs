@@ -5,6 +5,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Ironframe.Component
 import Ironframe.Calm.Model
+import Ironframe.Calm.Export (applicationSettings, applicationSettingsWithCredentials)
 import Ironframe.Calm.Resolve
 import Ironframe.Effect
 import Ironframe.Json
@@ -51,9 +52,12 @@ decorations = case parseDecorators (encode (Array values)) of
       ]
 
 resolve :: (Text -> Value) -> Either Text Resolution
-resolve describe = do
+resolve describe = resolveWith describe id
+
+resolveWith :: (Text -> Value) -> (Decorators -> Decorators) -> Either Text Resolution
+resolveWith describe change = do
   model <- architecture
-  decorators <- decorations
+  decorators <- change <$> decorations
   let go results = case runEff (resolveCalm model decorators "local" "/repo") results of
         Done (Left problem) -> Left problem
         Done (Right (Left problem)) -> Left (renderCalmError problem)
@@ -90,3 +94,28 @@ spec = describe "LawSpec component resolution" $ do
     case resolve changed of
       Left problem -> problem `shouldSatisfy` T.isInfixOf "does not provide the resolved contract"
       Right _ -> expectationFailure "accepted a contract with different content"
+
+  it "refuses a declared setting with no connection binding" $ do
+    let changed name = if name == "client" then
+          insert "requires" (Object [("graph", insert "settings" (Array [String "BASE_URL", String "INVITE"]) (keyOr "graph" (keyOr "requires" (descriptor name))))]) (descriptor name)
+          else descriptor name
+    case resolve changed of
+      Left problem -> problem `shouldSatisfy` T.isInfixOf "required setting INVITE"
+      Right _ -> expectationFailure "accepted a missing required setting"
+  it "renders typed credential substitutions without interpreting ordinary file URIs" $ do
+    let changed name = if name == "client" then
+          insert "requires" (Object [("graph", insert "settings" (Array [String "BASE_URL", String "AUTH"]) (keyOr "graph" (keyOr "requires" (descriptor name))))]) (descriptor name)
+          else descriptor name
+        change decorations' = decorations' {decsItems = map decorate (decsItems decorations')}
+        decorate decorator
+          | decId decorator == "connection" = decorator {decData = Object ["connection" .= Object ["requirement" .= String "graph", "settings" .= Object ["BASE_URL" .= String "${endpoint}", "AUTH" .= String "Bearer ${credentials}"]]]}
+          | decId decorator == "server-binding" = decorator {decData = insert "component" (insert "credentials" (String "env:EXAMPLE_TOKEN") (keyOr "component" (decData decorator))) (decData decorator)}
+          | decId decorator == "client-binding" = decorator {decData = insert "component" (insert "env" (Object ["DATABASE" .= String "file:cache.db"]) (keyOr "component" (decData decorator))) (decData decorator)}
+          | otherwise = decorator
+    case resolveWith changed change of
+      Left problem -> expectationFailure (T.unpack problem)
+      Right resolution -> do
+        fmap (Map.lookup "AUTH" . (Map.! "client")) (applicationSettings resolution Map.empty) `shouldBe` Right (Just "Bearer env:EXAMPLE_TOKEN")
+        let launched = applicationSettingsWithCredentials resolution Map.empty (Map.singleton "server" "controlled-token")
+        fmap (Map.lookup "AUTH" . (Map.! "client")) launched `shouldBe` Right (Just "Bearer controlled-token")
+        fmap (Map.lookup "DATABASE" . (Map.! "client")) launched `shouldBe` Right (Just "file:cache.db")

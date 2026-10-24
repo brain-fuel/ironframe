@@ -55,3 +55,31 @@ test('a missing executable is an explicit startup failure', async t => {
   assert.ok(result.error, JSON.stringify(result));
   await host.close();
 });
+
+test('cleanup kills a surviving descendant after its process-group leader exits', {skip: process.platform === 'win32'}, async t => {
+  const {host, request} = await context(t);
+  const script = `const {spawn}=require('node:child_process'); const child=spawn(process.execPath,['-e', 'process.on("SIGTERM",()=>{}); console.log(process.pid); setInterval(()=>{},1000)'],{stdio:['ignore','inherit','inherit']}); child.unref(); setTimeout(()=>process.exit(0),200);`;
+  const result = await host.perform({...request, command: [process.execPath, '-e', script]});
+  assert.ok(result.ok, JSON.stringify(result));
+  let descendant;
+  const deadline = Date.now() + 5000;
+  for (;;) {
+    descendant = Number((await readFile(result.ok.log, 'utf8')).trim());
+    const status = await host.perform({effect: 'serviceStatus', id: result.ok.id});
+    if (descendant && !status.ok.running) break;
+    assert.ok(Date.now() < deadline);
+    await new Promise(resolve => setTimeout(resolve, 20));
+  }
+  assert.deepEqual(await host.perform({effect: 'stopService', id: result.ok.id}), {ok: null});
+  assert.throws(() => process.kill(descendant, 0), error => error.code === 'ESRCH');
+});
+
+test('a completed owned command cleans descendants that retain captured streams', {skip: process.platform === 'win32', timeout: 10000}, async t => {
+  const {host, root} = await context(t);
+  const script = `const {spawn}=require('node:child_process'); const child=spawn(process.execPath,['-e','console.log(process.pid); setInterval(()=>{},1000)'],{stdio:['ignore','inherit','inherit']}); child.unref(); setTimeout(()=>process.exit(0),200);`;
+  const result = await host.perform({effect: 'run', program: process.execPath, args: ['-e', script], cwd: root, stream: false, ownedGroup: true});
+  assert.equal(result.ok?.success, true, JSON.stringify(result));
+  const descendant = Number(result.ok.stdout.trim());
+  assert.ok(descendant > 0);
+  assert.throws(() => process.kill(descendant, 0), error => error.code === 'ESRCH');
+});

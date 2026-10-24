@@ -5,6 +5,7 @@
 -- ref:DEC-calm-exports
 module Ironframe.Calm.Export
   ( applicationSettings
+  , applicationSettingsWithCredentials
   , bindingLabel
   , mermaid
   , dot
@@ -28,29 +29,34 @@ import Ironframe.Settings
 
 -- | The settings each application reads, by application node.
 applicationSettings :: Resolution -> Map Text Text -> Either ResolveError (Map Text (Map Text Text))
-applicationSettings resolution deployed = do
+applicationSettings resolution deployed = applicationSettingsWithCredentials resolution deployed Map.empty
+
+-- | Launch-time credential values replace only declared credential references.
+applicationSettingsWithCredentials :: Resolution -> Map Text Text -> Map Text Text -> Either ResolveError (Map Text (Map Text Text))
+applicationSettingsWithCredentials resolution deployed credentials = do
   let topology = resTopology resolution
   environment <- resolve (resManifest resolution) (rtEnvironment topology) deployed
+  let context dependency = case Map.lookup (rdName dependency) credentials of
+        Just value -> dependency {rdCredentials = Just value}
+        Nothing -> dependency
+      dependencies = map context (reDependencies environment)
   fmap Map.fromList $ forM (rtApplications topology) $ \application -> do
-    let wiring = Map.fromList
-            [ (k, v)
-            | edge <- edgesOf topology (raNode application)
-            , dependency <- take 1 (filter ((== reDestination edge) . rdName) (reDependencies environment))
-            , k <- Map.keys (reSettings edge)
-            , Just v <- [Map.lookup k (rdSettings dependency)]
-            ]
-        ownTemplates = [(name, text) | Object fields <- [keyOr "env" (Map.findWithDefault Null (raNode application) (resComponentBindings resolution))], (name,String text) <- fields]
+    wiring <- fmap Map.fromList $ forM
+      [(name,template,dependency) | edge <- edgesOf topology (raNode application),
+        dependency <- take 1 (filter ((== reDestination edge) . rdName) dependencies),
+        (name,template) <- Map.toAscList (reSettings edge)] $ \(name,template,dependency) -> do
+          value <- renderSetting (raNode application) name template dependency
+          pure (name,value)
+    let ownTemplates = [(name, text) | Object fields <- [keyOr "env" (Map.findWithDefault Null (raNode application) (resComponentBindings resolution))], (name,String text) <- fields]
     ownSettings <- fmap Map.fromList $ forM ownTemplates $ \(name,template) -> do
       let located = case Map.lookup (raNode application) (rtComponents topology) of
             Just component -> T.replace "${componentRoot}" (Component.componentRoot component) template
             Nothing -> template
-      rendered <- case filter ((== raNode application) . rdName) (reDependencies environment) of
+      rendered <- case filter ((== raNode application) . rdName) dependencies of
         dependency : _ -> renderSetting (raNode application) name located dependency
         [] -> Right located
       pure (name,rendered)
-    let
-        conflicts = Map.keys (Map.intersection ownSettings wiring)
-    case conflicts of
+    case Map.keys (Map.intersection ownSettings wiring) of
       name : _ -> Left (SettingConflict (raNode application) name)
       [] -> Right (raNode application, Map.union wiring ownSettings)
 

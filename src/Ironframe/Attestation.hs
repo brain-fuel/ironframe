@@ -302,9 +302,10 @@ encodeArchitecture r =
 encodeApplication :: ApplicationRef -> Value
 encodeApplication r =
   Object $
-    [ "node" .= String (appNode r)
-    , "implementation" .= encodeImplementation (appImplementation r)
-    ] ++ opt "contract" encodeContractRef (appContract r) ++ opt "component" id (appComponent r)
+    [ "node" .= String (appNode r) ]
+      ++ opt "contract" encodeContractRef (appContract r)
+      ++ ["implementation" .= encodeImplementation (appImplementation r)]
+      ++ opt "component" id (appComponent r)
 
 encodeExecution :: Execution -> Value
 encodeExecution e =
