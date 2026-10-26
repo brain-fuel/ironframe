@@ -88,3 +88,51 @@ a reverted snapshot when declarations still describe a newer candidate.
 The example establishes the selected Kafka/HTTP integration. It does not add
 email/Cassandra twins, migrate Kafka offsets or database state, undo notifications,
 or complete any remaining human/external 1.0 gate.
+
+## 0.3.0 release verification
+
+The assembled 0.3.0 release at `93f97b8` repeated the observed workflow with
+LawTwin 0.3.0 images and its 0.3.0 observation binary, using the same released
+LawSpec 0.31.0 archive. The release check passed; this is not a 1.0 sign-off.
+
+The retained receipt is `.artifacts/0.3.0/observed-shop/run-Ooj64d/acceptance.json`,
+with SHA-256 `6eaf1c9f80c490acd2ced856c3cd279de4460abbbe6925f74af2b433267d3288`. Authored laws retained the same SHA-256 shown above.
+
+| Run | Logs | Collection | Native execution id |
+| --- | ---: | --- | --- |
+| fixture | 945 | complete | `dda6546e-ad55-4b53-973a-85da160d1d3a` |
+| receiver-loss | 944 | incomplete | `6a112434-b443-4e4e-903b-879c27e22d42` |
+| provider-first | 945 | complete | `fd045401-d5e7-46a5-a23d-843563247de7` |
+| provider-second | 945 | complete | `b6fcbf13-f368-4cef-99cc-c57d94976025` |
+
+Both real candidates were published and adopted only after completed fixture
+and matching provider runs. Fresh application and audit processes exercised
+each selection and the reverted binding. The loss control still ran the native
+laws successfully but could not qualify as completed collection evidence.
+
+Release checks completed:
+
+- The npm suite passed 1,434 tests; two opt-in deployments were skipped there.
+  The separate CALM deployment acceptance passed with the 0.3.0 images in real,
+  twin and mixed modes, including external/managed apps, faults, reset/replay
+  and topology correspondence for exports and settings.
+- The first native run exposed five historical framework-version assumptions.
+  After narrowly updating those comparisons, all 1,422 affected serde/corpus
+  cases passed; the remaining 826 cases had passed in the assembled run.
+  Frozen provider versions and historical receipt bytes were preserved.
+- The actual `tools/wasm.sh` rebuilt the shipped core. Integrity and four
+  native/WASM comparisons on the fresh evidence passed: eligibility, incomplete
+  collection refusal, binding construction and changed-content refusal.
+- Strict compilation, all infrastructure module checks and canon passed under
+  the existing deferred human-vetting policy.
+- A clean installation of `ironframe-0.3.0.tgz` reported the release version,
+  matched the shipped WASM digest and loaded the selected binding through
+  `ironframe/observation`. The archive remains ready for owner npm publication.
+- The freshly built `localhost/ironframe-config-service:0.3.0` container
+  served the exact selected reverted application binding before teardown.
+
+Fresh independent Kafka and HTTP provider reports are retained in
+`examples/calm-shop/architecture/conformance/0.3.0/`. Their scopes and limitations
+are described in the CALM demonstration guide; historical 0.2.1 reports remain.
+The observation image was independently built, exercised and removed. No live
+cloud resources or registries were changed.

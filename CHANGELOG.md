@@ -19,6 +19,14 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   configuration service; publication does not imply application adoption.
 - An observed calm-shop acceptance path using the actual unchanged Go laws.
 
+### Changed
+
+- Advance runnable examples and the configuration-service image to 0.3.0.
+  Keep historical parity fixtures and provider receipts unchanged, and pin
+  exported infrastructure modules to `v0.3.0`.
+- Use fresh LawTwin 0.3.0 independent provider receipts: Kafka answers-level
+  conformance, scoped Python HTTP conformance and the lawful Swagger selection.
+
 ## [0.2.1] - 2026-10-26
 
 ### Fixed
