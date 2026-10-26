@@ -47,7 +47,7 @@ const implementationCommit=(await command('git',['rev-parse','HEAD'],{cwd:root})
 let decorations=await json(decorators);
 for (const decoration of decorations) {
   if(decoration.type==='ironframe-environment') decoration.data.project=project;
-  if(decoration.data.application) decoration.data.application.implementation={commit:implementationCommit,version:'0.1.0'};
+  if(decoration.type==='ironframe-binding'&&decoration.data.application) decoration.data.application.implementation={commit:implementationCommit,version:'0.1.0'};
   const binding=decoration.data.twin??decoration.data.real;
   if(!binding)continue;
   if(decoration['applies-to'].includes('adoptions-log')) {
