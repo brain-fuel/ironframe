@@ -4,6 +4,7 @@ import qualified Data.ByteString as B
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
+import Ironframe.Corpus (normalise)
 import Ironframe.Json
 import Ironframe.Json.Serde (Decoder, decodeWith)
 import Ironframe.Manifest.Serde
@@ -49,7 +50,7 @@ checkManifest decoded m = it (T.unpack (maybe "" id (textAt "name" m))) $
       Nothing -> expectationFailure "the manifest's YAML did not decode"
       Just json -> case decode json of
         Left e -> expectationFailure (T.unpack e)
-        Right v -> (encodePretty . encodeManifest <$> decodeManifest v) `shouldBe` Right expected
+        Right v -> (normalise . encodePretty . encodeManifest <$> decodeManifest v) `shouldBe` Right (normalise expected)
   where
     text = maybe "" id (textAt "text" (keyOr "input" m))
     expected = maybe "" id (textAt "ok" (keyOr "expected" m))

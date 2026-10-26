@@ -152,7 +152,7 @@
       "environment": "twin",
       "twin": {
         "image": "lawtwin/kafka",
-        "version": "0.2.1",
+        "version": "0.3.0",
         "stands-in-for": {
           "package": "lawtwin.kafka",
           "version": "0.1.0",
@@ -161,7 +161,7 @@
           ]
         },
         "conformance": {
-          "report": "conformance/0.2.1/kafka/report.json"
+          "report": "conformance/0.3.0/kafka/report.json"
         },
         "ports": [
           9092
@@ -190,7 +190,7 @@
       "environment": "twin",
       "twin": {
         "image": "lawtwin/http",
-        "version": "0.2.1",
+        "version": "0.3.0",
         "stands-in-for": {
           "package": "lawtwin.petstore",
           "version": "0.1.0",
@@ -200,7 +200,7 @@
         },
         "contract": "petstore",
         "conformance": {
-          "report": "conformance/0.2.1/http/python.json"
+          "report": "conformance/0.3.0/http/python.json"
         },
         "ports": [
           8080
@@ -398,7 +398,7 @@
       "environment": "mixed",
       "twin": {
         "image": "lawtwin/http",
-        "version": "0.2.1",
+        "version": "0.3.0",
         "stands-in-for": {
           "package": "lawtwin.petstore",
           "version": "0.1.0",
@@ -408,7 +408,7 @@
         },
         "contract": "petstore",
         "conformance": {
-          "report": "conformance/0.2.1/http/python.json"
+          "report": "conformance/0.3.0/http/python.json"
         },
         "ports": [
           8080

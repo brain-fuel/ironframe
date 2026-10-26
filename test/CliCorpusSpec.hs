@@ -58,7 +58,9 @@ spec = do
       forM_ [e | String e <- arrayOf (keyOr "examples" (keyOr "input" c))] $ \name ->
         if name == "calm-shop"
           then copyTree (repo </> "test/fixtures/calm-shop-0.1.0") (root </> "calm-shop/architecture")
-          else copyTree (repo </> "examples" </> T.unpack name) (root </> T.unpack name)
+          else if name `elem` ["kafka-app", "petstore-app"]
+            then copyTree (repo </> "test/fixtures" </> (T.unpack name ++ "-0.1.0")) (root </> T.unpack name)
+            else copyTree (repo </> "examples" </> T.unpack name) (root </> T.unpack name)
       let tools = root </> ".tools"
       createDirectoryIfMissing True tools
       forM_ [("podman", fakePodman), ("tofu", fakeTofu), ("broken-podman", brokenPodman)] $ \(name, script) -> do

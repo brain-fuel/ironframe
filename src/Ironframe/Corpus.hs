@@ -101,7 +101,7 @@ answer s e = case text' "effect" e of
   "locate" -> (ok (maybe Null String (Map.lookup (text' "variable" e) (sEnv s) >>= \v -> if T.null v then Nothing else Just v)), s)
   "run" -> case sProcesses s of
     (expected : rest) ->
-      let same = keyOr "program" expected == keyOr "program" e && keyOr "args" expected == keyOr "args" e && keyOr "stream" expected == keyOr "stream" e
+      let same = keyOr "program" expected == keyOr "program" e && releaseVersions (keyOr "args" expected) == releaseVersions (keyOr "args" e) && keyOr "stream" expected == keyOr "stream" e
           s' = s {sProcesses = rest, sMismatches = sMismatches s ++ ["process: expected " <> encode (picked expected) <> ", got " <> encode (picked e) | not same]}
           success = keyOr "success" expected
        in ( ok (Object ["success" .= success, "code" .= Number (I (if success == Bool True then 0 else 1)), "stdout" .= keyOr "stdout" expected, "stderr" .= keyOr "stderr" expected])
@@ -189,10 +189,17 @@ normalise = times . uuids . producerVersion
                   _ -> more1
       _ -> Nothing
 
--- | Historical parity ignores only the release producer version, not provider versions.
+-- | Historical parity ignores the release producer and exact framework defaults.
+-- Provider and contract versions remain part of the frozen behavioural checks.
 producerVersion :: Text -> Text
-producerVersion = T.replace "ironframe 0.2.1" "ironframe 0.1.0"
-  . T.replace "\"name\": \"ironframe\",\n    \"version\": \"0.2.1\"" "\"name\": \"ironframe\",\n    \"version\": \"0.1.0\""
+producerVersion = T.replace "git::https://github.com/brain-fuel/ironframe.git//modules?ref=v0.3.0" "git::https://github.com/brain-fuel/ironframe.git//modules?ref=v0.1.0"
+  . T.replace "git::https://github.com/brain-fuel/ironframe.git//modules/aws-ecs-fargate?ref=v0.3.0" "git::https://github.com/brain-fuel/ironframe.git//modules/aws-ecs-fargate?ref=v0.1.0"
+  . T.replace "git::https://github.com/brain-fuel/ironframe.git//modules/azure-container-apps?ref=v0.3.0" "git::https://github.com/brain-fuel/ironframe.git//modules/azure-container-apps?ref=v0.1.0"
+  . T.replace "git::https://github.com/brain-fuel/ironframe.git//modules/gcp-cloud-run?ref=v0.3.0" "git::https://github.com/brain-fuel/ironframe.git//modules/gcp-cloud-run?ref=v0.1.0"
+  . T.replace "git::https://github.com/brain-fuel/ironframe.git//modules/gcp-compute-engine?ref=v0.3.0" "git::https://github.com/brain-fuel/ironframe.git//modules/gcp-compute-engine?ref=v0.1.0"
+  . T.replace "localhost/ironframe-config-service:0.3.0" "localhost/ironframe-config-service:0.1.0"
+  . T.replace "ironframe 0.3.0" "ironframe 0.1.0"
+  . T.replace "\"name\": \"ironframe\",\n    \"version\": \"0.3.0\"" "\"name\": \"ironframe\",\n    \"version\": \"0.1.0\""
 
 releaseVersions :: Value -> Value
 releaseVersions (String value) = String (producerVersion value)

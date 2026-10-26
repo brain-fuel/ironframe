@@ -1,6 +1,6 @@
 cabal-version: 3.0
 name: ironframe-wasm
-version: 0.2.1
+version: 0.3.0
 build-type: Simple
 executable ironframe-wasm
   main-is: Exports.hs

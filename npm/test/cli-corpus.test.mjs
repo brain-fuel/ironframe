@@ -114,7 +114,9 @@ export function replaceTimes(text) {
 }
 
 function normalise(text, root) {
-  return replaceTimes(replaceUuids(text.split(root).join("/work").replaceAll("ironframe 0.2.1", "ironframe 0.1.0").replaceAll('"name": "ironframe",\n    "version": "0.2.1"', '"name": "ironframe",\n    "version": "0.1.0"')));
+  const defaults = ["", "/aws-ecs-fargate", "/azure-container-apps", "/gcp-cloud-run", "/gcp-compute-engine"];
+  for (const module of defaults) text = text.replaceAll(`git::https://github.com/brain-fuel/ironframe.git//modules${module}?ref=v0.3.0`, `git::https://github.com/brain-fuel/ironframe.git//modules${module}?ref=v0.1.0`);
+  return replaceTimes(replaceUuids(text.split(root).join("/work").replaceAll("localhost/ironframe-config-service:0.3.0", "localhost/ironframe-config-service:0.1.0").replaceAll("ironframe 0.3.0", "ironframe 0.1.0").replaceAll('"name": "ironframe",\n    "version": "0.3.0"', '"name": "ironframe",\n    "version": "0.1.0"')));
 }
 
 const utf8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
@@ -179,7 +181,7 @@ async function replay(item) {
   try {
     for (const example of item.input.examples) {
       const [from, to] =
-        example === "calm-shop" ? ["test/fixtures/calm-shop-0.1.0", "calm-shop/architecture"] : [`examples/${example}`, example];
+        example === "calm-shop" ? ["test/fixtures/calm-shop-0.1.0", "calm-shop/architecture"] : ["kafka-app", "petstore-app"].includes(example) ? [`test/fixtures/${example}-0.1.0`, example] : [`examples/${example}`, example];
       await copyExample(join(repo, from), join(root, to));
     }
     const tools = join(root, ".tools");

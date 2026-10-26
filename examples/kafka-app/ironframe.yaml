@@ -20,10 +20,10 @@ environments:
       kafka:
         twin:
           image: lawtwin/kafka
-          version: 0.1.0
+          version: 0.3.0
           conformance:
             level: answers
-            report: conformance/lawtwin-kafka-0.1.0.json
+            report: conformance/lawtwin-kafka-0.3.0.json
           ports: [9092]
           seed: 42
           config:
@@ -65,9 +65,9 @@ environments:
       kafka:
         twin:
           image: lawtwin/kafka
-          version: 0.1.0
+          version: 0.3.0
           conformance:
-            report: conformance/lawtwin-kafka-0.1.0.json
+            report: conformance/lawtwin-kafka-0.3.0.json
           ports: [9092]
     sync:
       - aws_appconfig:
@@ -88,9 +88,9 @@ environments:
       kafka:
         twin:
           image: lawtwin/kafka
-          version: 0.1.0
+          version: 0.3.0
           conformance:
-            report: conformance/lawtwin-kafka-0.1.0.json
+            report: conformance/lawtwin-kafka-0.3.0.json
           ports: [9092]
           protocol: tcp
           seed: 42

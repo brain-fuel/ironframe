@@ -20,11 +20,11 @@ environments:
       petstore:
         twin:
           image: lawtwin/http
-          version: 0.1.0
+          version: 0.3.0
           contract: petstore
           conformance:
             level: conformant
-            report: conformance/lawtwin-http-0.1.0-petstore.json
+            report: conformance/lawtwin-http-0.3.0-petstore.json
           ports: [8080]
           endpoint: http://localhost:8080
           seed: 42
@@ -51,10 +51,10 @@ environments:
       petstore:
         twin:
           image: lawtwin/http
-          version: 0.1.0
+          version: 0.3.0
           contract: petstore
           conformance:
-            report: conformance/lawtwin-http-0.1.0-petstore.json
+            report: conformance/lawtwin-http-0.3.0-petstore.json
           ports: [8080]
           seed: 42
     sync:

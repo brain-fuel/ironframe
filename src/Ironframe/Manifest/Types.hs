@@ -194,7 +194,7 @@ defaultAdminContainerPort :: Integer
 defaultAdminContainerPort = 9644
 
 defaultConfigServiceImage :: Text
-defaultConfigServiceImage = "localhost/ironframe-config-service:0.1.0"
+defaultConfigServiceImage = "localhost/ironframe-config-service:0.3.0"
 
 defaultConfigServicePort :: Integer
 defaultConfigServicePort = 8700

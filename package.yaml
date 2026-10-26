@@ -1,5 +1,5 @@
 name: ironframe
-version: 0.2.1
+version: 0.3.0
 license: MIT
 synopsis: Wire applications to their dependencies, real or twin, per environment
 extra-source-files: [README.md, CHANGELOG.md]

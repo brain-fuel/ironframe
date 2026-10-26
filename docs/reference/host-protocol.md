@@ -140,7 +140,7 @@ connection string in the variable `connectionStringEnv` names, used against
 
 | Method | Parameters | Result |
 | --- | --- | --- |
-| `version` | none | The core's version. |
+| `version` | none | The host-protocol compatibility version (`0.1.0`). Use CLI `--version` for the release version. |
 | `cli` | `argv`, `cwd` | `{exitCode}`. The `ironframe` command: `npm/bin/ironframe.mjs` runs it and exits with that code, or 2 when the method fails. |
 | `configService.handle` | `settingsPath`, `method`, `path` | `{status, contentType, body}`. One answer of the [configuration service](config-service.md). |
 | `corpus.check` | `case`, `fixtures` | `{pass, ...}`: whether one corpus case is reproduced, run over a scripted host inside the core. |

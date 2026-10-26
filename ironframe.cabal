@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           ironframe
-version:        0.2.1
+version:        0.3.0
 synopsis:       Wire applications to their dependencies, real or twin, per environment
 license:        MIT
 license-file:   LICENSE

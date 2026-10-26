@@ -8,8 +8,8 @@
 // attestation. In the environments with twins, faults, resets and
 // deterministic replay are driven through the twins' control planes.
 // Unresolved and incompatible bindings are refused by name. It needs podman
-// with a compose provider, Go, npm, and the images lawtwin/kafka:0.2.1,
-// lawtwin/http:0.2.1, apache/kafka:4.3.1 and lawtwin/petstore3-native:latest,
+// with a compose provider, Go, npm, and the images lawtwin/kafka:0.3.0,
+// lawtwin/http:0.3.0, apache/kafka:4.3.1 and lawtwin/petstore3-native:latest,
 // so it runs only with IRONFRAME_E2E=1, as `make e2e-calm` sets it.
 //
 // The example's pinned LawSpec consumes completed-run attestations;
@@ -124,8 +124,8 @@ function runLaws(dir, environment) {
     assert.equal(record.kind, kind, `${ability} in ${environment}`);
     assert.equal(record.implementation.kind, kind === "real" ? "real-provider" : "fixture");
     if (kind === "stand-in") {
-      assert.equal(record.implementation.version, "0.2.1");
-      assert.equal(record.stand_in.version, "0.2.1");
+      assert.equal(record.implementation.version, "0.3.0");
+      assert.equal(record.stand_in.version, "0.3.0");
       assert.equal(record.stand_in.stands_in_for.version, "0.1.0");
     } else if (ability.endsWith("::Adoptions")) assert.equal(record.implementation.version, "4.3.1");
     assert.ok(record.completed.reached);
@@ -258,7 +258,7 @@ async function theChainRunsInEveryBinding() {
   }
   try {
     // Provider receipts retain their actual scope; Swagger remains lawful.
-    const receipts = join(dir, "architecture/conformance/0.2.1");
+    const receipts = join(dir, "architecture/conformance/0.3.0");
     const python = JSON.parse(readFileSync(join(receipts, "http/python.json"), "utf8"));
     const swagger = JSON.parse(readFileSync(join(receipts, "http/swagger-petstore3.json"), "utf8"));
     assert.equal(python.level, "conformant");
@@ -285,7 +285,7 @@ async function theChainRunsInEveryBinding() {
     assert.deepEqual((await problems(dir, "staging", { tofu: root })).tofu, []);
     const changedRoot = JSON.parse(root);
     const deployment = changedRoot.module.twin_adoptions_log;
-    assert.equal(deployment.image, twinPrefix ? `${twinPrefix}/kafka:0.2.1` : "docker.io/lawtwin/kafka:0.2.1");
+    assert.equal(deployment.image, twinPrefix ? `${twinPrefix}/kafka:0.3.0` : "docker.io/lawtwin/kafka:0.3.0");
     assert.deepEqual(deployment.ports, [9092]);
     assert.equal(JSON.parse(deployment.environment.TWIN_CONFIG).seed, 42);
     assert.deepEqual(changedRoot.output.endpoints.value, { "adoptions-log": "${module.twin_adoptions_log.endpoint}" });

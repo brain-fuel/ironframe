@@ -79,7 +79,7 @@ check: lint test integrity tofu-check canon ## run every check
 # | The configuration service's image, the npm package's Node host over the WASM core, tagged as
 # | the manifest's default. ref:DEC-config-service
 config-service-image: ## build the configuration service image with podman
-	$(PODMAN) build -f config-service/Containerfile -t localhost/ironframe-config-service:0.1.0 .
+	$(PODMAN) build -f config-service/Containerfile -t localhost/ironframe-config-service:0.3.0 .
 
 # | Remove build output and every generated working directory; the shipped WASM core in npm/
 # | stays. ref:DEC-manifest-shape

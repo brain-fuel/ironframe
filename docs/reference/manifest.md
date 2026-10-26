@@ -99,7 +99,7 @@ Inside a YAML flow mapping, `{...}`, quote a template: `{URL: '${endpoint}'}`.
 | `cloud` | for a cloud | The cloud's inputs, below. |
 | `dependencies` | yes | Each declared dependency, bound to `real` or `twin`. |
 | `sync` | no | Where the settings are written, below. |
-| `config_service` | no, podman only | Runs the configuration service: `image`, default `localhost/ironframe-config-service:0.1.0`, and `port`, default 8700. |
+| `config_service` | no, podman only | Runs the configuration service: `image`, default `localhost/ironframe-config-service:0.3.0`, and `port`, default 8700. |
 
 ### `real`
 

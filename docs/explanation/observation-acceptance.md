@@ -5,10 +5,12 @@ title: Observation and binding promotion acceptance, 26 October 2026
 ---
 # Observation and binding promotion acceptance
 
+## Feature acceptance before 0.3.0
+
 The assembled implementation at `6b17dcb` ran the released LawSpec 0.31.0
 archive against actual native Go handlers, LawTwin Kafka/HTTP 0.2.1, Apache
 Kafka 4.3.1 and the native Swagger Petstore. LawTwin's observer source is
-`ef5edb5`. This is an unreleased feature increment, not a new release tag or a
+`ef5edb5`. This check covered the then-unreleased feature increment; it was not a release or
 1.0 sign-off. Existing provider conformance scopes remain unchanged.
 
 The retained run is `.artifacts/observed-shop/run-d2LQMY/acceptance.json`.

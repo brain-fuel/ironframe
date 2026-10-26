@@ -4,8 +4,8 @@
 // synced, `ironframe attest` records each stand-in with its conformance level,
 // seed and history digest, `ironframe twin` drives a twin's control plane, and
 // `ironframe down` removes everything. It needs podman with a compose
-// provider and the images lawtwin/kafka:0.1.0, lawtwin/http:0.1.0 and
-// localhost/ironframe-config-service:0.1.0 (make config-service-image), so it
+// provider and the images lawtwin/kafka:0.3.0, lawtwin/http:0.3.0 and
+// localhost/ironframe-config-service:0.3.0 (make config-service-image), so it
 // runs only with IRONFRAME_E2E=1, as `make e2e` sets it.
 // ref:REQ-end-to-end-with-twins
 import { test } from "node:test";
@@ -120,7 +120,7 @@ async function upRunsTheAppsAgainstTwins() {
       const record = attestation(directory).dependencies.find((d) => d.name === dependency);
       assert.equal(record.kind, "stand-in");
       assert.ok(record.reached, `${dependency} was reached`);
-      assert.deepEqual([record.stand_in.product, record.stand_in.version], [product, "0.1.0"]);
+      assert.deepEqual([record.stand_in.product, record.stand_in.version], [product, "0.3.0"]);
       assert.equal(record.stand_in.conformance, level);
       assert.equal(record.stand_in.seed, 42);
       assert.ok(record.stand_in.history_entries >= 2, `${dependency}'s history holds what the app did`);

@@ -1,0 +1,305 @@
+{
+  "purpose": "Supplementary scope and provenance for current CALM example bindings; real-provider conformance is not an Ironframe binding field.",
+  "implementationVersion": "0.3.0",
+  "contractVersions": {
+    "lawtwin.kafka": "0.1.0",
+    "lawtwin.petstore": "0.1.0"
+  },
+  "sources": {
+    "repository": "https://github.com/brain-fuel/lawtwin",
+    "kafkaCommit": "b2cf5490986981003daa27b7077b1a32de0eb4e8",
+    "httpCommit": "b2cf5490986981003daa27b7077b1a32de0eb4e8",
+    "consumerSourceCommit": "1febd2b"
+  },
+  "rawCopies": [
+    {
+      "path": "http/context.json",
+      "sha256": "e8fdd3549ebd36a8572c7b0f482d0ef59b0607a616387d84aa253e4a7408af35"
+    },
+    {
+      "path": "http/python-forget-delete.json",
+      "sha256": "d0ec5b92384478ecc788712b2fd8caa4da8f13707d203846c331e39858f2c4aa"
+    },
+    {
+      "path": "http/python-forget-delete.log",
+      "sha256": "ef44371780aa0c32fc53e4da6e620ff71e0ec0e0286d387e237597b06fc418a2"
+    },
+    {
+      "path": "http/python-invalid.json",
+      "sha256": "17d95c91906c4206d4da4119a0e5477359cf3b0628508468424ac8bc553f168e"
+    },
+    {
+      "path": "http/python-invalid.log",
+      "sha256": "9ed9a83534cbbbd48d885e1efbc9392430607da4ef6cd3026858a5350a27fd6a"
+    },
+    {
+      "path": "http/python.json",
+      "sha256": "b29ce2a0a58d464e92a5edd221d7727cbfe7f1ea66ac7887652c7e0041d30fff"
+    },
+    {
+      "path": "http/python.log",
+      "sha256": "63d000a9a17810969db0ea9bcf52f8343b6d0e7298698727eec2b3b92c08f9d2"
+    },
+    {
+      "path": "http/report.md",
+      "sha256": "824b852ace82a0b63c34a36b2c6bda66291cee5b421ee3f6eb0037eedc05d671"
+    },
+    {
+      "path": "http/swagger-petstore3.json",
+      "sha256": "390a2068376e692a7f5986e18fc7dda296907ffb1009e1208219b1a12d366e21"
+    },
+    {
+      "path": "http/swagger-petstore3.log",
+      "sha256": "9e66a2a1a88dafef9e10a558a1f31407c9499460ecb092c3743530d96e0803ea"
+    },
+    {
+      "path": "kafka/context.json",
+      "sha256": "2b267710a9656550af29544e9d555ccb4c8baffb31988f655ee9a9374f3b93f5"
+    },
+    {
+      "path": "kafka/report.json",
+      "sha256": "a36636b484ab746b613225aee5c5f862520fc4626e32669e66ef650bc1fb987e"
+    },
+    {
+      "path": "kafka/report.md",
+      "sha256": "c18560c5eac3a9df223c7c5df522845ca218121b4b348e06279b3672548de8c2"
+    },
+    {
+      "path": "kafka/traces/franz-go/faults.frames.jsonl",
+      "sha256": "6edd561621ab961c1492e749d51953f81267ef86e84c1ad194d510ea07621a37"
+    },
+    {
+      "path": "kafka/traces/franz-go/faults.history.jsonl",
+      "sha256": "c510f3cd9ba14b2087ba9cec8f5fcbaac2cf85d56a33fcbe50907b92fbae5171"
+    },
+    {
+      "path": "kafka/traces/franz-go/force.frames.jsonl",
+      "sha256": "8c4d77deef965ac453699298292bdea710fb8e3728970a7d64a8872a7f3f069d"
+    },
+    {
+      "path": "kafka/traces/franz-go/force.history.jsonl",
+      "sha256": "fb8a1ccd7a3f4624306de9f4a884dc896fae2ffb5b11a0284dbb3bc5c8b51b01"
+    },
+    {
+      "path": "kafka/traces/franz-go/group-rebalance.frames.jsonl",
+      "sha256": "e4c99f5f45797c60d4dc6c39f60a72f139ab40edf6cd3f8561f4837e261ddae7"
+    },
+    {
+      "path": "kafka/traces/franz-go/group-rebalance.history.jsonl",
+      "sha256": "8b2631fe98624bcee754570b073a604361c1cc8964f77d07e7f0c2441fecbb00"
+    },
+    {
+      "path": "kafka/traces/franz-go/idempotent.frames.jsonl",
+      "sha256": "382f37ca2b6425bf92a57563f21539fa84f2da907be1d075944bf6d1c2cbe101"
+    },
+    {
+      "path": "kafka/traces/franz-go/idempotent.history.jsonl",
+      "sha256": "cb22a1eeb2a51f7f62a1f860ae875b68cc90949eb3b63afde36615d03ee6f767"
+    },
+    {
+      "path": "kafka/traces/franz-go/produce-consume.frames.jsonl",
+      "sha256": "55421bd38b13a4878f3b2a91d3e13c9c9c9aa4f1f043396f880fe350f2c488c3"
+    },
+    {
+      "path": "kafka/traces/franz-go/produce-consume.history.jsonl",
+      "sha256": "fc5a5b4f3e460995678938a1c9df93be28395936e3561dc7248bbf29718055b7"
+    },
+    {
+      "path": "kafka/traces/franz-go/transactions.frames.jsonl",
+      "sha256": "f8def5e5002c6f9ba09ea3dffa5417d170e02f2aab6748f7f3130378d858975c"
+    },
+    {
+      "path": "kafka/traces/franz-go/transactions.history.jsonl",
+      "sha256": "64add0a447dd1f9ff29c044a80331545d7ec74a178cc8f35580511704eb16296"
+    },
+    {
+      "path": "kafka/traces/java/faults.frames.jsonl",
+      "sha256": "1bea67908ac36a4b7f16243f384d9c456d9b4e258ffb87f30c089f3b37257e4d"
+    },
+    {
+      "path": "kafka/traces/java/faults.history.jsonl",
+      "sha256": "b1c2e1ca402b7874ac2f32c693a56bc2792e65b3f8876242d4df239fee9bada7"
+    },
+    {
+      "path": "kafka/traces/java/force.frames.jsonl",
+      "sha256": "d02f29d628f69c5d33f9fa997fe9fb9f64c8ecb5359af3a32ba6c72c2ded4859"
+    },
+    {
+      "path": "kafka/traces/java/force.history.jsonl",
+      "sha256": "8bc736535a7bff60d30c6b7ffd2ad57dcb3caf6e395001212ddede8a83fe22da"
+    },
+    {
+      "path": "kafka/traces/java/group-rebalance.frames.jsonl",
+      "sha256": "e71daffa07e679e04dec130abb5d2988b3557272acab2e2589535da9e1caf2d6"
+    },
+    {
+      "path": "kafka/traces/java/group-rebalance.history.jsonl",
+      "sha256": "2875dec49df6613f3b4745af5ae856f91de147553c5285572b621e351450c59c"
+    },
+    {
+      "path": "kafka/traces/java/idempotent.frames.jsonl",
+      "sha256": "efe520e40742b1fb0b59e35cb307961e4d34e70be9dd0f953531db71961356bb"
+    },
+    {
+      "path": "kafka/traces/java/idempotent.history.jsonl",
+      "sha256": "e1c5cb71cb729f7a8ed943561ef42f954d9b49952323469b523155df176ede0c"
+    },
+    {
+      "path": "kafka/traces/java/produce-consume.frames.jsonl",
+      "sha256": "a30e172be1b8ab2f03f5a21cd07f3680cfbb065189c320a58a78d7e8e1093a8a"
+    },
+    {
+      "path": "kafka/traces/java/produce-consume.history.jsonl",
+      "sha256": "ea0a62184d1b5d030cd6d5dbb24b9bbeca5fc241b4c5f0add66440aed959674c"
+    },
+    {
+      "path": "kafka/traces/java/transactions.frames.jsonl",
+      "sha256": "15439a35264ee2b564b6032c4e90010dfc4b09991a26451de947cdf6385c5c11"
+    },
+    {
+      "path": "kafka/traces/java/transactions.history.jsonl",
+      "sha256": "8acf28fac9deefe95202ff6c7b04b9372fb34be073effe63e25360908a3027da"
+    },
+    {
+      "path": "kafka/traces/kafkajs/faults.frames.jsonl",
+      "sha256": "212724c468fb0e724745790f8540cf7ae234369cb3f5df464a694f9d45af0dec"
+    },
+    {
+      "path": "kafka/traces/kafkajs/faults.history.jsonl",
+      "sha256": "03b64e4585407ef6cf4bf5a702e9ddcc53db381ba52178bd5c1054036754a6fb"
+    },
+    {
+      "path": "kafka/traces/kafkajs/force.frames.jsonl",
+      "sha256": "9afcc0c55cdd9abdd05d0f5440ea3e498fd580578053c45070660291681b7754"
+    },
+    {
+      "path": "kafka/traces/kafkajs/force.history.jsonl",
+      "sha256": "48342644c5e74f33c8fcb7b807a3234fdcf4c7a9153a903db7f9325143df8b20"
+    },
+    {
+      "path": "kafka/traces/kafkajs/group-rebalance.frames.jsonl",
+      "sha256": "4968c2c9cdaa53e7cd838d6846a08447ce9d6704a5e4c3ca730024ed4389e886"
+    },
+    {
+      "path": "kafka/traces/kafkajs/group-rebalance.history.jsonl",
+      "sha256": "2daf0e9c773e608fc1b6fd8b673c60c20d70e3388a3cd716dad9d935f810a5f4"
+    },
+    {
+      "path": "kafka/traces/kafkajs/idempotent.frames.jsonl",
+      "sha256": "f02211a49e50bc3b8f156c08e9500a2ab5cd3952fbbeb4d762ab71085d78b812"
+    },
+    {
+      "path": "kafka/traces/kafkajs/idempotent.history.jsonl",
+      "sha256": "02610e492841dd25e4a2950d67baeb3d6f8dafa3255b12b0d29b2e4ce2197ccd"
+    },
+    {
+      "path": "kafka/traces/kafkajs/produce-consume.frames.jsonl",
+      "sha256": "96d9a166bbf5406152f70ce7360282bd3e5fc48ea4878dda77aac8582ef47b92"
+    },
+    {
+      "path": "kafka/traces/kafkajs/produce-consume.history.jsonl",
+      "sha256": "785e3b0d041236d5ee89e2d69de39f47c8683e5bc62a92002ad9f9c93db75a8e"
+    },
+    {
+      "path": "kafka/traces/kafkajs/transactions.frames.jsonl",
+      "sha256": "35bfd494224f7b0ac1ef420e7ca42a7a6799559e1a7ca2c941630497bddd19e1"
+    },
+    {
+      "path": "kafka/traces/kafkajs/transactions.history.jsonl",
+      "sha256": "e97ae67b8c9e083e2fa7019e032bb0fd433b13f7c0daa99212347a8b16f5f265"
+    },
+    {
+      "path": "kafka/traces/librdkafka/faults.frames.jsonl",
+      "sha256": "90a2203328262093bd8df9288157b2231fc038211c962e6d2c2adac2280ce070"
+    },
+    {
+      "path": "kafka/traces/librdkafka/faults.history.jsonl",
+      "sha256": "52574ab4481f5d17b03841f5d1e2b2cafd1996938d37e1b7fb2c1f80d65c5f83"
+    },
+    {
+      "path": "kafka/traces/librdkafka/force.frames.jsonl",
+      "sha256": "066b45c4f4f9f895c09bfaa4f6a3902bbb3a3e4a01460d47a82f5771b6292eba"
+    },
+    {
+      "path": "kafka/traces/librdkafka/force.history.jsonl",
+      "sha256": "7536a29f88cd37bf08d55758d3c7638606a12347af242f109f906bdd274f4217"
+    },
+    {
+      "path": "kafka/traces/librdkafka/group-rebalance.frames.jsonl",
+      "sha256": "d77b78ca2105bf4ace4cce29eca7f277943032b02fe01d2ed481b56992315435"
+    },
+    {
+      "path": "kafka/traces/librdkafka/group-rebalance.history.jsonl",
+      "sha256": "f8f1d4573894752f87338cab9823b4082d60842763281d8f22b50f8a9e5139f5"
+    },
+    {
+      "path": "kafka/traces/librdkafka/idempotent.frames.jsonl",
+      "sha256": "861217fb6384d4c95dc572bffa59561c595931df0f30bc79fadf877bb09b56d1"
+    },
+    {
+      "path": "kafka/traces/librdkafka/idempotent.history.jsonl",
+      "sha256": "d04809525c58d264533abac1e42339743a38eb57948edade21613e867970443b"
+    },
+    {
+      "path": "kafka/traces/librdkafka/produce-consume.frames.jsonl",
+      "sha256": "0f9405343761bdd1a155f8e01ef68769abda32c8f08f40ddbb5fab76530e67fc"
+    },
+    {
+      "path": "kafka/traces/librdkafka/produce-consume.history.jsonl",
+      "sha256": "02ee882ce8eca7f11b7be2a1394c04c512c9efe992b5be84dbc4786b6463b085"
+    },
+    {
+      "path": "kafka/traces/librdkafka/transactions.frames.jsonl",
+      "sha256": "8ddd87dc2a7551dd1ca823be49613ee167cddd543cd0d08509604878172ba173"
+    },
+    {
+      "path": "kafka/traces/librdkafka/transactions.history.jsonl",
+      "sha256": "998b5c78f5523ccf6855d4fc89f1a48a5f89ac0622e368543b53a58e6ac9ebc8"
+    }
+  ],
+  "bindingEvidence": {
+    "Kafka twins": {
+      "receipt": "kafka/report.json",
+      "level": "answers",
+      "realProvider": "apache/kafka:4.3.1",
+      "realRuns": 24,
+      "twinRuns": 24,
+      "ledgerAccountedDivergences": 8
+    },
+    "HTTP twins": {
+      "receipt": "http/python.json",
+      "level": "conformant",
+      "provider": "independent hand-written Python Petstore",
+      "requests": 44,
+      "resourceLaws": 7,
+      "seed": 1,
+      "rounds": 2,
+      "retries": true,
+      "invalid": false
+    },
+    "local real Swagger Petstore": {
+      "receipt": "http/swagger-petstore3.json",
+      "level": "lawful",
+      "requests": 84,
+      "resourceLaws": 7,
+      "answerDivergences": 36,
+      "lawViolations": 0,
+      "invalidInputFindings": 2,
+      "bindingUse": "supplementary evidence only; provider identity remains the supported real binding"
+    },
+    "hosted staging Petstore": {
+      "receipt": null,
+      "level": "not checked",
+      "reason": "Local-image conformance does not attest the hosted endpoint."
+    }
+  },
+  "limits": [
+    "HTTP conformant applies only to the 44-request modeled-resource selection.",
+    "Eight unmodelled valid HTTP operations remain outside that selection; broader Python invalid selection is lawful with six differences.",
+    "The Swagger report is lawful, not conformant.",
+    "Local image identities and binary/source/contract hashes are retained in http/context.json; no registry publication is asserted.",
+    "Kafka full wire traces remain in the LawTwin source report directory at the recorded commit.",
+    "Historical 0.1.0 receipts and application versions remain unchanged."
+  ],
+  "implementationReconciliation": "Provider images and independent reports were rebuilt/rerun after the final generated-consumer commit; binary/image/source identities are retained in each provider context."
+}

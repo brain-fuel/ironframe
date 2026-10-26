@@ -64,7 +64,7 @@ needs the cloud SDKs.
 
 ## Quick start
 
-LawTwin's images, `lawtwin/kafka:0.1.0` and `lawtwin/http:0.1.0`, are built in
+LawTwin's images, `lawtwin/kafka:0.3.0` and `lawtwin/http:0.3.0`, are built in
 the lawtwin repository with `make image image-http`.
 
 ```sh
@@ -86,7 +86,7 @@ The [observation and promotion guide](docs/how-to/observe-and-promote-bindings.m
 adds a disposable OTLP receiver, immutable configuration revisions, completed
 fixture/provider evidence checks, and explicit publication and adoption. The
 `observed.calm.json` variant of calm-shop keeps the same application laws.
-These are development additions; existing 1.0 gates remain open.
+These features ship in 0.3.0; existing 1.0 gates remain open.
 
 ## Layout
 

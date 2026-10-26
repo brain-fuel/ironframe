@@ -36,7 +36,7 @@ import Ironframe.Settings (qualifyImage)
 
 -- | The released modules, used when an environment names no @cloud.modules@.
 releasedModules :: Text
-releasedModules = "git::https://github.com/brain-fuel/ironframe.git//modules?ref=v0.1.0"
+releasedModules = "git::https://github.com/brain-fuel/ironframe.git//modules?ref=v0.3.0"
 
 endpointsOutput :: Text
 endpointsOutput = "endpoints"
