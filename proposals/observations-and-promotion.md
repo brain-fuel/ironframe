@@ -40,3 +40,11 @@ specifications); AWS AppConfig deployment/rollback; Azure immutable snapshots
 and snapshot references; Google Parameter Manager versions. These supply the
 transport and revision semantics, not proof of business behavior or complete
 observation. This adds no solver or proof backend.
+
+
+Implementation and verification are recorded in
+[the acceptance receipt](../docs/explanation/observation-acceptance.md) and
+[the user guide](../docs/how-to/observe-and-promote-bindings.md). The implementation
+keeps native/WASM policy in Haskell, the receiver in LawTwin, and LawSpec language
+and compiler behavior unchanged. Cloud deployment and logging-provider fidelity
+are outside the demonstrated local acceptance scope.

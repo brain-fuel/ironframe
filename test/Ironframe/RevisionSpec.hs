@@ -72,6 +72,22 @@ evidence entries = Object ["format" .= String "ironframe-promotion-evidence","ve
 
 spec :: Spec
 spec = describe "configuration revision policy" $ do
+  it "keeps a shared revision pending until every application adopts it" $ do
+    let base = configuration "real"
+        original = keyOr "payload" base
+        topology = keyOr "topology" original
+        expanded = insert "applications" (Array [Object ["node" .= String "worker"],Object ["node" .= String "reader"]]) topology
+        settings = insert "reader" (Object ["EMAIL_URL" .= String "http://real:8080"]) (keyOr "settings" original)
+        identities = insert "reader" (Object ["implementation" .= String "build-2","version" .= String "0.1.0"]) (keyOr "applications" original)
+        payload = insert "topology" expanded (insert "topologyDigest" (String (digestOf (encode expanded))) (insert "settings" settings (insert "applications" identities original)))
+        config = insert "payload" payload (insert "revision" (String (identify payload)) base)
+        state = Object ["format" .= String "ironframe-activation","version" .= Number (I 1),"desired" .= keyOr "revision" config,"previous" .= Null,"transition" .= String "shared-activation","adopted" .= Object []]
+        acknowledgement node implementation = Object ["node" .= String node,"implementation" .= String implementation,"revision" .= keyOr "revision" config,"transition" .= String "shared-activation","settingsDigest" .= String (identify (keyOr node settings)),"drainedFrom" .= Null,"drained" .= Bool True]
+    case adoption config state (acknowledgement "worker" "build-1") of
+      Left problem -> expectationFailure (T.unpack problem)
+      Right pending -> do
+        textAt "phase" pending `shouldBe` Just "awaiting-adoption"
+        textAt "phase" <$> adoption config pending (acknowledgement "reader" "build-2") `shouldBe` Right (Just "active")
   it "is insensitive to object ordering but changes with settings" $ do
     identify (Object [("b",Bool True),("a",String "x")]) `shouldBe` identify (Object [("a",String "x"),("b",Bool True)])
     identify (configuration "real") `shouldNotBe` identify (configuration "twin")
