@@ -1,7 +1,8 @@
 # Current CALM example provider receipts
 
 `context.json` maps these byte-for-byte raw LawTwin report copies to the current
-example. Kafka comes from LawTwin commit `914a95c`; HTTP comes from `51fe43b`.
+example. Both provider reports come from LawTwin commit `0edcf84`, after the final
+consumer regeneration in `1febd2b` and rebuilt-image verification.
 The HTTP directory retains the original report summary and identity/coverage
 context. Kafka's complete wire traces remain in the upstream report directory.
 

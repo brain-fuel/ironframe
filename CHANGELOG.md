@@ -6,10 +6,13 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.2.1] - 2026-10-24
+## [0.2.1] - 2026-10-26
 
 ### Fixed
 
+- Reconcile the current CALM shop with LawTwin 0.2.1 and Apache Kafka 4.3.1,
+  retaining the scoped Python and lawful Swagger provider receipts. Historical
+  parity inputs remain frozen while the runnable example advances.
 - Pin the CALM demonstration to the final LawSpec 0.31.0 archive after its
   compact EDN and concurrent Git cache fixes. The 0.2.0 tag is retained.
 
