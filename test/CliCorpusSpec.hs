@@ -57,7 +57,7 @@ spec = do
       root <- canonicalizePath tmp
       forM_ [e | String e <- arrayOf (keyOr "examples" (keyOr "input" c))] $ \name ->
         if name == "calm-shop"
-          then copyTree (repo </> "examples/calm-shop/architecture") (root </> "calm-shop/architecture")
+          then copyTree (repo </> "test/fixtures/calm-shop-0.1.0") (root </> "calm-shop/architecture")
           else copyTree (repo </> "examples" </> T.unpack name) (root </> T.unpack name)
       let tools = root </> ".tools"
       createDirectoryIfMissing True tools

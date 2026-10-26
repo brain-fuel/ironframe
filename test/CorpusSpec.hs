@@ -17,10 +17,11 @@ import Test.Hspec
 fixtures :: IO Value
 fixtures = do
   let dir = "examples/calm-shop/architecture"
-  names <- listDirectory dir
-  conformance <- listDirectory (dir </> "conformance")
+  let frozen = "test/fixtures/calm-shop-0.1.0"
+  names <- listDirectory frozen
+  conformance <- listDirectory (frozen </> "conformance")
   let files = [n | n <- names, ".json" `T.isSuffixOf` T.pack n] ++ ["conformance" </> n | n <- conformance]
-  pairs <- mapM (\f -> (,) (T.pack (dir </> f)) . String <$> TIO.readFile (dir </> f)) files
+  pairs <- mapM (\f -> (,) (T.pack (dir </> f)) . String <$> TIO.readFile (frozen </> f)) files
   pure (Object pairs)
 
 spec :: Spec

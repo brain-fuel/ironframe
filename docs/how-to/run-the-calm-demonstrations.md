@@ -24,8 +24,8 @@ service's alone; environments `twin`, `real`, `mixed` and `staging`.
 Ironframe (`npm i -g ironframe`, or `node npm/bin/ironframe.mjs` from a
 checkout), podman with a compose provider, Go 1.25 or later, Node 22 or later
 with npm, and these images:
-`lawtwin/kafka:0.1.0` and `lawtwin/http:0.1.0` (built in the lawtwin
-repository with `make image image-http`), `apache/kafka:4.1.0`, and
+`lawtwin/kafka:0.2.1` and `lawtwin/http:0.2.1` (built in the lawtwin
+repository with `make image image-http`), `apache/kafka:4.3.1`, and
 `localhost/lawtwin/petstore3-native:latest` (the Swagger Petstore built for
 the machine's architecture, `podman build -t lawtwin/petstore3-native
 examples/http/petstore3` in the lawtwin repository). The CALM CLI is optional
@@ -54,10 +54,10 @@ LawSpec evidence, diagram and infrastructure exports, settings and replay
 histories. Containers are torn down on success and failure.
 
 To select fresh fixture builds without replacing the example's image tags,
-tag them under a separate repository prefix at version `0.1.0`, and set
+tag them under a separate repository prefix at version `0.2.1`, and set
 `IRONFRAME_TWIN_IMAGE_PREFIX` to that prefix. For example,
-`localhost/ironframe-acceptance` selects `localhost/ironframe-acceptance/kafka:0.1.0`
-and `localhost/ironframe-acceptance/http:0.1.0`. Their actual image digests are
+`localhost/ironframe-acceptance` selects `localhost/ironframe-acceptance/kafka:0.2.1`
+and `localhost/ironframe-acceptance/http:0.2.1`. Their actual image digests are
 recorded in attestations. `IRONFRAME_APP_IMAGE` can similarly select a fresh
 tag for the managed audit image, built from the scratch application's current
 Linux executable when absent.
@@ -87,8 +87,8 @@ cd ../app && npx lawspec evidence --attestation ../architecture/.ironframe/twin/
 ```
 
 Each law that ran under the native `Adoptions` and `Pets` handlers is
-reported property tested, against `stand-in lawtwin/kafka 0.1.0 (conformance
-answers)` and `stand-in lawtwin/http 0.1.0 (conformance conformant)`.
+reported property tested, against `stand-in lawtwin/kafka 0.2.1 (conformance
+answers)` and `stand-in lawtwin/http 0.2.1 (conformance conformant)`.
 The explicit completed file yields `against`, `environmentRun.execution.status:
 "completed"` and `environmentOutcome: "passed"` for all four native law
 instances, with real-provider or fixture identity and completed fixture history
@@ -131,6 +131,30 @@ image, built from `app/Containerfile` once
 `GOOS=linux CGO_ENABLED=0 go build -o shop-linux ./cmd/shop` has run) and
 `mixed` (real Kafka, Petstore twin) the same way. The laws and the
 application do not change; only the settings and the attestation do.
+
+## Provider receipt scope for the current example
+
+`architecture/conformance/0.2.1/` retains the fresh raw LawTwin reports.
+Kafka's report is level 3, `answers`, against Apache Kafka 4.3.1: 24 real and
+24 twin runs passed, with eight ledger-accounted assignment divergences.
+The HTTP twin binding uses the independent Python Petstore's **conformant**
+44-request modeled-resource selection: seed 1, two rounds, retries, seven
+resource laws. Its report does not establish the eight unmodelled operations.
+The broader 84-request Python selection is lawful with six invalid/unmodelled
+answer differences.
+
+The actual Swagger Petstore 3 receipt is **lawful**, with 36 answer differences,
+no resource-law violations and two invalid-input findings in 84 requests. It
+is retained separately and is never called conformant. Real bindings currently
+carry provider identity, not a conformance-report field; this receipt is
+supplementary example evidence. The hosted staging Petstore was not checked by
+these local-image runs. The context files record scope, hashes and local image
+IDs; the images are not asserted to be published.
+
+Implementation versions are 0.2.1, while the declared `lawtwin.kafka` and
+`lawtwin.petstore` contract versions remain 0.1.0. The 0.1.0 receipts and frozen
+corpus inputs remain unchanged. These observations support the selected runs,
+not complete provider fidelity or the remaining 1.0 gates.
 
 ## Haskell/WASM port acceptance, 2026-10-21
 

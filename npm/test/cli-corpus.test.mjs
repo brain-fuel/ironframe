@@ -179,7 +179,7 @@ async function replay(item) {
   try {
     for (const example of item.input.examples) {
       const [from, to] =
-        example === "calm-shop" ? ["examples/calm-shop/architecture", "calm-shop/architecture"] : [`examples/${example}`, example];
+        example === "calm-shop" ? ["test/fixtures/calm-shop-0.1.0", "calm-shop/architecture"] : [`examples/${example}`, example];
       await copyExample(join(repo, from), join(root, to));
     }
     const tools = join(root, ".tools");

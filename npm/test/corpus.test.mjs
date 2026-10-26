@@ -18,12 +18,13 @@ const host = createHost();
 /** The example files cases name rather than copy, keyed by their repository path. */
 function fixtures() {
   const dir = "examples/calm-shop/architecture";
+  const frozen = "test/fixtures/calm-shop-0.1.0";
   const found = {};
   const read = (relative) => {
-    found[`${dir}/${relative}`] = readFileSync(new URL(`../../${dir}/${relative}`, import.meta.url), "utf8");
+    found[`${dir}/${relative}`] = readFileSync(new URL(`../../${frozen}/${relative}`, import.meta.url), "utf8");
   };
-  for (const name of readdirSync(new URL(`../../${dir}/`, import.meta.url))) if (name.endsWith(".json")) read(name);
-  for (const name of readdirSync(new URL(`../../${dir}/conformance/`, import.meta.url))) read(`conformance/${name}`);
+  for (const name of readdirSync(new URL(`../../${frozen}/`, import.meta.url))) if (name.endsWith(".json")) read(name);
+  for (const name of readdirSync(new URL(`../../${frozen}/conformance/`, import.meta.url))) read(`conformance/${name}`);
   return found;
 }
 const given = fixtures();

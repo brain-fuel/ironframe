@@ -1,0 +1,107 @@
+{
+  "purpose": "Supplementary scope and provenance for current CALM example bindings; real-provider conformance is not an Ironframe binding field.",
+  "implementationVersion": "0.2.1",
+  "contractVersions": {
+    "lawtwin.kafka": "0.1.0",
+    "lawtwin.petstore": "0.1.0"
+  },
+  "sources": {
+    "repository": "https://github.com/brain-fuel/lawtwin",
+    "kafkaCommit": "914a95c",
+    "httpCommit": "51fe43b"
+  },
+  "rawCopies": [
+    {
+      "path": "kafka/report.json",
+      "sha256": "d0ec6de1f7e2e91630091a5841aee2caf5920cbfe36aa3a3fdba95a5d487c949"
+    },
+    {
+      "path": "kafka/report.md",
+      "sha256": "4ac60f8c1506d6c11845bfd0b122ed654ebe1b0061a907a73574a1ad34e0d76d"
+    },
+    {
+      "path": "http/context.json",
+      "sha256": "996e01333c498c096a3d26e5afddb0eb8a7869ef74704c592ffeb20b18860db7"
+    },
+    {
+      "path": "http/python-forget-delete.json",
+      "sha256": "d0ec5b92384478ecc788712b2fd8caa4da8f13707d203846c331e39858f2c4aa"
+    },
+    {
+      "path": "http/python-forget-delete.log",
+      "sha256": "ef44371780aa0c32fc53e4da6e620ff71e0ec0e0286d387e237597b06fc418a2"
+    },
+    {
+      "path": "http/python-invalid.json",
+      "sha256": "17d95c91906c4206d4da4119a0e5477359cf3b0628508468424ac8bc553f168e"
+    },
+    {
+      "path": "http/python-invalid.log",
+      "sha256": "9ed9a83534cbbbd48d885e1efbc9392430607da4ef6cd3026858a5350a27fd6a"
+    },
+    {
+      "path": "http/python.json",
+      "sha256": "b29ce2a0a58d464e92a5edd221d7727cbfe7f1ea66ac7887652c7e0041d30fff"
+    },
+    {
+      "path": "http/python.log",
+      "sha256": "63d000a9a17810969db0ea9bcf52f8343b6d0e7298698727eec2b3b92c08f9d2"
+    },
+    {
+      "path": "http/report.md",
+      "sha256": "8840793aa0de886226688b672212d3ab9e3694ad11983243a122d7024baf83e0"
+    },
+    {
+      "path": "http/swagger-petstore3.json",
+      "sha256": "390a2068376e692a7f5986e18fc7dda296907ffb1009e1208219b1a12d366e21"
+    },
+    {
+      "path": "http/swagger-petstore3.log",
+      "sha256": "9e66a2a1a88dafef9e10a558a1f31407c9499460ecb092c3743530d96e0803ea"
+    }
+  ],
+  "bindingEvidence": {
+    "Kafka twins": {
+      "receipt": "kafka/report.json",
+      "level": "answers",
+      "realProvider": "apache/kafka:4.3.1",
+      "realRuns": 24,
+      "twinRuns": 24,
+      "ledgerAccountedDivergences": 8
+    },
+    "HTTP twins": {
+      "receipt": "http/python.json",
+      "level": "conformant",
+      "provider": "independent hand-written Python Petstore",
+      "requests": 44,
+      "resourceLaws": 7,
+      "seed": 1,
+      "rounds": 2,
+      "retries": true,
+      "invalid": false
+    },
+    "local real Swagger Petstore": {
+      "receipt": "http/swagger-petstore3.json",
+      "level": "lawful",
+      "requests": 84,
+      "resourceLaws": 7,
+      "answerDivergences": 36,
+      "lawViolations": 0,
+      "invalidInputFindings": 2,
+      "bindingUse": "supplementary evidence only; provider identity remains the supported real binding"
+    },
+    "hosted staging Petstore": {
+      "receipt": null,
+      "level": "not checked",
+      "reason": "Local-image conformance does not attest the hosted endpoint."
+    }
+  },
+  "limits": [
+    "HTTP conformant applies only to the 44-request modeled-resource selection.",
+    "Eight unmodelled valid HTTP operations remain outside that selection; broader Python invalid selection is lawful with six differences.",
+    "The Swagger report is lawful, not conformant.",
+    "Local image identities and binary/source/contract hashes are retained in http/context.json; no registry publication is asserted.",
+    "Kafka full wire traces remain in the LawTwin source report directory at the recorded commit.",
+    "Historical 0.1.0 receipts and application versions remain unchanged."
+  ]
+}

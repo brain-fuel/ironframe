@@ -1,5 +1,5 @@
 // End to end, the CALM chain with podman, LawTwin's images, the real products
-// and LawSpec 0.29.2: the calm-shop architecture is validated and exported
+// and LawSpec 0.31.0: the calm-shop architecture is validated and exported
 // without deploying anything; then in each of the twin, real and mixed
 // environments Ironframe brings the dependencies up, the shop's unchanged
 // LawSpec laws run against them under `ironframe run`, the audit runs as a
@@ -8,8 +8,8 @@
 // attestation. In the environments with twins, faults, resets and
 // deterministic replay are driven through the twins' control planes.
 // Unresolved and incompatible bindings are refused by name. It needs podman
-// with a compose provider, Go, npm, and the images lawtwin/kafka:0.1.0,
-// lawtwin/http:0.1.0, apache/kafka:4.1.0 and lawtwin/petstore3-native:latest,
+// with a compose provider, Go, npm, and the images lawtwin/kafka:0.2.1,
+// lawtwin/http:0.2.1, apache/kafka:4.3.1 and lawtwin/petstore3-native:latest,
 // so it runs only with IRONFRAME_E2E=1, as `make e2e-calm` sets it.
 //
 // The example's pinned LawSpec consumes completed-run attestations;
@@ -123,6 +123,11 @@ function runLaws(dir, environment) {
     const record = attestation.dependencies.find((d) => d.name === ability);
     assert.equal(record.kind, kind, `${ability} in ${environment}`);
     assert.equal(record.implementation.kind, kind === "real" ? "real-provider" : "fixture");
+    if (kind === "stand-in") {
+      assert.equal(record.implementation.version, "0.2.1");
+      assert.equal(record.stand_in.version, "0.2.1");
+      assert.equal(record.stand_in.stands_in_for.version, "0.1.0");
+    } else if (ability.endsWith("::Adoptions")) assert.equal(record.implementation.version, "4.3.1");
     assert.ok(record.completed.reached);
     assert.equal(record.completed.history_digest !== undefined, kind === "stand-in");
   }
@@ -252,6 +257,20 @@ async function theChainRunsInEveryBinding() {
     writeFileSync(file, JSON.stringify(document, null, 2) + "\n");
   }
   try {
+    // Provider receipts retain their actual scope; Swagger remains lawful.
+    const receipts = join(dir, "architecture/conformance/0.2.1");
+    const python = JSON.parse(readFileSync(join(receipts, "http/python.json"), "utf8"));
+    const swagger = JSON.parse(readFileSync(join(receipts, "http/swagger-petstore3.json"), "utf8"));
+    assert.equal(python.level, "conformant");
+    assert.equal(python.real.requests, 44);
+    assert.equal(python.divergences.length, 0);
+    assert.equal(swagger.level, "lawful");
+    assert.equal(swagger.real.requests, 84);
+    assert.equal(swagger.divergences.length, 36);
+    assert.equal(swagger.real.violations.length, 0);
+    assert.equal(swagger.real.findings.length, 2);
+    retain("provider-receipt-context.json", readFileSync(join(receipts, "context.json"), "utf8"));
+
     // Validation and every export work without deploying anything.
     const validated = succeeds(dir, ["validate"]);
     for (const environment of ["twin", "real", "mixed", "staging"]) assert.ok(validated.includes(`environment ${environment}: resolved`));
@@ -259,14 +278,14 @@ async function theChainRunsInEveryBinding() {
       assert.match(succeeds(dir, ["validate", "--calm-cli"]), /calm validate: passed/);
       const diagram = succeeds(dir, ["export", "diagram", "-e", "mixed", "--format", "calm-template"]);
       retain("calm-tool-diagram.md", diagram);
-      assert.ok(diagram.includes("```mermaid") && diagram.includes("real apache/kafka 4.1.0"));
+      assert.ok(diagram.includes("```mermaid") && diagram.includes("real apache/kafka 4.3.1"));
     }
     const root = succeeds(dir, ["export", "tofu", "-e", "staging"]);
     retain("staging.tf.json", root);
     assert.deepEqual((await problems(dir, "staging", { tofu: root })).tofu, []);
     const changedRoot = JSON.parse(root);
     const deployment = changedRoot.module.twin_adoptions_log;
-    assert.equal(deployment.image, twinPrefix ? `${twinPrefix}/kafka:0.1.0` : "docker.io/lawtwin/kafka:0.1.0");
+    assert.equal(deployment.image, twinPrefix ? `${twinPrefix}/kafka:0.2.1` : "docker.io/lawtwin/kafka:0.2.1");
     assert.deepEqual(deployment.ports, [9092]);
     assert.equal(JSON.parse(deployment.environment.TWIN_CONFIG).seed, 42);
     assert.deepEqual(changedRoot.output.endpoints.value, { "adoptions-log": "${module.twin_adoptions_log.endpoint}" });
