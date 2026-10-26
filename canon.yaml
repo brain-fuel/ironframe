@@ -9,6 +9,8 @@ ignore:
   - .canon-cache/
   - .ironframe/
   - target/
+  # Retained scratch runs and their generated helpers; sources live in tools/.
+  - .artifacts/
   # Build output: stack's, the WASM build's cabal, and npm's installed packages.
   - .stack-work/
   - dist-newstyle/
