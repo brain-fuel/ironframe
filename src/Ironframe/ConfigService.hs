@@ -16,6 +16,7 @@ import Ironframe.Json.Serde
 import qualified Ironframe.Path as Path
 import Ironframe.Rust (debugStr)
 import Ironframe.Settings
+import qualified Ironframe.Revision as Revision
 
 -- | An answer: status, content type, body.
 data Response = Response {responseStatus :: Int, responseType :: Maybe Text, responseBody :: Text}
@@ -46,6 +47,21 @@ handle settingsPath method path = case T.splitOn "/" (T.drop 1 path) of
   ["v1", "environments", name] | not (T.null name) -> get $ withEnvironment (decodePath name) $ \settings -> pure (json 200 (fromTextMap settings))
   ["v1", "environments", name, "env"] | not (T.null name) -> get $ withEnvironment (decodePath name) $ \settings ->
     pure (plain (renderDotenv ("Settings of environment " <> decodePath name) settings))
+  ["v1", "environments", name, "bindings", node] | not (T.null name) && not (T.null node) -> get $
+    withEnvironment (decodePath name) $ \_ -> do
+      let root = Path.join (maybe "." id (Path.parent settingsPath)) "revisions"
+      current <- readFileE (Path.join root "current.json")
+      case current >>= either (Left . (\message -> IoError message False)) Right . decode of
+        Left problem -> pure (failure 503 (ioMessage problem))
+        Right state -> case textAt "desired" state >>= T.stripPrefix "sha256:" of
+          Just hash | T.length hash == 64 && T.all (`elem` ("0123456789abcdef" :: String)) hash -> do
+            raw <- readFileE (Path.join root (hash <> ".json"))
+            pure $ case raw >>= either (Left . (\message -> IoError message False)) Right . decode of
+              Left problem -> failure 503 (ioMessage problem)
+              Right configuration
+                | textAt "environment" (keyOr "payload" configuration) /= Just (decodePath name) -> failure 404 "revision belongs to another environment"
+                | otherwise -> either (failure 503) (json 200) (Revision.binding configuration state (decodePath node))
+          _ -> pure (failure 503 "no configuration revision has been selected")
   ["v1", "environments", name, "settings", k] | not (T.null name) && not (T.null k) -> get $ withEnvironment (decodePath name) $ \settings ->
     pure $ case Map.lookup (decodePath k) settings of
       Just v -> plain v

@@ -95,6 +95,10 @@ mermaid t =
       ++ [ "  classDef real fill:#e8f5e9,stroke:#2e7d32\n"
          , "  classDef twin fill:#e3f2fd,stroke:#1565c0,stroke-dasharray: 4 2\n"
          ]
+      ++ case rtObservation t >>= textAt "node" of
+        Nothing -> []
+        Just node -> ["  " <> mermaidId node <> "[\"Run observation receiver\"]\n"]
+          ++ ["  " <> mermaidId (raNode app) <> " -.->|OTLP| " <> mermaidId node <> "\n" | app <- rtApplications t]
 
 -- | The topology as a Graphviz digraph.
 dot :: ResolvedTopology -> Text
@@ -112,6 +116,10 @@ dot t =
       ++ [ "  \"" <> reSource e <> "\" -> \"" <> reDestination e <> "\" [label=\"" <> T.intercalate ", " (map shortAbility (reConsumes e)) <> "\"];\n"
          | e <- rtEdges t
          ]
+      ++ case rtObservation t >>= textAt "node" of
+        Nothing -> []
+        Just node -> ["  \"" <> node <> "\" [shape=box, label=\"Run observation receiver\"];\n"]
+          ++ ["  \"" <> raNode app <> "\" -> \"" <> node <> "\" [style=dashed, label=\"OTLP\"];\n" | app <- rtApplications t]
       ++ ["}\n"]
   where
     style BoundReal = "style=filled, fillcolor=\"#e8f5e9\""
@@ -171,6 +179,12 @@ mermaidProblems t diagram =
   concatMap dependencyProblem (rtDependencies t)
     ++ ["the diagram has no edge " <> a <> " --> " <> b | (a, b) <- Set.toAscList (Set.difference expected drawn)]
     ++ ["the diagram has an edge " <> a <> " --> " <> b <> " the topology does not" | (a, b) <- Set.toAscList (Set.difference drawn expected)]
+    ++ case rtObservation t >>= textAt "node" of
+      Nothing -> []
+      Just node -> ["the diagram has no observation receiver " <> node | not (any (T.isPrefixOf ("  " <> mermaidId node <> "[")) diagramLines)]
+        ++ ["the diagram has no telemetry edge from " <> raNode app <> " to " <> node |
+              app <- rtApplications t,
+              not (("  " <> mermaidId (raNode app) <> " -.->|OTLP| " <> mermaidId node) `elem` diagramLines)]
   where
     diagramLines = rustLines diagram
     dependencyProblem d =

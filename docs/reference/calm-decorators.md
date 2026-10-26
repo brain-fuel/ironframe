@@ -107,6 +107,7 @@ Applies to the system node (or nodes) the environment deploys.
 | `runtime` | `podman`, `aws`, `gcp` or `azure`. |
 | `cloud`, `sync`, `config_service` | As in a manifest's environment. |
 | `description` | For a reader. |
+| `observation` | Optional run receiver: `node` names a dedicated CALM node; `relationships` names exactly one CALM `interacts` relationship from every application to that node. |
 
 ## Refusals
 

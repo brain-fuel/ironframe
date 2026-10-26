@@ -52,6 +52,7 @@ export function createHost(options = {}) {
   const clouds = options.clouds ?? defaultClouds();
   const services = new Map();
   const commands = new Set();
+  const locks = new Set();
   const signal = options.signal;
 
   async function freeEndpoint(endpoint) {
@@ -128,6 +129,40 @@ export function createHost(options = {}) {
   }
 
   const effects = {
+    async lockDirectory({path}) {
+      await fs.mkdir(dirname(path), {recursive: true});
+      await fs.mkdir(path);
+      locks.add(path);
+      return ok(null);
+    },
+    async unlockDirectory({path}) {
+      if (!locks.has(path)) throw new Error("Directory lock is not owned by this host");
+      await fs.rmdir(path);
+      locks.delete(path);
+      return ok(null);
+    },
+    async compareAndSwap({path, expected, text}) {
+      await fs.mkdir(dirname(path), {recursive: true});
+      const lock = path + ".lock";
+      await fs.mkdir(lock);
+      const temporary = path + "." + clock.uuid() + ".tmp";
+      try {
+        let current;
+        try { current = strict.decode(await fs.readFile(path)); }
+        catch (error) { if (error.code !== "ENOENT") throw error; current = null; }
+        if (current !== expected) return ok(false);
+        const file = await fs.open(temporary, "wx", 0o600);
+        try { await file.writeFile(text, "utf8"); await file.sync(); }
+        finally { await file.close(); }
+        await fs.rename(temporary, path);
+        const directory = await fs.open(dirname(path), "r");
+        try { await directory.sync(); } finally { await directory.close(); }
+        return ok(true);
+      } finally {
+        await fs.rm(temporary, {force: true});
+        await fs.rmdir(lock);
+      }
+    },
     async readFile({ path }) {
       return readText(path);
     },
@@ -368,6 +403,10 @@ export function createHost(options = {}) {
     const results = await Promise.allSettled([...services.values(), ...commands].map(stopOwned));
     services.clear();
     commands.clear();
+    for (const path of locks) {
+      results.push(await fs.rmdir(path).then(() => ({status: 'fulfilled'}), reason => ({status: 'rejected', reason})));
+    }
+    locks.clear();
     const errors = results.filter(result => result.status === 'rejected').map(result => result.reason);
     if (errors.length) throw new AggregateError(errors, 'Owned process cleanup failed');
   }

@@ -82,6 +82,12 @@ ironframe down local
 Petstore contract. The tutorial, `docs/tutorials/wire-the-kafka-example.md`,
 walks through both, and `make e2e` runs them as a test.
 
+The [observation and promotion guide](docs/how-to/observe-and-promote-bindings.md)
+adds a disposable OTLP receiver, immutable configuration revisions, completed
+fixture/provider evidence checks, and explicit publication and adoption. The
+`observed.calm.json` variant of calm-shop keeps the same application laws.
+These are development additions; existing 1.0 gates remain open.
+
 ## Layout
 
 | Path | What it holds |

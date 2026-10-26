@@ -18,21 +18,26 @@
     ".": {
       "types": "./index.d.ts",
       "import": "./api.mjs"
+    },
+    "./observation": {
+      "types": "./observation.d.ts",
+      "import": "./observation.mjs"
     }
   },
   "types": "index.d.ts",
   "files": [
-             "*.mjs",
-             "build.json",
-             "index.d.ts",
-             "bin",
-             "clouds",
-             "core.wasm",
-             "core_jsffi.js",
-             "README.md",
-             "CHANGELOG.md",
-             "LICENSE"
-           ],
+    "*.mjs",
+    "build.json",
+    "index.d.ts",
+    "bin",
+    "clouds",
+    "core.wasm",
+    "core_jsffi.js",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "observation.d.ts"
+  ],
   "scripts": {
     "prepack": "for f in README.md CHANGELOG.md; do cmp -s ../$f $f || { cp ../$f .$f.$$ && mv -f .$f.$$ $f; }; done",
     "test": "node --test test/*.test.mjs"

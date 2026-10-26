@@ -33,6 +33,7 @@ library
       Ironframe.Effect
       Ironframe.Embedded
       Ironframe.Endpoint
+      Ironframe.Evidence.Histories
       Ironframe.Json
       Ironframe.Json.FromStr
       Ironframe.Json.Schema
@@ -41,11 +42,15 @@ library
       Ironframe.Manifest
       Ironframe.Manifest.Serde
       Ironframe.Manifest.Types
+      Ironframe.Observation
+      Ironframe.Observation.Environment
       Ironframe.Ops
       Ironframe.Path
       Ironframe.Podman
       Ironframe.Process
       Ironframe.Regex
+      Ironframe.Revision
+      Ironframe.Revision.Command
       Ironframe.Rust
       Ironframe.Semver
       Ironframe.Settings
@@ -103,6 +108,7 @@ test-suite ironframe-test
       Ironframe.DigestSpec
       Ironframe.EndpointSpec
       Ironframe.JsonSpec
+      Ironframe.RevisionSpec
       Ironframe.RustSpec
       Ironframe.SchemaSpec
       Ironframe.SemverSpec

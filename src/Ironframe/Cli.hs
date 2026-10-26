@@ -29,6 +29,8 @@ import Ironframe.Sync (realClouds, renderOutcome)
 import Ironframe.Tofu (renderTofuError, rootModule)
 import Ironframe.Twin
 import Ironframe.Workdir
+import qualified Ironframe.Revision.Command as Revision
+import qualified Ironframe.Observation as Observation
 
 -- | The verbs and their options, as the command line gives them.
 data Command
@@ -38,6 +40,8 @@ data Command
   | Run Text Text (Maybe Text) (Maybe Text) [Text]
   | App Text Text (Maybe Text) [Text]
   | Test Text (Maybe Text) [Text]
+  | Revision Text Text Value
+  | Observe Text Value [Text]
   | Schema SchemaKind
   | Settings Text SettingsFormat (Maybe Text)
   | Compose Text
@@ -124,6 +128,16 @@ parseArgs argv = do
           envRequired = maybe (Left (ParseError "the following required arguments were not provided:\n  --env <ENVIRONMENT>")) Right env
        in case word of
             "validate" -> extra 0 >> Right (Validate (flag "calm-cli"))
+            "revision" -> do
+              action <- positional 0 "ACTION"
+              environment <- envRequired
+              extra 1
+              Right (Revision action environment (Object [(name,String (last values)) | (name,values) <- Map.toAscList (options parsed)]))
+            "observe" -> do
+              environment <- envRequired
+              extra 0
+              when (null (rest parsed)) (Left (ParseError "observe requires the test runner command after --"))
+              Right (Observe environment (Object [(name,String (last values)) | (name,values) <- Map.toAscList (options parsed)]) (rest parsed))
             "resolve" -> extra 1 >> (\e -> Resolve (optionalPositional 0) e (one "output")) <$> envRequired
             "export" -> do
               what <- positional 0 "WHAT" >>= exportKind
@@ -239,6 +253,14 @@ valueOptions =
   , ("exit-code", Nothing)
   , ("since", Nothing)
   , ("limit", Nothing)
+  , ("revision", Nothing)
+  , ("evidence", Nothing)
+  , ("expected", Nothing)
+  , ("ack", Nothing)
+  , ("observer", Nothing)
+  , ("listen", Nothing)
+  , ("admin-listen", Nothing)
+  , ("endpoint", Nothing)
   ]
 
 flagOptions :: [(Text, Maybe Char)]
@@ -287,6 +309,8 @@ helpText =
     , "Usage: ironframe [OPTIONS] <COMMAND>"
     , ""
     , "Commands:"
+    , "  observe   Run a test runner with a disposable OTLP receiver; retain evidence before teardown"
+    , "  revision  Prepare, check, activate, publish, adopt or revert an immutable configuration revision"
     , "  validate  Check the manifest, or the architecture, its decorators and every environment they declare"
     , "  test      Run selected CALM components with fresh LawSpec tests; bracket owned services and record completed evidence"
     , "  resolve   Resolve an environment of a CALM architecture and print the resolved topology, or refuse it"
@@ -316,6 +340,8 @@ helpText =
 
 environmentOfCommand :: Command -> Maybe Text
 environmentOfCommand = \case
+  Observe environment _ _ -> Just environment
+  Revision _ environment _ -> Just environment
   Schema _ -> Nothing
   Validate _ -> Nothing
   Resolve _ e _ -> Just e
@@ -335,6 +361,8 @@ environmentOfCommand = \case
 
 needsArchitecture :: Command -> Bool
 needsArchitecture = \case
+  Observe {} -> True
+  Revision {} -> True
   Test {} -> True
   Resolve {} -> True
   Export {} -> True
@@ -387,6 +415,8 @@ run globals0 command = case command of
 
 verb :: Globals -> Manifest -> Text -> Eff Resolution -> Maybe Resolution -> Command -> Eff Integer
 verb globals manifest dir calm resolution = \case
+  Observe _ opts invocation -> calm >>= \r -> Observation.observe r opts invocation
+  Revision action _ opts -> calm >>= \r -> Revision.command r action opts
   Schema _ -> pure 0
   Resolve _ _ output -> do
     r <- calm

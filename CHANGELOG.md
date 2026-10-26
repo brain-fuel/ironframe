@@ -6,6 +6,17 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Run-scoped disposable observations, declared CALM telemetry relationships,
+  independent diagnostics and exact per-run fixture history sidecars.
+- Immutable configuration revisions with completed native-law, collection and
+  provider evidence checks; content-addressed receipts, serialized activation,
+  per-application publication, adoption acknowledgements and reversion.
+- A complete binding document for cloud configuration readers and the local
+  configuration service; publication does not imply application adoption.
+- An observed calm-shop acceptance path using the actual unchanged Go laws.
+
 ## [0.2.1] - 2026-10-26
 
 ### Fixed

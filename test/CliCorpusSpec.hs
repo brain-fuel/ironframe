@@ -86,6 +86,7 @@ spec = do
           ["schema", "attestation"] -> TIO.readFile "schema/attestation-v1.schema.json"
           ["schema", "contract"] -> TIO.readFile "schema/calm/ironframe-contract.decorator.schema.json"
           ["schema", "binding"] -> TIO.readFile "schema/calm/ironframe-binding.decorator.schema.json"
+          ["schema", "environment"] -> TIO.readFile "schema/calm/ironframe-environment.decorator.schema.json"
           _ -> pure (textOf "stdout" expected)
         let norm t = normalise (T.replace (T.pack root) "/work" t)
             code = keyOr "exitCode" (capturedResult captured)

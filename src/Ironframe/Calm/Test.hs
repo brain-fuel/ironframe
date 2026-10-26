@@ -22,6 +22,7 @@ import Ironframe.Podman (locatePodman, podmanProgram, renderPodmanError)
 import Ironframe.Settings
 import Ironframe.Sync (realClouds)
 import Ironframe.Workdir
+import Ironframe.Observation (retainHistories)
 
 data Service = Service
   { serviceNode :: Text
@@ -141,6 +142,8 @@ runComponents integration resolution selected arguments = do
         (do _ <- up realClouds scopedManifest (resDir resolution) (rtEnvironment topology) (UpOptions True 90) progress
             Right <$> action)
         (pure . Left)
+      retained <- getEnv "IRONFRAME_OBSERVATION_DIR"
+      forM_ retained (retainHistories resolution)
       cleanup <- catchError (down scopedManifest (resDir resolution) (rtEnvironment topology) >> pure Nothing) (pure . Just)
       finish result cleanup
     else action

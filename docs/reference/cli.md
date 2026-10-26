@@ -30,6 +30,12 @@ ironframe -a <architecture> run --env <environment> --app <node> [--dir <dir>] [
 ironframe -a <architecture> app <node> --env <environment> [--attestation <path>] [-- <args>...]
 ironframe -a <architecture> attest <environment> --app <node> | --complete <file> [--exit-code <n>]
 ironframe schema contract | binding | environment
+ironframe -a <architecture> observe --env <environment> --revision <file> [--observer <program>] [--listen <host:port>] [--admin-listen <host:port>] [--endpoint <url>] [--output <directory>] -- <runner>...
+ironframe -a <architecture> revision prepare --env <environment> [--output <file>]
+ironframe -a <architecture> revision check | activate --env <environment> --revision <file> --evidence <file> [--expected <revision|none>]
+ironframe -a <architecture> revision publish --env <environment> --app <node> --expected <revision>
+ironframe -a <architecture> revision adopt --env <environment> --ack <file> --expected <revision>
+ironframe -a <architecture> revision status | revert --env <environment> [--expected <revision>]
 ironframe --version
 ```
 
@@ -111,3 +117,8 @@ answer, as `lawtwin` does.
 | `AWS_*`, `AWS_ENDPOINT_URL` | AWS credentials and endpoint for `aws_appconfig`, as the AWS CLI reads them. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Google credentials for `gcp_parameter_manager`, or Application Default Credentials. |
 | `AZURE_APPCONFIG_CONNECTION_STRING` | The App Configuration store's connection string, or the variable a target names. |
+
+`observe` and `revision` are described in
+[Observe isolated runs and promote dependency bindings](../how-to/observe-and-promote-bindings.md).
+A revision is not a feature flag applied transparently to live Kafka clients:
+applications drain old work and explicitly acknowledge the loaded binding.

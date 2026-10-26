@@ -3,7 +3,7 @@
 -- Network effects answer as if nothing listens. ref:DEC-host-protocol
 module NativeHost (Captured (..), runNative) where
 
-import Control.Exception (IOException, try)
+import Control.Exception (IOException, try, finally)
 import qualified Data.ByteString as B
 import Data.IORef
 import qualified Data.Map.Strict as Map
@@ -74,6 +74,26 @@ runNative method params dir environment = do
             renameFile (path e <> ".tmp") (path e)
             ok (Bool True)
       "writeFile" -> attempt (B.writeFile (path e) (TE.encodeUtf8 (text' "text" e)) >> ok Null)
+      "lockDirectory" -> attempt $ do
+        createDirectoryIfMissing True (takeDirectory (path e))
+        createDirectory (path e)
+        ok Null
+      "unlockDirectory" -> attempt (removeDirectory (path e) >> ok Null)
+      "compareAndSwap" -> attempt $ do
+        let target = path e
+            lock = target <> ".lock"
+        createDirectoryIfMissing True (takeDirectory target)
+        createDirectory lock
+        flip finally (removeDirectory lock) $ do
+          previous <- try (B.readFile target) :: IO (Either IOException B.ByteString)
+          current <- case previous of
+            Right bytes -> either (ioError . userError . show) (pure . String) (TE.decodeUtf8' bytes)
+            Left problem | isDoesNotExistError problem -> pure Null
+            Left problem -> ioError problem
+          if current /= keyOr "expected" e then ok (Bool False) else do
+            B.writeFile (target <> ".cas.tmp") (TE.encodeUtf8 (text' "text" e))
+            renameFile (target <> ".cas.tmp") target
+            ok (Bool True)
       "removeFile" -> attempt (removeFile (path e) >> ok Null)
       "removeTree" -> attempt (removeDirectoryRecursive (path e) >> ok Null)
       "createDir" -> attempt (createDirectoryIfMissing True (path e) >> ok Null)

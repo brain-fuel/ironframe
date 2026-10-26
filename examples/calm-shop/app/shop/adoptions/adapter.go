@@ -97,6 +97,7 @@ type pet struct {
 }
 
 func (handler *PetsHandler) Register(value0 string) int64 {
+	defer observeOperation("register", "service-registers-pets")
 	body, _ := json.Marshal(pet{ID: nextPet.Add(1), Name: value0, PhotoUrls: []string{}, Status: "available"})
 	response, err := handler.client.Post(handler.base+"/pet", "application/json", bytes.NewReader(body))
 	if err != nil {
@@ -114,6 +115,7 @@ func (handler *PetsHandler) Register(value0 string) int64 {
 }
 
 func (handler *PetsHandler) NameOf(value0 int64) LawSpecMaybe[string] {
+	defer observeOperation("nameOf", "service-registers-pets")
 	response, err := handler.client.Get(handler.base + "/pet/" + strconv.FormatInt(value0, 10))
 	if err != nil {
 		panic(fmt.Sprintf("nameOf %d: %v", value0, err))
@@ -187,6 +189,7 @@ type adoptionRecord struct {
 }
 
 func (handler *AdoptionsHandler) Publish(value0 Adoption) {
+	defer observeOperation("publish", "service-publishes-adoptions")
 	value, _ := json.Marshal(adoptionRecord(value0))
 	key := []byte(strconv.FormatInt(value0.Pet, 10))
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
@@ -199,6 +202,7 @@ func (handler *AdoptionsHandler) Publish(value0 Adoption) {
 }
 
 func (handler *AdoptionsHandler) Lookup(value0 int64) LawSpecMaybe[Adoption] {
+	defer observeOperation("lookup", "service-publishes-adoptions")
 	from := int64(0)
 	if offset, ok := written.Load(value0); ok {
 		from = offset.(int64)

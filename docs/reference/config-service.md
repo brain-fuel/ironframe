@@ -46,6 +46,7 @@ needs no cloud SDK. Run on its own, it reads two environment variables:
 | `GET /healthz` | `ok`. |
 | `GET /v1/environments` | `{"project": ..., "environments": [...]}`. |
 | `GET /v1/environments/{environment}` | The environment's settings as a JSON object. |
+| `GET /v1/environments/{environment}/bindings/{node}` | The selected complete application binding, including revision and activation transition; 503 before selection. |
 | `GET /v1/environments/{environment}/env` | The settings as a dotenv file. |
 | `GET /v1/environments/{environment}/settings/{key}` | One setting's value as plain text. |
 

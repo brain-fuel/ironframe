@@ -23,7 +23,7 @@ module Ironframe.Calm.Run
   , writeTopology
   ) where
 
-import Control.Monad (foldM, forM, when)
+import Control.Monad (foldM, forM, forM_, when)
 import qualified Data.Map.Strict as Map
 import Data.Map.Strict (Map)
 import Data.Maybe (fromMaybe)
@@ -46,6 +46,8 @@ import Ironframe.Settings
 import Ironframe.Time
 import Ironframe.Twin
 import Ironframe.Workdir
+import qualified Ironframe.Observation.Environment as Observation
+import qualified Ironframe.Evidence.Histories as Histories
 
 attestationVariable, runVariable :: Text
 attestationVariable = "IRONFRAME_ATTESTATION"
@@ -313,16 +315,19 @@ runCommandWith owned parent resolution node command dir output = do
         Nothing -> begun
         Just identity -> begun {attExecution = fmap (\execution -> execution {execEnvironmentRun = Just identity, execCommand = invocation}) (attExecution begun)}
   path <- writeRun resolution running output
+  observation <- Observation.forExecution node (runId (attRun running))
   result <-
     (if owned then runOwnedInherited else runInherited)
       program
       (if parent == Nothing then args else drop 1 invocation)
-      (Map.toAscList settings ++ [(attestationVariable, path), (runVariable, runId (attRun running))])
+      (Map.toAscList settings ++ observation ++ [(attestationVariable, path), (runVariable, runId (attRun running))])
       dir
   out <- either (failWith . ((program <> ": ") <>) . ioMessage) pure result
   let exitCode = fromMaybe 1 (procCode out)
   completed <- complete resolution running exitCode
   path' <- writeRun resolution completed output
+  observing <- getEnv "IRONFRAME_OBSERVATION_CONFIG"
+  forM_ observing (\_ -> Histories.retain (resDir resolution) completed (path' <> ".histories.json"))
   pure (RunReport exitCode completed path')
 
 -- | Runs a managed application as its binding says: its process in its

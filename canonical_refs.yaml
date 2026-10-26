@@ -214,3 +214,12 @@ jsonschema-rs:
   kind: package
   title: jsonschema-rs 0.33, the Rust JSON Schema validator whose errors the corpus recorded
   locator: https://docs.rs/jsonschema/0.33.0
+
+otlp:
+  kind: article
+  title: OpenTelemetry Protocol specification
+  locator: https://opentelemetry.io/docs/specs/otlp/
+otel-logs-sdk:
+  kind: article
+  title: OpenTelemetry Logs SDK, ForceFlush and shutdown
+  locator: https://opentelemetry.io/docs/specs/otel/logs/sdk/

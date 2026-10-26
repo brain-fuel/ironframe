@@ -9,6 +9,7 @@ import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Ironframe.Attestation as A
+import qualified Ironframe.Revision as Revision
 import Ironframe.Calm.Export (mermaidProblems, settingsProblems, tofuProblems)
 import Ironframe.Calm.Model
 import Ironframe.Calm.Resolve (Resolution (..))
@@ -75,6 +76,11 @@ texts = \case
 dispatch :: Text -> Value -> Maybe (Eff Value)
 dispatch method p = case method of
   "version" -> Just (pure (String version))
+  "revision.validate" -> Just (pure (either (\message -> Object ["error" .= String message]) id (Revision.validateRevision (keyOr "configuration" p))))
+  "revision.assess" -> Just (pure (either (\message -> Object ["error" .= String message]) id (Revision.assess (keyOr "configuration" p) (keyOr "evidence" p))))
+  "revision.adoption" -> Just (pure (either (\message -> Object ["error" .= String message]) id (Revision.adoption (keyOr "configuration" p) (keyOr "state" p) (keyOr "acknowledgement" p))))
+  "revision.binding" -> Just (pure (either (\message -> Object ["error" .= String message]) id (Revision.binding (keyOr "configuration" p) (keyOr "state" p) (text' "node" p))))
+  "revision.bindingSettings" -> Just (pure (either (\message -> Object ["error" .= String message]) id (Revision.bindingSettings (keyOr "binding" p))))
   "cli" -> Just $ do
     code <- cli (texts (keyOr "argv" p)) (text' "cwd" p)
     pure (Object ["exitCode" .= Number (I code)])

@@ -5,7 +5,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Ironframe.Component
 import Ironframe.Calm.Model
-import Ironframe.Calm.Export (applicationSettings, applicationSettingsWithCredentials)
+import Ironframe.Calm.Export (applicationSettings, applicationSettingsWithCredentials, mermaid, mermaidProblems)
 import Ironframe.Calm.Resolve
 import Ironframe.Effect
 import Ironframe.Json
@@ -76,6 +76,20 @@ resolveWith describe change = do
 
 spec :: Spec
 spec = describe "LawSpec component resolution" $ do
+  it "checks telemetry diagram correspondence independently of business edges" $
+    case resolve descriptor of
+      Left problem -> expectationFailure (T.unpack problem)
+      Right resolved -> do
+        let topology = (resTopology resolved) {rtObservation = Just (Object ["node" .= String "run-observer"])}
+            diagram = mermaid topology
+            missing = T.unlines (filter (not . T.isInfixOf "-.->|OTLP|") (T.lines diagram))
+        mermaidProblems topology diagram `shouldBe` []
+        mermaidProblems topology missing `shouldSatisfy` (not . null)
+  it "refuses observation wired to a business dependency without dedicated telemetry edges" $ do
+    let change ds = ds {decsItems = [if decKind d == environmentType then d {decData = insert "observation" (Object ["node" .= String "server","relationships" .= Array [String "client-server"]]) (decData d)} else d | d <- decsItems ds]}
+    case resolveWith descriptor change of
+      Left problem -> problem `shouldSatisfy` T.isInfixOf "observation"
+      Right _ -> expectationFailure "accepted a dependency node as the run observation receiver"
   it "checks the descriptor protocol before interpreting a component" $ do
     decodeComponent (insert "version" (Number (I 2)) (descriptor "client")) `shouldBe` Left "expected lawspec-component descriptor version 1"
   it "keeps one component identity while a managed service also provides a dependency" $ do

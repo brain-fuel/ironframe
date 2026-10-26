@@ -16,6 +16,8 @@ module Ironframe.Effect
     -- * Files
   , readFileE
   , writeAtomically
+  , compareAndSwap
+  , withDirectoryLock
   , writeFileE
   , removeFileE
   , removeTree
@@ -133,6 +135,28 @@ writeAtomically path text = do
     Left e -> Left e
     Right (Bool b) -> Right b
     Right _ -> Right True
+
+-- | Replace a text file only if its complete previous contents match; Nothing
+-- means it must not exist. The host serializes competing writers with a lock.
+compareAndSwap :: Text -> Maybe Text -> Text -> Eff Bool
+compareAndSwap path expected text = do
+  answer <- perform (effect "compareAndSwap"
+    ["path" .= String path, "expected" .= maybe Null String expected, "text" .= String text])
+  result <- either (failWith . ioMessage) pure (ioResult answer)
+  case result of
+    Bool changed -> pure changed
+    _ -> failWith "host returned no compare-and-swap result"
+
+-- | Keep an operation lock across a sequence of effects, including cloud
+-- publication. Selection changes cannot interleave with that publication.
+withDirectoryLock :: Text -> Eff a -> Eff a
+withDirectoryLock path action = do
+  acquired <- perform (effect "lockDirectory" ["path" .= String path])
+  _ <- either (failWith . ioMessage) pure (ioResult acquired)
+  result <- catchError (Right <$> action) (pure . Left)
+  released <- perform (effect "unlockDirectory" ["path" .= String path])
+  _ <- either (failWith . ioMessage) pure (ioResult released)
+  either failWith pure result
 
 -- | Writes a file directly, as Rust's fs::write.
 writeFileE :: Text -> Text -> Eff (Either IoError ())

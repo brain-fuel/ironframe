@@ -87,3 +87,8 @@ clean: ## remove build output
 	stack clean --no-terminal
 	rm -rf wasm/dist-newstyle
 	find . -name .ironframe -type d -prune -exec rm -rf {} +
+
+# | Exercise actual Go laws with isolated observations and binding promotion.
+.PHONY: e2e-observed
+e2e-observed: ## observed Kafka/HTTP runs, publication, adoption and reversion
+	node tools/observed-shop.mjs

@@ -137,6 +137,7 @@ data ResolvedTopology = ResolvedTopology
   , rtEdges :: [ResolvedEdge]
   , rtComponents :: Map Text Component.Component
   , rtComponentSettings :: Map Text [Text]
+  , rtObservation :: Maybe Value
   }
   deriving (Show, Eq)
 
@@ -184,11 +185,14 @@ encodeTopology t =
     , "edges" .= Array (map edge (rtEdges t))
     ]
       `withComponents` rtComponents t
+      `withObservation` rtObservation t
   where
     withComponents (Object fields) components
       | Map.null components = Object fields
       | otherwise = Object (fields ++ ["components" .= Object [(node, insert "settings" (Array (map String (Map.findWithDefault [] node (rtComponentSettings t)))) (Component.componentView component)) | (node,component) <- Map.toAscList components]])
     withComponents value _ = value
+    withObservation value Nothing = value
+    withObservation value (Just observation) = insert "observation" observation value
     application a =
       Object $
         [ "node" .= String (raNode a)
@@ -289,6 +293,7 @@ data EnvironmentData = EnvironmentData
   , edCloud :: Maybe Cloud
   , edSync :: [SyncTarget]
   , edConfigService :: Maybe ConfigService
+  , edObservation :: Maybe Value
   }
 
 environmentData :: Decoder EnvironmentData
@@ -300,6 +305,7 @@ environmentData =
       <*> optional "cloud" decodeCloud
       <*> defaulted "sync" [] (vec decodeSyncTarget)
       <*> optional "config_service" decodeConfigService
+      <*> optional "observation" (struct "Observation" True ((\node relationships -> Object ["node" .= String node,"relationships" .= Array (map String relationships)]) <$> required "node" string <*> required "relationships" (vec string)))
 
 contractIdentity :: Decoder ContractIdentity
 contractIdentity =
@@ -728,7 +734,15 @@ resolveCalm architecture decorators environment dir = do
           )
           ([], Map.empty)
           resolvedEdges
-      found = dependencyProblems ++ declarationProblems
+      observationProblems = case environmentData' >>= edObservation of
+        Nothing -> []
+        Just observation ->
+          let observer = fromMaybe "" (textAt "node" observation)
+              relationships = textsAt "relationships" observation
+              sources = [source | name <- relationships, Just relationship <- [relationshipOf architecture name], Interacts source [destination] <- [relKind relationship], destination == observer]
+           in [calmProblem "observation.node" "must name a dedicated CALM node" | isNothing (nodeOf architecture observer) || observer `elem` map raNode resolvedApplications || observer `elem` map rnNode resolvedDependencies]
+             ++ [calmProblem "observation.relationships" "must name one CALM interacts edge from every application to the observation node" | length sources /= length relationships || Set.fromList sources /= Set.fromList (map raNode resolvedApplications) || length sources /= length resolvedApplications || length relationships /= Set.size (Set.fromList relationships)]
+      found = dependencyProblems ++ declarationProblems ++ observationProblems
       refuse = Left . CalmError Nothing
   pure $ case environmentData' of
     Nothing -> refuse found
@@ -763,6 +777,7 @@ resolveCalm architecture decorators environment dir = do
                       , rtApplications = resolvedApplications
                       , rtDependencies = resolvedDependencies
                       , rtEdges = resolvedEdges
+                      , rtObservation = edObservation dat
                       , rtComponents = components
                       , rtComponentSettings = Map.map (\decorator -> [name | Object fields <- [keyOr "env" (keyOr "component" (decData decorator))], (name,_) <- fields]) (Map.filterWithKey (\node _ -> Map.member node components) bindings)
                       }

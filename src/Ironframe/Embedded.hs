@@ -1307,6 +1307,28 @@ environmentDecoratorSchema =
   \        },\n\
   \        \"description\": {\n\
   \          \"type\": \"string\"\n\
+  \        },\n\
+  \        \"observation\": {\n\
+  \          \"type\": \"object\",\n\
+  \          \"additionalProperties\": false,\n\
+  \          \"required\": [\n\
+  \            \"node\",\n\
+  \            \"relationships\"\n\
+  \          ],\n\
+  \          \"properties\": {\n\
+  \            \"node\": {\n\
+  \              \"type\": \"string\",\n\
+  \              \"minLength\": 1\n\
+  \            },\n\
+  \            \"relationships\": {\n\
+  \              \"type\": \"array\",\n\
+  \              \"minItems\": 1,\n\
+  \              \"items\": {\n\
+  \                \"type\": \"string\",\n\
+  \                \"minLength\": 1\n\
+  \              }\n\
+  \            }\n\
+  \          }\n\
   \        }\n\
   \      }\n\
   \    }\n\

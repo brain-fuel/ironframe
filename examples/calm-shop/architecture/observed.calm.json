@@ -1,0 +1,118 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+  "unique-id": "calm-shop-observed",
+  "metadata": [
+    {
+      "description": "One shop service with run-scoped observations; the application laws and dependency models remain unchanged."
+    }
+  ],
+  "nodes": [
+    {
+      "unique-id": "calm-shop",
+      "node-type": "system",
+      "name": "Calm shop",
+      "description": "The shop and the dependencies it reaches."
+    },
+    {
+      "unique-id": "adoptions-service",
+      "node-type": "service",
+      "name": "Adoptions service",
+      "description": "Registers each adopted pet and publishes the adoption (example.com/calm-shop, cmd/shop)."
+    },
+    {
+      "unique-id": "adoptions-log",
+      "node-type": "message-broker",
+      "name": "Adoptions log",
+      "description": "The Kafka cluster holding the adoptions topic, shared by the service and the audit.",
+      "interfaces": [
+        {
+          "unique-id": "adoptions-log-bootstrap",
+          "host": "kafka",
+          "port": 9092
+        }
+      ]
+    },
+    {
+      "unique-id": "pet-registry",
+      "node-type": "service",
+      "name": "Pet registry",
+      "description": "A Petstore API the service registers pets with.",
+      "interfaces": [
+        {
+          "unique-id": "pet-registry-api",
+          "url": "/pet"
+        }
+      ]
+    },
+    {
+      "unique-id": "run-observer",
+      "node-type": "service",
+      "name": "Run observation receiver",
+      "description": "Disposable OTLP receiver owned by the test runner."
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "service-publishes-adoptions",
+      "description": "The service publishes each adoption on the adoptions topic.",
+      "protocol": "TCP",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "adoptions-service"
+          },
+          "destination": {
+            "node": "adoptions-log",
+            "interfaces": [
+              "adoptions-log-bootstrap"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "service-registers-pets",
+      "description": "The service registers each pet and reads its name back.",
+      "protocol": "HTTP",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "adoptions-service"
+          },
+          "destination": {
+            "node": "pet-registry",
+            "interfaces": [
+              "pet-registry-api"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "calm-shop-composition",
+      "relationship-type": {
+        "composed-of": {
+          "container": "calm-shop",
+          "nodes": [
+            "adoptions-service",
+            "adoptions-log",
+            "pet-registry",
+            "run-observer"
+          ]
+        }
+      }
+    },
+    {
+      "unique-id": "service-observations",
+      "protocol": "HTTP",
+      "relationship-type": {
+        "interacts": {
+          "actor": "adoptions-service",
+          "nodes": [
+            "run-observer"
+          ]
+        }
+      }
+    }
+  ]
+}

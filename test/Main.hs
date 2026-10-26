@@ -4,6 +4,7 @@ import qualified CliCorpusSpec
 import qualified CorpusSpec
 import qualified Ironframe.EndpointSpec
 import qualified Ironframe.DigestSpec
+import qualified Ironframe.RevisionSpec
 import qualified Ironframe.ComponentSpec
 import qualified Ironframe.JsonSpec
 import qualified Ironframe.RustSpec
@@ -16,6 +17,7 @@ import Test.Hspec
 
 main :: IO ()
 main = hspec $ do
+  Ironframe.RevisionSpec.spec
   Ironframe.EndpointSpec.spec
   Ironframe.ComponentSpec.spec
   Ironframe.JsonSpec.spec
