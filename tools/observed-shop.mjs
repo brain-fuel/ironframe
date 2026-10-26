@@ -79,6 +79,8 @@ const lawspec=join(app,'node_modules/lawspec/bin/lawspec.mjs');
 process.env.IRONFRAME_LAWSPEC=lawspec;
 await command(process.execPath,[lawspec,'generate'],{cwd:app});
 await command('go',['mod','download'],{cwd:app});
+const application=join(app,'shop-bin');
+await command('go',['build','-o',application,'./cmd/shop'],{cwd:app});
 await iron(['validate']);
 
 // A runner inside `observe` reads this file's generated helper. Its telemetry
@@ -145,6 +147,15 @@ async function adopt(state) {
   assert.deepEqual(JSON.parse(published.done.IRONFRAME_CONFIGURATION_BUNDLE),binding);
   const loaded=await api.run('revision.bindingSettings',{binding});
   assert.equal(loaded.done.IRONFRAME_CONFIGURATION_REVISION,state.desired);
+  // Previous test/application jobs have exited. Start fresh real clients from
+  // the published bundle before acknowledging adoption, including after revert.
+  const adoptionIndex=recording.adoptions?.length??0;
+  const environment={...process.env,...loaded.done,IRONFRAME_OBSERVATION_CONFIG:'',SHOP_PET_ID_BASE:String(1000000+adoptionIndex*1000)};
+  const adoptedOutput=await command(application,['rex','ada'],{cwd:app,env:environment});
+  assert.match(adoptedOutput,/rex/);assert.match(adoptedOutput,/ada/);
+  const audit=JSON.parse(await command(application,['audit'],{cwd:app,env:environment}));
+  assert.ok(audit.adoptions>0);
+  (recording.adoptions??=[]).push({revision:state.desired,transition:state.transition,application:JSON.parse(adoptedOutput),audit});
   const ack=join(scratch,'adopt-'+state.transition+'.json');
   await save(ack,{node:binding.node,implementation:binding.implementation,revision:binding.revision,transition:binding.transition,settingsDigest:binding.settingsDigest,drainedFrom:binding.previous,drained:true});
   const adopted=JSON.parse(await iron(['revision','adopt','--env','real','--expected',state.desired,'--ack',ack]));
@@ -179,7 +190,7 @@ try {
   assert.equal(reverted.desired,firstId);
   await adopt(reverted);
   await assert.rejects(iron(['revision','revert','--env','real','--expected',secondId]));
-  recording.checks.push('changed edge needs fresh provider test; fixture evidence reuse; revert requires fresh adoption; stale selection refused');
+  recording.checks.push('changed edge needs fresh provider test; fixture evidence reuse; fresh real clients exercise each activated/reverted binding; stale selection refused');
   recording.status='passed';
 } catch(error) {recording.status='failed';recording.error=error.stack??String(error);throw error;}
 finally {
