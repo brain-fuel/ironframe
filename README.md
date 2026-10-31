@@ -88,6 +88,10 @@ fixture/provider evidence checks, and explicit publication and adoption. The
 `observed.calm.json` variant of calm-shop keeps the same application laws.
 These features ship in 0.3.0; existing 1.0 gates remain open.
 
+The [AWS pilot handoff](docs/how-to/start-the-aws-pilot.md) records account
+setup, collaboration branches, deployment gaps and the required complete
+teardown. The pilot has not yet been deployed or verified in AWS.
+
 ## Layout
 
 | Path | What it holds |
