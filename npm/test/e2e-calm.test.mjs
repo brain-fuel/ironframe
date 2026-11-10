@@ -1,5 +1,5 @@
 // End to end, the CALM chain with podman, LawTwin's images, the real products
-// and LawSpec 0.31.0: the calm-shop architecture is validated and exported
+// and LawSpec 0.32.0: the calm-shop architecture is validated and exported
 // without deploying anything; then in each of the twin, real and mixed
 // environments Ironframe brings the dependencies up, the shop's unchanged
 // LawSpec laws run against them under `ironframe run`, the audit runs as a
