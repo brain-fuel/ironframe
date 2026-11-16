@@ -242,7 +242,7 @@ with the existing calm-shop provider images available:
 
 ```sh
 IRONFRAME_OBSERVATION_CORE=/absolute/path/lawtwin/target/release/lawtwin-observation \
-IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.32.0.tgz \
+IRONFRAME_LAWSPEC_PACKAGE=/absolute/path/lawspec-0.34.1.tgz \
 node tools/observed-shop.mjs
 ```
 

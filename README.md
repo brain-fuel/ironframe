@@ -122,7 +122,7 @@ make canon        # canon check, with CANON_HOME pointing at a canon checkout
 make check        # lint, test, integrity, tofu-check and canon
 ```
 
-The calm-shop example pins LawSpec 0.32.0, which reads completed-run
+The calm-shop example pins LawSpec 0.34.1, which reads completed-run
 attestations. To check against an unpublished LawSpec build, set
 `IRONFRAME_LAWSPEC_PACKAGE` to its packed archive; the [CALM demonstration guide](docs/how-to/run-the-calm-demonstrations.md)
 shows the archive, CALM tooling and retained-evidence options.

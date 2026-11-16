@@ -8,7 +8,7 @@ Ironframe adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Pin the CALM demonstration to the published LawSpec 0.32.0. Its lock records
+- Pin the CALM demonstration to the published LawSpec 0.34.1. Its lock records
   the registry integrity and the optional native compiler and
   `wasm-platform-kit` packages. The observation acceptance record retains its
   0.31.0 run.
